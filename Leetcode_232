@@ -34,7 +34,7 @@ public:
 };
 /*before I saw Stefanpochmann solution,I consider It's not convenient  for keeping output stack before push(),
   For example:input stack 1,2,3,4,5 we could get output stack 5 4 3 2 1.so I had ignored the if(output.empty()) to 
-  figure out rebuild output_stack after push();
+  figure out output_stack,instead of rebuild output_stack after push();
 */
 
 //StefanPochmann Solution 
