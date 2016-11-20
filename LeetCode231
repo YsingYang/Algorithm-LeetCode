@@ -1,0 +1,25 @@
+class Solution {
+public:
+    bool isPowerOfTwo(int n) {
+        for(int i=0;i<31;++i){
+            if(n&1!=0){
+                return (n>>1)==0? true:false;
+            }
+            n >>=1;
+        }
+        return false;
+    }
+};
+
+//This quiz is a simple question about bitmanipulation and I consider it's very useful in practice.
+
+
+
+class Solution {
+public:
+    bool isPowerOfTwo(int n) {
+        if(n<=0) return false;
+        return !(n&(n-1));
+    }
+};
+//@dong.wang.1694 Using n&(n-1).very elegant!
