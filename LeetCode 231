@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int k) {
+        int res=0,index=0;
+        travel(root,index,k,res);
+        return res;
+    }
+    void travel(TreeNode* root,int &index,const int &k,int &res){
+        if(root){
+            travel(root->left,index,k,res);
+            ++index;
+            if(index==k){
+                res=root->val;
+                return;
+            }
+            travel(root->right,index,k,res);
+        }
+    }
+};//Inorder_iterator,just beat 46%,but it's the best runtime of my solution,I will continue to think about other better answers
+
+/*solution_2 inspired by @angelvivienne in discuss,but I don't think this solution is most preferable among the three solution 
+  he posted.I consider average time complexity of this solution is O(nlogn).On the another hand,this quiz doesn't 	
+declare that the tree is balanced tree.so the wrong complexity is O(n^2); please let me know if i was wrong.thandks!^-^
+*/
+
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int k) {
+        int count=countnode(root->left);
+        if(k<=count)
+            return kthSmallest(root->left,k);
+        else if(k>count+1){
+            return kthSmallest(root->right,k-count-1);
+        }
+        else 
+            return root->val;
+    }
+    
+    int countnode(TreeNode* root){
+        if(!root)   return 0;
+        return 1+countnode(root->left)+countnode(root->right);
+    }
+};
