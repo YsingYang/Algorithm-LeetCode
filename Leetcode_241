@@ -28,7 +28,7 @@ public:
 };
 
 /*
-  Thanks for @ran3 share his idea about using map to cache string->result;
+  Thanks for @ran3 sharing his idea about using map to cache string->result;
 */
 class Solution {
 public:
