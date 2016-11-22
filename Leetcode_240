@@ -72,7 +72,25 @@ public:
     }
 };
 
-//@loki2441 Solution,and a little improvement ,suggestd by @wz2326 
+/*@loki2441 Solution,and a little improvement ,suggestd by @wz2326 
+   very interest improvement
+   
+   if(matrix[mid][csize-1]<target)
+                front=mid+1;
+            if(matrix[mid][csize-1]>target)
+                --rear;
+            else
+                return mid;
+   faster than   
+   
+   if(matrix[mid][csize-1]<target)
+                front=mid+1;
+            if(matrix[mid][csize-1]>target)
+                --rear;
+            else
+                return mid;
+   
+*/
 class Solution {
 public:
     bool searchMatrix(vector<vector<int>>& matrix, int target) {
