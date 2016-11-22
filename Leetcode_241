@@ -1,0 +1,109 @@
+//first submit,standard divide and conquer.time complexity is O(n^3)?O(nlog^2n)?
+
+class Solution {
+public:
+    vector<int> diffWaysToCompute(string input) {
+        vector<int> res;
+        int size=input.size();
+        for(int i=0;i<input.size();++i){
+            char c=input[i];
+            if(c=='+'||c=='-'||c=='*'){
+                vector<int> res1=diffWaysToCompute(input.substr(0,i));
+                vector<int> res2=diffWaysToCompute(input.substr(i+1));
+                for(int i:res1){
+                    for(int j:res2){
+                        switch(c){
+                            case '+':res.push_back(i+j);break;
+                            case '-':res.push_back(i-j);break;
+                            case '*':res.push_back(i*j);break;
+                        }
+                    }
+                }
+            }
+        }
+        if(res.empty()) res.push_back(atoi(input.c_str()));
+        return res;
+        
+    }
+};
+
+/*
+  Thanks for @ran3 share his idea about using map to cache string->result;
+*/
+class Solution {
+public:
+    vector<int> diffWaysToCompute(string input) {
+        unordered_map<string,vector<int>> visited;
+        return divide(input,visited);
+    }
+private:
+    vector<int> divide(string input,unordered_map<string,vector<int>> &visited){
+        if(visited.find(input)!=visited.end())  return visited[input];
+        vector<int> res;
+        int size=input.size();
+        for(int i=0;i<input.size();++i){
+            char c=input[i];
+            if(c=='+'||c=='-'||c=='*'){
+                vector<int> res1=divide(input.substr(0,i),visited);;
+                vector<int> res2=divide(input.substr(i+1),visited);;
+                for(int i:res1){
+                    for(int j:res2){
+                        switch(c){
+                            case '+':res.push_back(i+j);break;
+                            case '-':res.push_back(i-j);break;
+                            case '*':res.push_back(i*j);break;
+                        }
+                    }
+                }
+            }
+        }
+        if(res.empty()) res.push_back(atoi(input.c_str()));
+        visited[input]=res;
+        return res;
+    }
+};
+
+/*
+  also it can be more complex like this solution below this explanation which runtime is same as previous solution. I consider
+  it result of the case set;
+*/
+class Solution {
+public:
+    vector<int> diffWaysToCompute(string input) {
+        unordered_map<string,vector<int>> visited;
+        return divide(input,visited);
+    }
+private:
+    vector<int> divide(string input,unordered_map<string,vector<int>> &visited){
+        if(visited.find(input)!=visited.end())  return visited[input];
+        vector<int> res;
+        int size=input.size();
+        for(int i=0;i<input.size();++i){
+            char c=input[i];
+            if(c=='+'||c=='-'||c=='*'){
+                vector<int> res1,res2;
+                if(visited.find(input.substr(0,i))!=visited.end())
+                    res1=visited[input.substr(0,i)];
+                else
+                    res1=divide(input.substr(0,i),visited);
+                if(visited.find(input.substr(i+1))!=visited.end())
+                    res2=visited[input.substr(i+1)];
+                else
+                    res2=divide(input.substr(i+1),visited);
+                for(int i:res1){
+                    for(int j:res2){
+                        switch(c){
+                            case '+':res.push_back(i+j);break;
+                            case '-':res.push_back(i-j);break;
+                            case '*':res.push_back(i*j);break;
+                        }
+                    }
+                }
+            }
+        }
+        if(res.empty()) res.push_back(atoi(input.c_str()));
+        visited[input]=res;
+        return res;
+    }
+};
+
