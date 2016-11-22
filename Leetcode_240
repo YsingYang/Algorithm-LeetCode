@@ -1,0 +1,73 @@
+//first submit
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if(matrix.empty())  return false;
+        int rsize=matrix.size(),csize=matrix[0].size();
+        for(int i=0;i<rsize;++i){
+            if(target<matrix[i][0])
+                return false;
+            if(target<=matrix[i][csize-1]&&binarysearch(matrix[i],target,csize))
+                return true;
+        }
+        return false;
+    }
+    
+    bool binarysearch(const vector<int> &matrix,int target,int size){
+        int front=0,rear=size-1;
+        while(front<=rear){
+            int mid=front+((rear-front)>>1);
+            if(matrix[mid]==target)
+                return true;
+            else if(matrix[mid]>target)
+                rear=mid-1;
+            else
+                front=mid+1;
+        }
+        return false;
+    }
+};
+
+//second submit
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if(matrix.empty())  return false;
+        int rsize=matrix.size(),csize=matrix[0].size();
+        int i=searchcolumn(matrix,rsize,csize,target);
+        for(;i<rsize;++i){
+            if(target<matrix[i][0])
+                return false;
+            if(target<=matrix[i][csize-1]&&binarysearch(matrix[i],target,csize))
+                return true;
+        }
+        return false;
+    }
+    
+    bool binarysearch(const vector<int> &matrix,const int target,const int size){
+        int front=0,rear=size-1;
+        while(front<=rear){
+            int mid=front+((rear-front)>>1);
+            if(matrix[mid]==target)
+                return true;
+            else if(matrix[mid]>target)
+                rear=mid-1;
+            else
+                front=mid+1;
+        }
+        return false;
+    }
+    int searchcolumn(const vector<vector<int>> &matrix,const int rsize,const int csize,const int target){
+        int front=0,rear=rsize-1;
+        while(front<=rear){
+            int mid=front+((rear-front)>>1);
+            if(matrix[mid][csize-1]<target)
+                front=mid+1;
+            if(matrix[mid][csize-1]>target)
+                --rear;
+            else
+                return mid;
+        }
+        return front;
+    }
+};
