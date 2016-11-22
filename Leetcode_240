@@ -110,3 +110,29 @@ public:
         return false;
     }
 };
+/*
+    TLE Solution 
+*/
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if (matrix.empty()) return false;
+        int rsize = matrix.size(),csize=matrix[0].size();
+        if (rsize == 0) return false;
+        return divide(matrix,0,rsize-1,0,csize-1,target);
+        
+    }   
+private:
+    bool divide(const vector<vector<int>>& matrix,int rstart,int rend,int cstart,int cend,const int target){
+        if(rend<rstart||cend<cstart)
+            return false;
+        int rm=rstart+((rend-rstart)>>1),cm=cstart+((cend-cstart)>>1);
+        if(matrix[rm][cm]>target)
+            return divide(matrix,rstart,rm-1,cstart,cm-1,target)||divide(matrix,rstart,rm-1,cm,cend,target)||divide(matrix,rm,rend,cstart,cm-1,target);
+        else if(matrix[rm][cm]<target)
+            return divide(matrix,rstart,rm,cm+1,cend,target)||divide(matrix,rm+1,rend,cstart,cm,target)||divide(matrix,rm+1,rend,cm+1,cend,target);
+        else
+            return true;
+    }
+    
+};
