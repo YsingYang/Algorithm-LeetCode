@@ -1,0 +1,46 @@
+/*
+  It's a interesting problem due to bitmanipulation,also,it is same as single number I in certain aspects.
+ */
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int size=nums.size(),res=size;
+        for(int i=0;i<size;++i){
+            res ^=i;
+            res ^=nums[i];
+        }
+        return res;
+    }
+};
+
+/*
+   Thanks for @mingjun add other Solutions.
+   using binary search or counting sum of the array,BTW,It's easy to use a trick to avoid overflow in implementation by sum.
+   I'm too lazy to modify them to c++ version :);just wait a monent
+*/
+2.SUM
+
+public class Solution {
+    public int missingNumber(int[] nums) {
+        int sum = 0;
+        for(int i = 0; i < nums.length; i++){
+            sum += i;
+            sum -= nums[i];
+        }
+        sum += nums.length;
+        return sum;
+    }
+}
+
+3.Binary Search
+
+public int missingNumber(int[] nums) { //binary search
+    Arrays.sort(nums);
+    int left = 0, right = nums.length, mid= (left + right)/2;
+    while(left<right){
+        mid = (left + right)/2;
+        if(nums[mid]>mid) right = mid;
+        else left = mid+1;
+    }
+    return left;
+}
