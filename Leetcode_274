@@ -1,0 +1,22 @@
+/*
+  I think this problem is difficult in the mean of H-index 囧，
+*/
+
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        int size=citations.size();
+        vector<int> table(size+1);
+        for(int i=0;i<size;++i){
+            if(citations[i]>=size)
+                ++table[size];
+            else
+                ++table[citations[i]];
+        }
+        for(int i=0;i<size;++i){
+            if(table[i]>=size-i)
+                return i;
+            table[i+1]+=table[i];
+        }
+    }
+};
