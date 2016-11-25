@@ -1,0 +1,23 @@
+/*
+  It's the easiest problem I have met in Leetcode,but why it have extraordinarily low acceptance.Oh I find the answer in discuss
+  just because most of people are used to use (f+r)/2 to get the mid.hah,Thanks for my roomate Ken_Lee instruct me to use 
+  f+((r-f)>>1) to compute mid. This is indeed a good habit
+*/
+
+// Forward declaration of isBadVersion API.
+bool isBadVersion(int version);
+
+class Solution {
+public:
+    int firstBadVersion(int n) {
+        int f=1,r=n;
+        while(f<r){
+            int mid = f+((r-f)>>1);
+            if(isBadVersion(mid))   
+                r=mid;
+            else
+                f=mid+1;
+        }
+        return f;
+    }
+};
