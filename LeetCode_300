@@ -1,0 +1,68 @@
+/*
+  Unbelievable,I actually did 300th question,haha(In fact,I have not did question of hard label...(｡•ˇ‸ˇ•｡) ..)
+  Back to the main topic,It's dynamic programming also can use binary_search to improve runtime complexity.nice question.
+*/
+//Solution 1:O(n^2) times
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> last_min(1,INT_MIN);
+        for(int i:nums){
+            for(int j=last_min.size()-1;j>=0;--j){
+                if(i>last_min[j]){
+                    if(j==last_min.size()-1)
+                        last_min.push_back(i);
+                    else
+                        last_min[j+1]=min(i,last_min[j+1]);
+            }
+        }
+        return last_min.size()-1;
+    }
+};
+
+//Solution 2:O(nlogn)times use binary_search
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> last_min(1,INT_MIN);
+        for(int i:nums){
+            int size=last_min.size();
+            int index=binary_search(last_min,i,size);
+            if(index==size){
+                last_min.push_back(i);
+            }
+            else
+                last_min[index]=min(i,last_min[index]);
+        }
+        return last_min.size()-1;
+    }
+private:
+    int binary_search(vector<int> &last_min,const int &num,const int &size){
+        int f=0,r=size-1,mid;
+        while(f<=r){
+            mid=f+((r-f)>>1);
+            if(last_min[mid]>=num)
+                r=mid-1;
+            else
+                f=mid+1;
+        }
+        return f;
+    }
+};
+
+/*Solution 3:thanks for @dtccwl sharing his implementation by using lower_bound,actually, the vector res is possiblly not
+  the LIS of nums,but the length is the answer our want;
+  
+  Further more,@john78 shared his implementation just use O(1)space result in he modifies the original vector<Int>nums,so,
+  I don't like it ,But it actually is a smart idea
+
+*/
+int lengthOfLIS(vector<int>& nums) {
+    vector<int> res;
+    for(int i=0; i<nums.size(); i++) {
+        auto it = std::lower_bound(res.begin(), res.end(), nums[i]);
+        if(it==res.end()) res.push_back(nums[i]);
+        else *it = nums[i];
+    }
+    return res.size();
+}
