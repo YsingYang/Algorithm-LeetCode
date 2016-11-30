@@ -1,0 +1,88 @@
+/*
+  It's difficult to me to solve this problem.But if you have know SegmentTree,it would be easy
+*/
+//Implementation_1,SegmentTree,Yes!It's too long!.
+
+struct SegmentTreeNode{
+    int leftnum,rightnum,sum;
+    SegmentTreeNode* left;
+    SegmentTreeNode* right;
+    SegmentTreeNode(int l,int r):leftnum(l),rightnum(r),sum(0),left(NULL),right(NULL) {}
+};
+
+class SegmentTree{
+private:
+    SegmentTreeNode  *root;
+
+    SegmentTreeNode* buildSt(vector<int> &num,int left,int right){
+        if(left>right)
+            return NULL;
+        else{
+            int mid = left+((right-left)>>1);
+            SegmentTreeNode *node = new SegmentTreeNode(left,right);
+            if(left==right)
+                node->sum = num[left];
+            else{
+                node->left= buildSt(num,left,mid);//It must keep mid instead of mid-1
+                node->right= buildSt(num,mid+1,right);
+                node->sum=node->left->sum+node->right->sum;
+            }
+            return node;
+        }
+    }
+
+    void update(SegmentTreeNode *node,int i,int val){
+        if(node->leftnum==node->rightnum)//more concise
+            node->sum=val;
+        else{
+            int mid = node->leftnum+((node->rightnum-node->leftnum)>>1);
+            if(mid>=i)   update(node->left,i,val);
+            else    update(node->right,i,val);
+            node->sum=node->left->sum+node->right->sum;
+        }
+    }
+
+    int sumRange(SegmentTreeNode *root,int i,int j){
+        if(i==root->leftnum&&j==root->rightnum)
+            return root->sum;
+      int mid = root->leftnum+((root->rightnum-root->leftnum)>>1);
+        if(j<=mid)  return sumRange(root->left,i,j);
+        else if(i>=mid+1)   return sumRange(root->right,i,j);
+        else    return sumRange(root->left,i,mid)+sumRange(root->right,mid+1,j);//!!I consider this step is too hard to figure out it
+
+    }
+
+public:
+    SegmentTree(vector<int> &num){
+        root = buildSt(num,0,num.size()-1);
+    }
+
+    void update(int i,int val){
+        update(root,i,val);
+    }
+
+    int sumRange(int i,int j){
+        return sumRange(root,i,j);
+    }
+};
+
+class NumArray {
+public:
+	NumArray(vector<int>& nums) {
+		st = new SegmentTree(nums);
+	}
+
+	void update(int i, int val) {
+		st->update(i,val);
+	}
+
+	int sumRange(int i, int j) {
+		return st->sumRange(i, j);
+	}
+private:
+	SegmentTree* st;
+};
+
+
+//Implementation_2 using buffer to cache update,It's a brilliant idea,It just use 80ms time , maybe result in the case,So I 
+//think it is not suitable for partical problem.
