@@ -1,0 +1,27 @@
+//As same as ugly number2,
+
+class Solution {
+public:
+    int nthSuperUglyNumber(int n, vector<int>& primes) {//不能用static,因为不是对应一个数组。
+        if(n<1||primes.empty()) return 0;
+        int size=primes.size();
+        vector<int> res(1,1);
+        vector<int> ugly_point(size,0);
+        for(int i=1;i<n;++i){
+            int min=primes[0]*res[ugly_point[0]],point=0;
+            for(int j=1;j<size;++j){
+                if(primes[j]*res[ugly_point[j]]<min){
+                    min=primes[j]*res[ugly_point[j]];
+                    point=j;
+                }
+            }
+            res.push_back(min);
+            for(int j=0;j<size;++j){
+                if(!(min%primes[j]))
+                    ++ugly_point[j];
+            }
+        }
+        return res[n-1];
+        
+    }
+};
