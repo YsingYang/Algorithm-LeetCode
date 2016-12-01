@@ -50,3 +50,27 @@ public:
         
     }
 };
+
+//Solution_3 The vector val can be removed,but actually the runtime is wrong than above solution,maybe it is due to a number of
+operation of multiply.
+
+class Solution {
+public:
+    int nthSuperUglyNumber(int n, vector<int>& primes) {//不能用static,因为不是对应一个数组。
+        if(n<1||primes.empty()) return 0;
+        int size=primes.size();
+        vector<int> res(1,1);
+        vector<int> ugly_point(size,0);
+        for(int i=1;i<n;++i){
+            int now_min = INT_MAX;
+            for(int j=0;j<size;++j){
+                if(primes[j]*res[ugly_point[j]]==res[i-1])
+                    ++ugly_point[j];
+                now_min=min(primes[j]*res[ugly_point[j]],now_min);
+            }
+            res.push_back(now_min);
+        }
+        return res[n-1];
+        
+    }
+};
