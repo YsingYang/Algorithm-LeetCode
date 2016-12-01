@@ -1,0 +1,42 @@
+/*
+  Thanks for @dietpepsi @npvinhphat sharing his thinking process,I quite agree with 
+      The key for dp is to find the variables to represent the states and deduce the transition function.
+  It's the main point
+*/
+//Solution_1
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int size=prices.size();
+        if(size<=1) return 0;
+        vector<int> buy(size);
+        vector<int> rset(size);
+        vector<int> sell(size);
+        buy[0]=-prices[0];rset[0]=0;sell[0] = INT_MIN;
+        for(int i=1;i<size;++i){
+            rset[i] = max(rset[i-1],sell[i-1]);
+            buy[i] = max(buy[i-1],rset[i-1]-prices[i]);
+            sell[i] = buy[i-1] + prices[i];
+        }
+        return max(rset[size-1],sell[size-1]);
+        
+    }
+};
+
+//We can improve the space complexity to O(1)
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int size=prices.size();
+        if(size<=1) return 0;
+        int buy=-prices[0],rset=0,sell = INT_MIN;
+        for(int i=1;i<size;++i){
+            int pre = sell;
+            sell = buy + prices[i];
+            buy = max(buy,rset-prices[i]);
+            rset = max(rset,pre);
+        }
+        return max(rset,sell);
+        
+    }
+};
