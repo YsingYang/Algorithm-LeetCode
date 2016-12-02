@@ -1,0 +1,43 @@
+//standard dynamic programming,
+
+//Solution_1 amount_vector in outer_loop
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {//dfs
+        if(amount==0)   return 0;
+        vector<int> res(amount+1,INT_MAX);
+        res[0]=0;
+        int size=coins.size();
+        for(int i=1;i<=amount;++i){
+            for(int j=0;j<size;++j){
+                if(i>=coins[j]&&res[i-coins[j]]!=INT_MAX){
+                    res[i]=min(res[i-coins[j]]+1,res[i]);
+                }
+            }
+        }
+        return res[amount]==INT_MAX?-1:res[amount];
+        
+    }
+};
+
+/*Solution_2 coins_vector in outer_loop,It's easy to understand why this solution is faster than solution_1 ,if the coins is more than
+  100 or 1000 ...,it would be many useless operation.
+*/
+
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {//dfs
+        vector<int> res(amount+1,amount+1);////如何这里要用INT_MAX下面要用A[i]中if判断,否则会出现INT_MAX+1的溢出情况
+        res[0]=0;
+        int size=coins.size();
+        for(int i=0;i<size;++i){
+            for(int j=coins[i];j<=amount;++j){
+                    res[j]=min(res[j-coins[i]]+1,res[j]);
+            }
+        }
+        return res[amount]>amount?-1:res[amount];
+        
+    }
+};
+
+// I will update the dfs Solution someday
