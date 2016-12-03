@@ -1,0 +1,23 @@
+//Thanks for @shuoshankou sharing his idea with detailed explanation
+
+class Solution {
+public:
+    void wiggleSort(vector<int>& nums) {
+         int size = nums.size();
+         auto midptr = nums.begin() + size / 2;
+         nth_element(nums.begin(), midptr, nums.end());
+         int median = *midptr;
+         int left = 0, right = size-1,i=0;
+         while(i<=right){
+             if(nums[virtualindex(i,size)]>median){
+                 swap(nums[virtualindex(i++,size)],nums[virtualindex(left++,size)]);
+             }
+             else if(nums[virtualindex(i,size)]<median){
+                swap(nums[virtualindex(i,size)],nums[virtualindex(right--,size)]);
+             }
+             else
+                ++i;
+         }
+    }
+}；
+// Not completed
