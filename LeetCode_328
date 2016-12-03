@@ -1,0 +1,42 @@
+//It is not necessary to use fake_head,otherwise it would be awful;like this
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        if(!head)
+            return head;
+        ListNode *fake_odd = new  ListNode(0);
+        ListNode *fake_even = new ListNode(0);
+        ListNode *node = head,*even = fake_even,*odd = fake_odd;
+        while(node){
+            odd->next = node;
+            odd = odd->next;
+            node = node->next;
+            if(node){
+                even ->next = node;
+                even = node;
+                node = node->next;
+            }
+        }
+        even->next=nullptr;
+        odd->next = fake_even->next;
+        return fake_odd->next;
+    }
+};
+
+//Obviously , this following implementation is more elegant;
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        if(!head)
+            return head;
+        ListNode *odd = head,*even = odd->next,*evenhead = even;
+        while(even&&even->next){
+            odd->next=odd->next->next;
+            even->next = even->next->next;
+            even = even->next;
+            odd=odd->next;
+        }
+        odd->next=evenhead;
+        return head;
+    }
+};
