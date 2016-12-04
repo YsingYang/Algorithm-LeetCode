@@ -1,0 +1,77 @@
+/*
+  It's not difficult quiz,But it's nightmare for me...Using some tricks like split the string will get  more concise code.
+*/
+//here is my code,ugly!
+
+class Solution {
+public:
+    bool isValidSerialization(string preorder) {
+        if(preorder.empty())    return false;
+        int size=preorder.size();
+        if(size==1&&preorder[0]=='#')   return true;
+        stack<int> st;
+        for(int i=0;i<size;++i){
+            if(preorder[i]==',')  continue;
+            if(isdigit(preorder[i])){
+                while(isdigit(preorder[i])){
+                    ++i;
+                }
+                st.push(0);
+            }
+            else{
+                if(st.empty())
+                    return false;
+                else{
+                    ++st.top();
+                    while(st.top()==2){
+                        st.pop();
+                        if(st.empty())
+                            if(i!=size-1)   return false;
+                            else    break;
+                        ++st.top();
+                    }
+                }
+            }
+        }
+        return st.empty();
+    }
+};
+
+//using tree property would be more easy ,Thanks for dietpepsi adding this problem and sharing his idea
+class Solution {
+public:
+    bool isValidSerialization(string preorder) {
+        int remain=1;
+        for(int i=0;i<preorder.size();++i){
+            if(preorder[i]==',')  
+                continue;
+            if(--remain<0)
+                return false;
+            else if(preorder[i]!='#'){
+                while(isdigit(preorder[i])){
+                    ++i;
+                }
+                remain+=2;
+            }
+        }
+        return remain==0;
+    }
+};
+
+//Also,It's more concise;
+class Solution {
+public:
+    bool isValidSerialization(string preorder) {
+        istringstream ss(preorder);
+        string temp;
+        int remain=1;
+        while(getline(ss,temp,',')){
+            if(--remain<0)
+                return false;
+            if(temp!="#"){
+                remain+=2;
+            }
+        }
+        return remain==0;
+    }
+};
