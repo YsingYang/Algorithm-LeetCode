@@ -1,0 +1,40 @@
+//Solution_1
+
+class Solution {
+public:
+    bool increasingTriplet(vector<int>& nums) {
+        vector<int> res(3,INT_MAX);
+        int flag=0;
+        for(int i=0;i<nums.size()&&!flag;++i){
+            for(int *j=&res[0];j<=&res[2];++j){
+                if(nums[i]<=*j){
+                    *j=nums[i];
+                    if(j==&res[2])    flag=1;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+};
+
+
+//update 
+class Solution {
+public:
+    bool increasingTriplet(vector<int>& nums) {
+        int *index1=nullptr,*index2=nullptr;
+        for(int i=0;i<nums.size();++i){
+            if(index1==nullptr||nums[i]<=(*index1)){
+                index1=&nums[i];
+            }
+            else if(index2==nullptr||nums[i]<=*index2)
+                index2=&nums[i];
+            else 
+                return true;
+        }
+        return false;
+    }
+};
+
+
