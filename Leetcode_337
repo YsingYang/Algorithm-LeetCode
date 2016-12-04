@@ -1,0 +1,50 @@
+//remarkable problem ,
+
+//solution_1 somewhat similar to divide to conque？
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int rob(TreeNode* root) {
+        vector<int> res= Houserob(root);
+        return max(res[0],res[1]);
+    }
+    
+    vector<int> Houserob(TreeNode *node){
+        if(!node)
+            return {0,0};
+        vector<int> left = Houserob(node->left);
+        vector<int> right = Houserob(node->right);
+        vector<int> now(2,0);
+        now[1] = max(left[0],left[1])+max(right[0],right[1]);
+        now[0] =node->val+ left[1] +right[1];
+        return now;
+    }
+};
+
+solution_2 more better idea, using reference cache grandchild_val tactfully,post by @espuer 
+class Solution {
+public:
+    int tryRob(TreeNode* root, int& l, int& r) {
+        if (!root)
+            return 0;
+            
+        int ll = 0, lr = 0, rl = 0, rr = 0;
+        l = tryRob(root->left, ll, lr);//interesting idea using reference to cache l r val
+        r = tryRob(root->right, rl, rr);
+        
+        return max(root->val + ll + lr + rl + rr, l + r);
+    }
+
+    int rob(TreeNode* root) {
+        int l, r;
+        return tryRob(root, l, r);
+    }
+};
