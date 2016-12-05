@@ -1,0 +1,110 @@
+//My_first_submission,using more space to cache res,It's easy to improve space complexity
+
+class NestedIterator {
+    vector<int> res;
+    stack<NestedInteger> st;
+    int index;
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        int size = nestedList.size();
+        for(int i =size-1;i>=0;--i){
+            st.push(nestedList[i]);
+        }
+        while(!st.empty()){
+            NestedInteger temp =st.top();
+            st.pop();
+            if(temp.isInteger()){
+                res.push_back(temp.getInteger());
+            }
+            else{
+                vector<NestedInteger> tm = temp.getList();
+                for(int i=tm.size()-1;i>=0;--i){
+                    st.push(tm[i]);
+                }
+            }
+        }
+        index = 0;
+    }
+
+    int next() {
+        return res[index++];
+    }
+
+    bool hasNext() {
+        return index <res.size();
+    }
+};
+
+//My_second submission
+
+class NestedIterator {
+private:
+    stack<NestedInteger> st;
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        int size = nestedList.size();
+        for(int i =size-1;i>=0;--i){
+            st.push(nestedList[i]);
+        }
+    }
+    
+    int next() {
+        int temp =st.top().getInteger();
+        st.pop();
+        return temp;
+    }
+    
+    void flatNested(){
+        NestedInteger temp =st.top();
+        st.pop();
+        vector<NestedInteger> tm = temp.getList();
+        for(int i=tm.size()-1;i>=0;--i){
+            st.push(tm[i]);
+        }
+    }
+    bool hasNext() {
+        while(!st.empty()&&!(st.top().isInteger())){
+            if(st.top().getList().empty()){
+                st.pop();
+            }
+            else
+                flatNested();
+        }
+        return !st.empty();
+    }
+};
+
+//Thanks for @StefanPochmann sharing his Solution by using real iterator
+
+class NestedIterator {
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        begins.push(nestedList.begin());
+        ends.push(nestedList.end());
+    }
+
+    int next() {
+        hasNext();
+        return (begins.top()++)->getInteger();
+    }
+
+    bool hasNext() {
+        while (begins.size()) {
+            if (begins.top() == ends.top()) {
+                begins.pop();
+                ends.pop();
+            } else {
+                auto x = begins.top();
+                if (x->isInteger())
+                    return true;
+                begins.top()++;
+                begins.push(x->getList().begin());
+                ends.push(x->getList().end());
+            }
+        }
+        return false;
+    }
+
+private:
+    stack<vector<NestedInteger>::iterator> begins, ends;
+};
