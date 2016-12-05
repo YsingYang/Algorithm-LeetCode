@@ -1,0 +1,49 @@
+//Standard bitmanipulation ,firstly, I don't find the regular pattern..So ,The first solution is not well
+
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> res(num+1,0);
+        if(num>=1)  res[1]=1;
+        for(int i=2;i<=num;){
+            int count=i,pre=(count>>1),now=count;
+            while(pre<count&&now<=num){
+                res[now++] =res[pre++];
+            }
+            pre=(count>>1);
+            while(pre<count&&now<=num){
+                res[now++] = res[pre++]+1;
+            }
+            i <<=1;
+        }
+        return res;
+    }
+};
+
+//Obviously,res[i] = res[(i>>1)] + (i&1)
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> res(num+1,0);
+        for(int i=1;i<=num;++i){
+            res[i] = res[(i>>1)] + (i&1);
+        }
+        return res;
+    }
+};
+
+//I hope static vector will improve the runtime ,but it don't work,Could it?
+
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        static vector<int> res(1,0);
+        int i = res.size();
+        while(i<=num){
+            res.push_back(res[(i>>1)] + (i&1));
+            ++i;
+        }
+        res.resize(num+1);
+        return res;
+    }
+};
