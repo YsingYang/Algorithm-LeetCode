@@ -1,0 +1,31 @@
+//static.
+
+class Solution {
+public:
+    int integerBreak(int n) {
+        static vector<int> res;
+        int i=res.size();
+        while(i<n-1){
+            if(i<=4){
+                res.push_back(divide(i+2));
+            }
+            else{
+                res.push_back(res[i-3]*3);
+            }
+            ++i;
+        }
+        return res[n-2];
+        
+    }
+    int divide(int num){
+        int pro=1;
+        if(num==2)  return 1;
+        if(num==3)  return 2;
+        while(num>4){
+            pro*=3;
+            num-=3;
+        }
+        pro*=num;
+        return pro;
+    }
+};
