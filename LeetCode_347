@@ -1,0 +1,30 @@
+/*
+  Using priority_queue + unordered_map , Leaning how to use priority_queue is helpful for solve some problems like kth element;
+  Also,You can make frequecy to be key_value.
+*/
+struct pairCompare{
+    bool operator()(const pair<int,int>&p1,const pair<int,int>&p2){
+        return p1.second<p2.second;
+    }
+};
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int,int> count;
+        for(int i:nums){
+            ++count[i];
+        }
+        vector<int> res;
+        int size=count.size();
+        priority_queue<pair<int,int>,vector<pair<int,int>>,pairCompare>p1;
+        for(auto i:count){
+            p1.push(i);
+            if(p1.size()+k>size){
+                res.push_back(p1.top().first);
+                p1.pop();
+            }
+        }
+        return res;
+    }
+};
+
