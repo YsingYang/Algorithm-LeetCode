@@ -1,0 +1,20 @@
+//Interesting Math problem , It can be abstracted as a Euclidean alorithm .But I'm figure out it....Thanks for ShuangquanLi 
+sharing his explanation.
+
+class Solution {
+public:
+    bool canMeasureWater(int x, int y, int z) {
+        return z == 0 || z <= (long long)x + y && z % gcd(x, y) == 0;
+    }
+    
+    int gcd(int x,int y){
+        if(y>x)
+            swap (x,y);
+        while(y){
+            int temp = y;
+            y = x%y;
+            x = temp;
+        }
+        return x;
+    }
+};
