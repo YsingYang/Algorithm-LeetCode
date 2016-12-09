@@ -1,0 +1,188 @@
+/*
+  A challenging problem，Examines Overall design capability of programmer.
+*/
+
+//My first Solution runtime is 589ms ~ . obviously ,It can use heap_sort for improving it;
+
+class Twitter {
+unordered_map<int,unordered_set<int>> fl;
+vector<pair<int,int>> post_order;
+public:
+    /** Initialize your data structure here. */
+    Twitter() {
+        
+    }
+    
+    /** Compose a new tweet. */
+    void postTweet(int userId, int tweetId) {
+        post_order.push_back({userId,tweetId});
+    }
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    vector<int> getNewsFeed(int userId) {
+        int count=0,i=post_order.size()-1;
+        vector<int> res;
+        while(count<10&&i>=0){
+            if(post_order[i].first==userId||fl[userId].find(post_order[i].first)!=fl[userId].end()){
+                res.push_back(post_order[i].second);
+                ++count;
+            }
+            --i;
+        }
+        return res;
+    }
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    void follow(int followerId, int followeeId) {
+        fl[followerId].insert(followeeId);
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    void unfollow(int followerId, int followeeId) {
+        fl[followerId].erase(followeeId);
+    }
+};
+
+class Twitter {
+struct twitte{
+    int count;
+    int tid;
+    int index;
+    int uid;
+    twitte(int t,int id,int idex,int u):count(t),tid(id),index(idex),uid(u){}
+};
+
+struct compare{
+    bool operator()(const twitte* a,twitte* b){
+        return a->count<b->count;
+    }
+};
+
+unordered_map<int,vector<twitte*>> utw;
+unordered_map<int,unordered_set<int>> fl;
+int count;
+public:
+    /** Initialize your data structure here. */
+    Twitter() {
+        count = 0;
+    }
+    
+    /** Compose a new tweet. */
+    void postTweet(int userId, int tweetId) {
+        int size = utw[userId].size();
+        twitte *tw= new twitte(count++,tweetId,size,userId);
+        utw[userId].push_back(tw);
+    }
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    vector<int> getNewsFeed(int userId) {
+        priority_queue<twitte*,vector<twitte*>,compare> pq;//build_heap;
+        int size;
+        for(auto it:fl[userId]){
+            size = utw[it].size();
+            if(size>0){
+                pq.push(utw[it][size-1]);
+            }
+        }
+        size = utw[userId].size();
+        if(size>0)   pq.push(utw[userId][size-1]);
+        int p =0;
+        vector<int> res;
+        while(!pq.empty()&&p<10){
+            twitte *temp = pq.top();
+            pq.pop();
+            res.push_back(temp->tid);
+            if(temp->index>0){
+                pq.push(utw[temp->uid][temp->index-1]);
+            }
+            ++p;
+        }
+       
+        return res;
+    }
+
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    void follow(int followerId, int followeeId) {
+        if(followerId!=followeeId)
+            fl[followerId].insert(followeeId);
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    void unfollow(int followerId, int followeeId) {
+        fl[followerId].erase(followeeId);
+    }
+};
+
+
+//@yang1e  shared  base-iterator approach to solve this problem in discuss . I consider use pair<iterator,iterator> is more remarkable
+ class Twitter
+{
+    struct Tweet
+    {
+        int time;
+        int id;
+        Tweet(int time, int id) : time(time), id(id) {}
+    };
+
+    std::unordered_map<int, std::vector<Tweet>> tweets; // [u] = array of tweets by u
+    std::unordered_map<int, std::unordered_set<int>> following; // [u] = array of users followed by u
+
+    int time;
+
+public:
+    Twitter() : time(0) {}
+
+    void postTweet(int userId, int tweetId)
+    {
+        tweets[userId].emplace_back(time++, tweetId);
+    }
+
+    std::vector<int> getNewsFeed(int userId)
+    {
+        std::vector<std::pair<Tweet*, Tweet*>> h; // pair of pointers (begin, current)
+
+        for (auto& u: following[userId])
+        {
+            auto& t = tweets[u];
+            if (t.size() > 0)
+                h.emplace_back(t.data(), t.data() + t.size() - 1);
+        }
+        auto& t = tweets[userId]; // self
+        if (t.size() > 0)
+            h.emplace_back(t.data(), t.data() + t.size() - 1);
+
+        auto f = [](const std::pair<Tweet*, Tweet*>& x, const std::pair<Tweet*, Tweet*>& y) {
+            return x.second->time < y.second->time;
+        };
+        std::make_heap(h.begin(), h.end(), f);
+
+        const int n = 10;
+        std::vector<int> o;
+        o.reserve(n);
+        for (int i = 0; (i < n) && !h.empty(); ++i)
+        {
+            std::pop_heap(h.begin(), h.end(), f);
+
+            auto& hb = h.back();
+            o.push_back(hb.second->id);
+
+            if (hb.first == hb.second--)
+                h.pop_back();
+            else
+                std::push_heap(h.begin(), h.end(), f);
+        }
+        return o;
+    }
+
+    void follow(int followerId, int followeeId)
+    {
+        if (followerId != followeeId)
+            following[followerId].insert(followeeId);
+    }
+
+    void unfollow(int followerId, int followeeId)
+    {
+        following[followerId].erase(followeeId);
+    }
+};
