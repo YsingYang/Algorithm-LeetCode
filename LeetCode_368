@@ -1,0 +1,111 @@
+/*
+  Incomplete Dp,beat 99.8%,similar to LIS?
+  Example : [1,2,3,4,5,6]
+  dp: [[1],[2,3,5],[4,6]
+  @ShuangquanLi used pair<int,int> for improving operation of result search.show it above my solution
+
+*/
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        if(nums.empty())    return {};
+        sort(nums.begin(),nums.end());
+        vector<vector<int>> dp;
+        for(int i:nums){
+            int j;
+            for(j=0;j<dp.size();++j){
+                int size=dp[j].size(),z;
+                for(z=0;z<size;++z){
+                    if(i%dp[j][z]==0)
+                        break;
+                }
+                if(z==size){
+                    dp[j].push_back(i);
+                    break;
+                }
+            }
+            if(j==dp.size()){
+                dp.push_back({i});
+            }
+        }
+        int index = dp.size()-1;
+        vector<int> res(index+1);
+        res[index] = dp[index][0];
+        for(int i=index-1;i>=0;--i){
+            for(int j=0;j<dp[i].size();++j){
+                if(res[index]%dp[i][j]==0)
+                    res[--index] = dp[i][j];
+            }
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+    vector<int> ret;
+    int n = nums.size();
+    if (!n) return ret;
+    sort(nums.begin(), nums.end());
+    vector<pair<int, int>> dp[n];
+    int maxi = 0;
+    dp[maxi].push_back(make_pair(nums[0], -1));
+    for (int i = 1; i < n; ++i) {
+        int j = maxi;
+        while (j >= 0) {
+            for (int id = 0; id < dp[j].size(); ++id) {
+                if (nums[i] % dp[j][id].first == 0) {
+                    dp[j + 1].emplace_back(nums[i], id);
+                    maxi = max(maxi, j + 1);
+                    goto out_of_while;
+                }
+            }
+            --j;
+        }
+        dp[j + 1].emplace_back(nums[i], -1);
+        out_of_while:;
+    }
+    int i = maxi, id = 0;
+    while (i >= 0) {
+        ret.push_back(dp[i][id].first);
+        id = dp[i][id].second;
+        --i;
+    }
+    return ret;
+    }
+};
+
+//Solution 3,complete dp
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int size=nums.size();
+        int maxl=0,maxparent;
+        vector<int> length(size,0);
+        vector<int> parent(size,0);
+        for(int i=size-1;i>=0;--i){
+            
+            for(int j = i;j<size;++j){
+                
+                if(nums[j]%nums[i]==0&&length[i]<length[j]+1){
+                    length[i] = length[j] +1;
+                    parent[i] = j;
+                    
+                    if(maxl<length[i]){
+                        maxl = length[i];
+                        maxparent = i;
+                    }
+                    
+                }
+            }
+        }
+        vector<int> res;
+        for(int i=0;i<maxl;++i){
+            res.push_back(nums[maxparent]);
+            maxparent = parent[maxparent];
+        }
+        return res;
+    }
+};
