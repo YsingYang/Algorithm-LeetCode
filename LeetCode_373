@@ -1,0 +1,71 @@
+//Solution-1 brust-force search
+struct compare{
+    bool operator()(const pair<int,int> &p1,const pair<int,int> &p2){
+        return p1.first+p1.second > p2.first+p2.second;
+    }
+};
+
+class Solution {
+public:
+    vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+        int s1 = nums1.size(),s2 = nums2.size(),sa = s1*s2;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,compare> pq;
+        vector<pair<int, int>> res;
+        for(int i:nums1){
+            for(int j:nums2){
+                pq.emplace(i,j);
+                if(pq.size()+k>sa){
+                    res.push_back(pq.top());
+                    pq.pop();
+                }
+            }
+        }
+        return res;
+        
+    }
+};
+
+/*
+  solution-2
+  You can assume the combination as a 2-D matrix like this 
+          index y 
+   index x      0,1,2,3,4
+                1
+                2
+                3
+  So let us recall ascendent matrix 
+  
+  Another question  can we captured data in compare struct?
+*/
+/*struct compare{
+    bool operator()(const pair<int,int> &p1,const pair<int,int> &p2){
+        return nums1p1.first+p1.second > p2.first+p2.second;
+    }
+};*/
+
+class Solution {
+public:
+    vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+        if(nums1.empty()||nums2.empty())    return {};
+        int s1 = nums1.size(),s2=nums2.size();
+        auto compare = [&nums1,&nums2](pair<int,int> &p1,pair<int,int> &p2){
+            return nums1[p1.first]+nums2[p1.second]>nums1[p2.first]+nums2[p2.second];
+        };
+        priority_queue<pair<int,int>,vector<pair<int,int>>,decltype(compare)> pq(compare);
+        pq.emplace(0,0);
+        vector<pair<int, int>> res;
+        while(!pq.empty()&&res.size()<k){
+            auto temp = pq.top();
+            res.emplace_back(nums1[temp.first],nums2[temp.second]);
+            pq.pop();
+            if(temp.first<s1-1){
+                pq.emplace(temp.first+1,temp.second);
+            }
+            if(temp.first==0&&temp.second<s2-1){
+                pq.emplace(temp.first,temp.second+1);
+            }
+        }
+        return res;
+        
+    }
+};
