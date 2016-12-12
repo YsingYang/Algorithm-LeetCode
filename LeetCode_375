@@ -1,0 +1,20 @@
+//It's an interesting problem about game theory
+class Solution {
+public:
+    int getMoneyAmount(int n) {
+        vector<vector<int>> res(n+1,vector<int> (n+1));
+        return dp(res,1,n);
+    }
+    
+    int dp(vector<vector<int>> &res,int f,int r){
+        if(f>=r)    return 0;
+        if(res[f][r]!=0)  return res[f][r];
+        int now = INT_MAX;
+        for(int i=f;i<=r;++i){
+            int temp = i + max(dp(res,f,i-1),dp(res,i+1,r));
+            now = min(now,temp);
+        }
+        res[f][r] = now;
+        return now;
+    }
+};
