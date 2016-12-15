@@ -1,0 +1,23 @@
+//Randomized algorithm . But I have no idea how to improve its runtime , Maybe it's a question about efficient Randomization? 
+
+class Solution {
+vector<int> ori,ran;
+public:
+    Solution(vector<int> nums) {
+        ori = ran = nums;
+    }
+    
+    /** Resets the array to its original configuration and return it. */
+    vector<int> reset() {
+        return ori;
+    }
+    
+    /** Returns a random shuffling of the array. */
+    vector<int> shuffle() {
+        int size=ran.size();
+        for(int i=size-1;i>=1;--i){
+            swap(ran[i],ran[rand()%(i+1)]);
+        }
+        return ran;
+    }
+};
