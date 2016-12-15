@@ -1,0 +1,73 @@
+class Solution {
+stack<NestedInteger *> st;
+public:
+    NestedInteger deserialize(string s) {
+        int size = s.size();
+        NestedInteger *temp =new NestedInteger();
+        for(int i=0;i<size;){
+            if(isdigit(s[i])||s[i]=='-'){
+                int flag=1;
+                if(s[i]=='-'){
+                    flag = -1;
+                    ++i;
+                }
+                int count=0;
+                while(isdigit(s[i])){
+                    count = count *10 + s[i++]-'0';
+                }
+                temp->add(count*flag);
+            }
+            else{
+                if(s[i]=='['){
+                    st.push(temp);
+                    temp = new NestedInteger();
+                }
+                else if(s[i]==']'){
+                    NestedInteger *last = st.top();
+                    st.pop();
+                    last->add(*temp);
+                    temp = last;
+                }
+                ++i;
+            }
+        }
+        return temp->getList().front();//!Look at this , This remarkable idea Figures out the problem about single number;!!
+    }
+};
+
+//Thanks for @zhiqing_xiao sharing his solution . After referencing his code,I realize previous code can be more concise.
+class Solution {
+stack<NestedInteger *> st;
+public:
+    NestedInteger deserialize(string s) {
+        int size = s.size();
+        NestedInteger *temp =new NestedInteger();
+        
+        auto checknum = [](char c){
+            return isdigit(c)||c=='-';
+        };
+        
+        for(auto i=s.begin();i!=s.end();){
+            if(checknum(*i)){
+                auto p2 = find_if_not(i,s.end(),checknum);
+                int num = stoi(string(i,p2));//stoi is very useful;
+                temp->add(num);
+                i =p2;
+            }
+            else{
+                if(*i=='['){
+                    st.push(temp);
+                    temp = new NestedInteger();
+                }
+                else if(*i==']'){
+                    NestedInteger *last = st.top();
+                    st.pop();
+                    last->add(*temp);
+                    temp = last;
+                }
+                ++i;
+            }
+        }
+        return temp->getList().front();
+    }
+};
