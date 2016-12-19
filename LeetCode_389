@@ -1,0 +1,36 @@
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+        int size=t.size(),ss=s.size();
+        int count=0;
+        for(int i=0;i<size;++i){
+            if(i<s.size()){
+                count^= (1<<(s[i]-'a'));
+            }
+            count ^= (1<<(t[i]-'a'));
+        }
+        char res = 'a';
+        while((count>>=1)!=0){
+            ++res;
+        }
+        return res;
+        
+    }
+};
+
+//More efficient solution
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+        int size=t.size(),ss=s.size();
+        char c=0;
+        for(int i=0;i<size;++i){
+            if(i<ss){
+                c^=s[i];
+            }   
+            c ^=t[i];
+        }
+        return c;
+        
+    }
+};
