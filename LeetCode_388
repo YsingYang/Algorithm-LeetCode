@@ -32,3 +32,25 @@ public:
 };
 
 //It can also Simplified to other solution(update latter)
+class Solution {
+public:
+    int lengthLongestPath(string input) {
+       istringstream ss(input);
+       string temp;
+       stack<int> st;
+       st.push(0);
+       int maxl=0;
+       while(getline(ss,temp,'\n')){
+          int level = temp.find_last_of('\t')+1;
+          while(level+1<st.size()){
+              st.pop();
+          }
+          int count = st.top()+temp.size()-level+1;//add / so if it's a ext.. It' should be diff 1
+          st.push(count);
+          if(temp.find_first_of('.')!=string::npos){
+              maxl = max(maxl,count-1);
+          }
+       }
+       return maxl;
+    }
+};
