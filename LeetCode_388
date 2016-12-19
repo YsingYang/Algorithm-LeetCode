@@ -1,0 +1,34 @@
+class Solution {
+public:
+    int lengthLongestPath(string input) {
+       istringstream ss(input);
+       string temp;
+       vector<int> length;
+       int maxl=0;
+       while(getline(ss,temp,'\n')){
+           int index=0;
+           while(temp[index]=='\t'){
+               ++index;
+           }
+           if(temp.find_first_of(".")==string::npos){
+               if(index>=length.size()){
+                   length.push_back(temp.size()-index);
+               }
+               else{
+                   length[index] = temp.size()-index;
+               }
+           }
+           else{
+               int count=0;
+               for(int i=0;i<index;++i){
+                   count +=length[i]+1;
+               }
+               count += (temp.size()-index);
+               maxl =max(maxl,count);
+           }
+       }
+       return maxl;
+    }
+};
+
+//It can also Simplified to other solution(update latter)
