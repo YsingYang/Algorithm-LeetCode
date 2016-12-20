@@ -1,0 +1,12 @@
+ class Solution{
+    public:
+        bool isSubsequence(string s, string t) {
+            char *ss = &s[0] ,*ts = &t[0];
+            while (*ts)
+                ss += *ss == *ts++;
+            return !*ss;
+        }
+    };
+    
+ //the tags of this problem is confused me;maybe the bs can be used in many income datas;
+ 
