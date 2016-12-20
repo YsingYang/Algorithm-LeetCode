@@ -1,0 +1,31 @@
+//This problem is more like mathematical problems.....It 's confuse me a long time..
+@singku Solution
+class Solution {
+public:
+    int lastRemaining(int n) {
+        if (n == 1) return 1;
+        if (n <= 4) return 2;
+        if (n % 2 != 0) n -= 1;
+        if (n % 4 != 0) return 4 * lastRemaining(n/4);
+        return 4 * lastRemaining(n/4) - 2;
+    }
+};
+
+//@NathanNi sharing more explanation 
+class Solution {
+public:
+    int lastRemaining(int n) {
+        bool left = true;
+        int remaining = n;
+        int step = 1,head =1;
+        while(remaining>1){
+            if(left||remaining%2==1){//we could compute result only if remain is odd , 
+                head +=step;
+            }
+            remaining = remaining /2;
+            step *=2;
+            left =!left;
+        }
+        return head;
+    }
+};
