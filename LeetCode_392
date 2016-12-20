@@ -10,3 +10,18 @@
     
  //the tags of this problem is confused me;maybe the bs can be used in many income datas;
  
+ 
+ class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+        int pos =0,sf=0,ss = s.size(),ts=t.size();
+        while(sf<ss&&pos<ts){
+            if((pos = t.find_first_of(string(1,s[sf++]),pos)+1)==0)
+                return false;
+        }
+        return sf==ss;
+        
+    }
+};
+
+Is find_first_of using binary search?
