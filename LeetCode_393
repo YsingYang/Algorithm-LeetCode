@@ -1,5 +1,5 @@
-//Be careful this problem UTF8 only can be from 1 to 4 bytes long,and 1XXXXXXX is not vaild;
-//fight.for.dream's idea.
+//Be careful this problem UTF8 only can be from 1 to 4 bytes long,and 1XXXXXXX is not vaild;and not only represented one data!!!
+//fight.for.dream's idea. 
 
 class Solution {
 public:
