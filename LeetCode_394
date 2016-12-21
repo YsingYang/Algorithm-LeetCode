@@ -1,0 +1,33 @@
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<int> st;
+        stack<string> sts;
+        sts.push("");
+        int size=s.size();
+        int count=0;
+        for(int i=0;i<size;++i){
+            if(isdigit(s[i])){
+                count = count*10 +s[i]-'0';
+            }
+            else if(s[i]=='['){
+                st.push(count);
+                sts.push(""); 
+                count =0;
+            }
+            else if(s[i]==']'){
+                string temp = sts.top();
+                sts.pop();
+                while(st.top()){
+                    sts.top() += temp;
+                    --st.top();
+                }
+                st.pop();
+            }
+            else{
+                sts.top()+=s[i];
+            }
+        }
+        return sts.top();
+    }
+};
