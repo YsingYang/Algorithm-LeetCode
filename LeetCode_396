@@ -1,0 +1,23 @@
+/*B(K) = 0 * BK[0] + 1*BK[1] ......+ (n-1)*Bk[n-1]
+  B(K+1) = 0 * BK[n-1] + 1 * BK[0] + ....+ (n-1) * Bk[n-2]
+  
+  -> B(k+1)-B(k) = sum - nBk[n-1]
+
+*/
+class Solution {
+public:
+    int maxRotateFunction(vector<int>& A) {
+        int res=0,sum=0,s = A.size(),last=0;
+        for(int i=0;i<s;++i){
+            res += i * A[i];
+            sum += A[i];
+        }
+        last = res;
+        for(int i=s-1;i>=1;--i){
+            int temp = sum + last - s * A[i];
+            res = max(res,temp);
+            last = temp;
+        }
+        return res;
+    }
+};
