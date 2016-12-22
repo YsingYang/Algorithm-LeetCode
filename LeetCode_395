@@ -1,4 +1,4 @@
-//runtime of brute search is O(n^2) ,divide and conquer is nlogn;why did it only run 3ms?
+//runtime of brute search is O(n^2) ,divide and conquer is nlogn;why did it only spend 3ms ?
 
 class Solution {
 public:
