@@ -1,0 +1,51 @@
+//DFS_search  , visited hash used reference can be more effiencent;
+class Solution {
+public:
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) {
+        unordered_map<string,unordered_set<dst*>> graph;
+        vector<double> res;
+        constructor(graph,equations,values);
+        unordered_set<string> visited;
+        for(int i=0;i<queries.size();++i){
+            res.push_back(dfs_search(graph,queries[i].first,queries[i].second,visited));
+            visited.clear();
+        }
+        return res;
+    }
+private:
+    struct dst{
+        string edge;
+        double distance;
+        dst(string e,double d):edge(e),distance(d){}
+    };
+    
+    void constructor(unordered_map<string,unordered_set<dst*>> &graph,const vector<pair<string, string>> &equations,const vector<double>& values){
+        for(int i=0;i<equations.size();++i){
+            struct dst *node = new dst(equations[i].second,values[i]);
+            struct dst *node_reverse = new dst(equations[i].first,1/values[i]);
+            graph[equations[i].first].insert(node);
+            graph[equations[i].second].insert(node_reverse);
+        }
+    }
+    
+    double dfs_search(unordered_map<string,unordered_set<dst*>> &graph,string in_node,string out_node,unordered_set<string> &visited){
+        if(graph.find(in_node)==graph.end()||graph.find(out_node)==graph.end()){
+            return -1.0;
+        }
+        if(in_node==out_node)
+            return 1.0;
+        visited.insert(in_node);
+        for(unordered_set<dst*>::iterator it=graph[in_node].begin();it!=graph[in_node].end();++it){
+            if((*it)->edge==out_node){
+                return (*it)->distance;
+            }
+            else if(visited.find((*it)->edge)==visited.end()){
+                double temp = dfs_search(graph,(*it)->edge,out_node,visited);
+                if(temp!=-1.0)
+                    return (*it)->distance * temp;
+            }
+        }
+        visited.erase(in_node);
+        return -1.0;
+    }
+};
