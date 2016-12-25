@@ -1,0 +1,23 @@
+/*
+  It's not a good idea for deleting the previous num..like case  "112" 1;
+  
+*/
+class Solution {
+public:
+    string removeKdigits(string num, int k) {
+        string res;
+        int size = num.size(),ls = size-k;
+        for(char c:num){
+            while(k&&res.size()&&res.back()>c){
+                res.pop_back();
+                --k;
+            }
+            res.push_back(c);
+        }
+        res.resize(ls);
+        while(!res.empty()&&res[0]=='0')    
+            res.erase(res.begin());//不能用substr,避免出现只有下标0;
+        
+        return res.empty()? "0":res;
+    }
+};
