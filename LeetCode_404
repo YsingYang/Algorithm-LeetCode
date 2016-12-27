@@ -10,3 +10,21 @@ public:
             return sumOfLeftLeaves(root->left)+sumOfLeftLeaves(root->right);
     }
 };
+
+//My second submission ,More elegant
+class Solution {
+public:
+    int sumOfLeftLeaves(TreeNode* root) {
+        return sum(root,0);
+    }
+private:
+    int sum(TreeNode* root,int tag){
+        if(!root)
+            return 0;
+        else if(!root->left&&!root->right&&tag==1){
+            return root->val;
+        }
+        else
+            return sum(root->left,1)+sum(root->right,2);
+    }
+};
