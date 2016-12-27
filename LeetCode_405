@@ -1,0 +1,51 @@
+class Solution {
+public:
+    string toHex(int num) {
+        string res(8,'0');
+        for(int i=7;i>=0;--i){
+            int temp=0;
+            for(int j=0;j<4;++j){
+                if((1&num)==1)
+                    temp += (1<<j);
+                num>>=1;
+            }
+            res[i]=tochar(temp);
+        }
+        int size=0;
+        while(res[size]=='0')
+            ++size;
+        res = size==8?"0":res.substr(size);
+        return res;
+    }
+private:
+    char tochar(int temp){
+        switch(temp){
+            case 10:return 'a';
+            case 11:return 'b';
+            case 12:return 'c';
+            case 13:return 'd';
+            case 14:return 'e';
+            case 15:return 'f';
+            default:return temp+'0';
+        }
+    }
+};
+
+//concise submissions
+class Solution {
+public:
+    string toHex(int num) {
+        string res;
+        int count=0;
+        if(num==0)  return "0";
+        while(num&&count<8){
+            int temp = num&15;
+            res += temp<10?'0'+temp:'a'+temp-10;
+            ++count;
+            num>>=4;
+        }
+        reverse(res.begin(),res.end());
+        return res;
+    }
+
+};
