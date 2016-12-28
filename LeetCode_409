@@ -1,0 +1,15 @@
+class Solution {
+public:
+    int longestPalindrome(string s) {
+        int size = s.size();
+        vector<int> count(52);
+        int odd=0;
+        for(char c:s){
+            int *temp = islower(c)?(&count[c-'a']):(&count[c-'A'+26]);
+            ++*temp;
+            (*temp)&1?++odd:--odd;
+        }
+        return odd==0?size:size-odd+1;
+    }
+    
+};
