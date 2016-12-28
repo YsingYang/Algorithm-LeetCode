@@ -22,3 +22,89 @@ static bool compare(const pair<int,int> &a,const pair<int,int> &b){
 };
 
 //The main point of this problem is how to use greedy method to solve it.That's why we should begin with the hightest people. 
+
+
+/*
+    EntityManager'Solution..
+    Using binary search to rebuild the order,Instead of O(n^2)Solution by using insert
+    
+
+*/
+ struct Node
+{
+	Node *left;
+	Node *right;
+	int height;
+	int countPer;
+	int actualCount;
+	Node(int value, int noofper,int real)
+	{
+		this->height  = value;
+		countPer = noofper;
+		left = NULL;
+		right = NULL;
+		actualCount = real;
+	}
+};
+class BinaryTree {
+public:
+	void insert(int value, int countPer)
+	{
+		person = insert(person, value, countPer, countPer);
+	}
+	void inorder(Node* person,vector<pair<int, int>> & result)
+	{
+		if (person == NULL) return;
+		inorder(person->left,result);
+	//	cout << "{"<<person->height << " " << person->countPer << "} ";
+		result.push_back({ person->height,person->actualCount });
+		inorder(person->right,result);
+	}
+	Node* person;
+	BinaryTree()
+	{
+		person = NULL;
+		}
+private:
+	Node* insert(Node* person, int value, int countPer,int real)
+	{
+		if (person == NULL) return new Node(value, 1,real);
+		if (countPer < person->countPer)
+		{
+			person->left = insert(person->left, value, countPer,real);
+			person->countPer++;
+		}
+		else
+		{
+			person->right = insert(person->right, value, countPer - person->countPer,real);
+		}
+		return person;
+	}
+	int countOf(Node *person)
+	{
+		if (person == NULL) return 1;
+		return person->countPer;
+	}
+};
+
+bool compare(pair<int, int> p1, pair<int, int> p2)
+{
+	if (p1.first == p2.first) return p1.second < p2.second;
+	return p1.first > p2.first;
+}
+
+class Solution {
+public:
+	vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+		BinaryTree btree;
+		sort(people.begin(), people.end(), compare);
+		for (int i = 0; i < people.size(); i++)
+		{
+		//	cout << people[i].first << " " << people[i].second << endl;
+			btree.insert(people[i].first, people[i].second);
+		}
+		vector<pair<int, int>> result;
+		btree.inorder(btree.person,result);
+		return result;
+	}
+};
