@@ -1,0 +1,50 @@
+//concise solution,But maybe not perfect.
+class Solution {
+public:
+    vector<string> fizzBuzz(int n) {
+        vector<string> res;
+        for(int i=1;i<=n;++i){
+            if(i%3==0){
+                i%5==0?res.push_back("FizzBuzz"):res.push_back("Fizz");
+            }
+            else if (i%5==0){
+                res.push_back("Buzz");
+            }
+            else
+                res.push_back(to_string(i));
+        }
+        return res;
+    }
+};
+
+//We must avoid to use % for add complexity.So , It's a good idea with using count @hand515 idea
+class Solution {
+public:
+    vector<string> fizzBuzz(int n) {
+        vector<string> res(n);
+        for(int i=1,fizz=1,Buzz=1;i<=n;++i){
+            if(fizz==3){
+                if(Buzz==5){
+                    res[i-1]="FizzBuzz";
+                    Buzz=1;
+                }
+                else{
+                    res[i-1]="Fizz";
+                    ++Buzz;
+                }
+                fizz=1;
+            }
+            else if (Buzz==5){
+                ++fizz;
+                res[i-1]="Buzz";
+                Buzz=1;
+            }
+            else{
+                res[i-1]=to_string(i);
+                ++Buzz;
+                ++fizz;
+            }
+        }
+        return res;
+    }
+};
