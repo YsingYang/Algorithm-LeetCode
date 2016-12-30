@@ -1,0 +1,39 @@
+//My solution
+
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+        vector<int> max_arr(3,INT_MIN);
+        unordered_set<int> dict;
+        for(int i =0;i<nums.size();++i){
+            if(dict.find(nums[i])!=dict.end())
+                continue;
+            dict.insert(nums[i]);
+            int *a = mymin(&max_arr[0],mymin(&max_arr[1],&max_arr[2]));
+            if(*a<nums[i]){
+                *a = nums[i];
+            }
+        }
+      //  cout<<c<<endl;
+        sort(max_arr.begin(),max_arr.end());
+        return dict.size()>=3?max_arr[0]:max_arr[2];
+    }
+    
+    int* mymin(int *a,int *b){
+        return *a<*b?a:b;
+    }
+};
+
+//@wfxr's idea . using long for avoid to the problem.but maybe is not a Robust when we have to process longtype
+//But , it's indeed  efficient .
+int thirdMax(vector<int>& nums) {
+    long long a, b, c;
+    a = b = c = LLONG_MIN;
+    for (auto num : nums) {
+        if (num <= c || num == b || num == a) continue;
+        c = num;
+        if (c > b) swap(b, c);
+        if (b > a) swap(a, b);
+    }
+    return c == LLONG_MIN ? a : c;
+}
