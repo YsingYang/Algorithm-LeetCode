@@ -1,0 +1,36 @@
+//simple dp solution  103ms
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        long sum = 0,subsum;
+        for(int i:nums){
+            sum += i;
+        }
+        if((sum&1)==1)  return false;
+        subsum = sum>>1;
+        vector<int> dp(subsum+1);
+        dp[0]=1;
+        for(int i:nums){
+            for(int j=subsum;j>=i;--j){ instead of + ..avoid to overflow 
+                dp[j] = dp[j] || dp[j-i];
+            }
+        }
+        return dp[subsum];
+    }
+}; 
+
+//very fast and cool idea !!!with using bitset by @alvin-777 solution
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        const int MAX_NUM = 100;
+        const int MAX_ARRAY_SIZE = 200;
+        bitset<MAX_NUM * MAX_ARRAY_SIZE / 2 + 1> bits(1);//counting the maxbit
+        int sum = 0;
+        for (auto n : nums) {
+            sum += n;
+            bits |= bits << n;
+        }
+        return !(sum % 2) && bits[sum / 2];
+    }
+};
