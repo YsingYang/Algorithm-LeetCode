@@ -1,0 +1,45 @@
+//My BFS solution
+class Solution {
+public:
+    vector<pair<int, int>> pacificAtlantic(vector<vector<int>>& matrix) {
+        vector<pair<int,int>>  res;
+        if(matrix.empty())  return res;
+        int rs = matrix.size(),cs = matrix[0].size();
+        vector<vector<int>> visited(rs,vector<int>(cs));
+        for(int i=0;i<rs;++i){
+            bfs(matrix,visited,i,0,rs,cs,1);
+            bfs(matrix,visited,i,cs-1,rs,cs,2);
+        }
+        for(int i=0;i<cs;++i){
+            bfs(matrix,visited,0,i,rs,cs,1);
+            bfs(matrix,visited,rs-1,i,rs,cs,2);
+        }
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                if(visited[i][j]==3)
+                    res.emplace_back(i,j);
+            }
+        }
+        return res;
+    }
+private:
+    void bfs(const vector<vector<int>> &matrix,vector<vector<int>> &visited,int i,int j,const int &rs,const int &cs,int flag){
+        queue<pair<int,int>> que;
+        que.push(make_pair(i,j));
+        while(!que.empty()){
+            int r=que.front().first,c=que.front().second; 
+            que.pop();
+            if(visited[r][c]==3||visited[r][c]==flag)
+                continue;
+            visited[r][c]+=flag;
+            if(r>0&&matrix[r][c]<=matrix[r-1][c])//pay attention this,We save the visited which can be *flowed* to it.
+                que.emplace(r-1,c);
+            if(c>0&&matrix[r][c]<=matrix[r][c-1])
+                que.emplace(r,c-1);
+            if(r+1<rs&&matrix[r][c]<=matrix[r+1][c])
+                que.emplace(r+1,c);
+            if(c+1<cs&&matrix[r][c]<=matrix[r][c+1])
+                que.emplace(r,c+1);
+        }
+    }
+};
