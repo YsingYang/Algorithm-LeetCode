@@ -1,0 +1,49 @@
+//Solution of Trie,useful idea
+class Solution {
+public:
+    int findMaximumXOR(vector<int>& nums) {
+        TreeNode *root = buildTrie(nums);
+        int res =0;
+        for(int i:nums){
+            res = max(res,find(i,root));
+        }
+        return res;
+    }
+private:
+    struct TreeNode{
+        vector<TreeNode *> next;
+        TreeNode():next(2,nullptr) {}
+    };
+
+    TreeNode* buildTrie(const vector<int> &nums){
+        TreeNode *root = new TreeNode();
+        for(int i:nums){
+            TreeNode *cur = root;
+            for(int j=31;j>=0;--j){
+                int index = ((i>>j)&1);
+                if(cur->next[index]==nullptr){
+                    cur->next[index] = new TreeNode();
+                }
+                cur = cur->next[index];
+            }
+        }
+        return root;
+    }
+    
+    int find(int num,TreeNode* cur){
+        int res=0;
+        for(int i=31;i>=0;--i){
+             res <<=1;
+            int index = (num>>i)&1?0:1;
+            if(cur->next[index]!=nullptr){
+                res |= 1;
+                cur = cur->next[index];
+            }
+            else{
+                cur = cur->next[index^1];
+            }
+            
+        }
+        return res;
+    }
+};
