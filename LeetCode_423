@@ -1,0 +1,27 @@
+class Solution {
+public:
+    string originalDigits(string s) {
+        vector<int> letter(26);
+        for(char c:s){
+            ++letter[c-'a'];
+        }
+        string res;
+        vector<int> digit(10);
+        digit[0]  = letter['z'-'a'];
+        digit[8] = letter['g'-'a'];
+        digit[4] = letter['u'-'a'];
+        digit[6] = letter['x'-'a'];
+        digit[2] = letter['w'-'a'];
+        digit[3] = letter['h'-'a']-digit[8];
+        digit[7] = letter['s'-'a']-digit[6];
+        digit[1] = letter['o'-'a'] -digit[0] - digit[2]- digit[4];
+        digit[5] = letter['v'-'a'] - digit[7];
+        digit[9] = letter['i'-'a'] - digit[8]-digit[6]-digit[5];
+        for(int i=0;i<=9;++i){
+            while(digit[i]--){
+                res += (i+'0');
+            }
+        }
+        return res;
+    }
+};
