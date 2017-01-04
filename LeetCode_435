@@ -1,0 +1,29 @@
+//Be carefully we must do the greedy idea on interval.end,instead of start;
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<Interval>& intervals) {
+        int size = intervals.size();
+        auto compare = [](Interval &a,Interval &b){
+            return a.end<b.end;
+        };
+        sort(intervals.begin(),intervals.end(),compare);
+        int index=0,count=0;
+        for(int i=1;i<size;++i){
+            if(intervals[i].start>=intervals[index].end){
+                index=i;
+            }
+            else
+                ++count;
+        }
+        return count;
+    }
+};
