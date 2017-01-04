@@ -1,0 +1,60 @@
+//Solution by map (runtime-179ms)
+class Solution {
+public:
+    vector<int> findRightInterval(vector<Interval>& intervals) {
+        map<int,int> start_set;
+        int size = intervals.size();
+        for(int i=0;i<size;++i){
+            start_set[intervals[i].start] = i;
+        }
+        vector<int> res;
+        for(int i=0;i<size;++i){
+            auto it = start_set.upper_bound(intervals[i].end-1);
+            if(it==start_set.end()){
+                //cout<<"执行"<<endl;
+                res.push_back(-1);
+            }
+            else{
+                res.push_back(it->second);
+            }
+        }
+        return res;
+    }
+};
+//Solution by using sort and vector_binary_search 142ms
+class Solution {
+public:
+    vector<int> findRightInterval(vector<Interval>& intervals) {
+        vector<pair<int,int>> hash;
+        int size = intervals.size();
+        for(int i=0;i<size;++i){
+            hash.emplace_back(intervals[i].start,i);
+        }
+        auto compare = [](pair<int,int> &a,pair<int,int> &b){
+            return a.first<b.first;
+        };
+        sort(hash.begin(),hash.end(),compare);
+        vector<int> res;
+        for(Interval i:intervals){
+            int temp = binary_search(hash,i.end-1);
+            if(temp==-1)
+                res.push_back(-1);
+            else
+                res.push_back(hash[binary_search(hash,i.end-1)].second);
+        }
+        return res;
+    }
+    int binary_search(const vector<pair<int,int>> &hash,int num){
+        int f = 0,l = hash.size()-1;
+        while(f<l){
+            int mid = f+((l-f)>>1);
+            if(hash[mid].first<=num){
+                f = mid+1;
+            }
+            else{
+                l = mid;
+            }
+        }
+        return hash[f].first<=num?-1:f;
+    }
+};
