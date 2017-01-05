@@ -1,0 +1,15 @@
+//recursive solution.more likely brute search..
+
+class Solution {
+public:
+    int pathSum(TreeNode* root, int sum) {
+        if(!root)   return 0;
+        return recursive(root,0,sum)+pathSum(root->left,sum)+pathSum(root->right,sum);
+    }
+    
+    int recursive(TreeNode* root,int pre,const int &sum){
+        if(!root)   return 0;
+        pre+= root->val;
+        return (pre==sum)+recursive(root->left,pre,sum)+recursive(root->right,pre,sum);
+    }
+};
