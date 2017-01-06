@@ -34,3 +34,28 @@ public:
         return ret;
     }
 };
+
+//Also we can change the position with swap posted by @klprateek .This solution can be used in findind the disappered number
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        if(nums.empty()) return {};
+        vector<int> res;
+        int n = nums.size();
+        for(int i = 0; i < n; i++)
+            nums[i]-=1;       //for indexing flexibility
+        
+        int i = 0;
+        while(i < n) {
+            if(nums[i] != nums[nums[i]]) 
+                    swap(nums[i], nums[nums[i]]);   //swap elements to their respective indexes.
+            else 
+                     i++;
+        }
+        for(int i = 0; i < n; i++) {
+            if(nums[i] != i) 
+                     res.push_back(nums[i]+1);     //get the elements which are at some other indexes (as they are occuring twice)
+        }
+        return res;
+    }
+};
