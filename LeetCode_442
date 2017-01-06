@@ -1,0 +1,36 @@
+/*
+  Solution 1.change number by filp number ,if number is negative ,It's a duplicated number
+*/
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        vector<int> res;
+        for(int i=0;i<nums.size();++i){
+            int index = abs(nums[i])-1;
+            if(nums[index]<0)
+                res.push_back(abs(index)+1);
+            nums[index] = -nums[index];
+        }
+        return res;
+    }
+};
+
+/*
+  Bit_manipulation improvement posted by shiyang6017 
+*/
+
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        vector<int> ret;
+        int mark = 0x80000000;  
+        int mask = 0x7fffffff; 
+        for (int i = 0; i < nums.size(); ++i){
+            int num = nums[i] & mask;
+            if (nums[num - 1] & mark)
+                ret.push_back(num);
+            nums[num - 1] |= mark;
+        }
+        return ret;
+    }
+};
