@@ -1,0 +1,54 @@
+/*
+  ..O(n^2logn)is faster than O(n^2)solution..wtf.. Perhaps due to the space complexity..
+  Firstly I use the vector<unordered_map<>> and get the TLE,but the loop is less than not use vector.
+  So , unordered map spend large space than other struce?
+*/
+//O(n^2)beat 92%
+class Solution {
+public:
+    int numberOfBoomerangs(vector<pair<int, int>>& points) {
+        int size = points.size();
+        int res=0;
+        unordered_map<int,int> distance;
+        for(int i=0;i<size;++i){
+            for(int j=0;j<size;++j){
+                if(i==j)    continue;
+                int dis = Eulardis(points[i],points[j]);
+                res += 2*(distance[dis]++);
+            }
+            distance.clear();
+        }
+        return res;
+    }
+    
+    static int Eulardis(const pair<int,int> &a,const pair<int,int> &b){
+        return pow(a.first - b.first,2)+pow(a.second-b.second,2);
+        
+    }
+};
+
+//O(n^2)beat 97%
+class Solution {
+public:
+    int numberOfBoomerangs(vector<pair<int, int>>& points) {
+        int res=0;
+        for(int i=0;i<points.size();++i)
+        {
+            vector<int>d;
+            for(int j=0;j<points.size();++j)
+                d.push_back((points[i].first-points[j].first)*(points[i].first-points[j].first)+(points[i].second-points[j].second)*(points[i].second-points[j].second));
+            sort(d.begin(),d.end());
+            int cnt=1;
+            for(int j=1;j<d.size();++j)
+                if(d[j]==d[j-1])
+                    cnt++;
+                else
+                {
+                    res+=cnt*(cnt-1);
+                    cnt=1;
+                }
+            res+=cnt*(cnt-1);
+        }
+        return res;
+    }
+};
