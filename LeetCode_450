@@ -1,0 +1,79 @@
+//my solution...emmm, A little longer...
+
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        TreeNode *dummy = new TreeNode(0);
+        dummy->left = root;
+        TreeNode *k,*parent=dummy,*plc,*plcparent;
+        TreeNode **flag = &(dummy->left);
+        if((k=find(root,key,parent,flag))!=nullptr){
+            if(!k->right){
+                *flag = k->left;
+            }
+            else{
+                plcparent = k;
+                plc = find_plc(k->right,plcparent);
+                if(plcparent != k){
+                    plcparent -> left = plc ->right;
+                    plc->right =nullptr;
+                }
+                *flag = plc;
+                plc ->left = k->left;
+                if(k->right!=plc)
+                    plc->right = k->right;
+            }
+        }
+        return dummy->left;
+            
+    }
+//如果头为key怎么办
+private:
+    TreeNode* find(TreeNode *root,int key,TreeNode *&parent,TreeNode **&flag){
+        if(!root)
+            return nullptr;
+        if(root->val>key){
+            flag = &(root->left);
+            parent  = root;
+            return find(root->left,key,parent,flag);
+        }
+        else if(root->val<key){
+            flag = &(root->right);
+            parent  = root;
+            return find(root->right,key,parent,flag);
+        }
+        else return root;
+    }
+    TreeNode* find_plc(TreeNode *root,TreeNode *&plcparent){//k->right存在
+        if(root->left){
+            plcparent = root;
+            return find_plc(root->left,plcparent);
+        }
+        else
+            return root;
+    }
+};
+
+//smart idea use swap and recursive posted by ,@zyoppy008 
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if (!root) return nullptr;
+        if (root->val == key) {
+            if (!root->right) {
+                TreeNode* left = root->left;
+                delete root;
+                return left;
+            }
+            else {
+                TreeNode* right = root->right;
+                while (right->left)
+                    right = right->left;
+                swap(root->val, right->val);    
+            }
+        }
+        root->left = deleteNode(root->left, key);
+        root->right = deleteNode(root->right, key);
+        return root;
+    }
+};
