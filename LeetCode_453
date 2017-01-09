@@ -1,0 +1,13 @@
+// incrementing n - 1 elements by 1 as same as decrementing by 1 all of numbers except min_number
+
+class Solution {
+public:
+    int minMoves(vector<int>& nums) {
+        int sum =0,min_num = INT_MAX,size = nums.size();
+        for(int i:nums){
+            sum +=i;
+            min_num = min(min_num,i);
+        }
+        return sum - min_num * size;
+    }
+};
