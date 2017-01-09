@@ -1,0 +1,42 @@
+//priority+vector_hash
+
+public:
+    string frequencySort(string s) {
+        vector<int> hash(128);
+        for(int i=0;i<s.size();++i){
+            ++hash[s[i]];
+        }
+        auto compare = [](pair<int,int> &a,pair<int,int> &b){
+            return a.second<b.second;
+        };
+        priority_queue <pair<int,int>,vector<pair<int,int>>,decltype(compare) > pq(compare);
+        for(int i=0;i<128;++i){
+            if(hash[i])
+                pq.emplace(i,hash[i]);
+        }
+        ostringstream os;
+        while(!pq.empty()){
+            pair<int,int> temp = pq.top();
+            pq.pop();
+            while(temp.second--){
+                os<<(char)temp.first;
+            }
+        }
+        return os.str();
+    }
+};
+
+//vector_hash + sort
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        int counts[256] = {0};
+        for (char ch : s)
+            ++counts[ch];
+        sort(s.begin(), s.end(), [&](char a, char b) { 
+            return counts[a] > counts[b] || (counts[a] == counts[b] && a < b); 
+        });
+        return s;
+    }
+};
