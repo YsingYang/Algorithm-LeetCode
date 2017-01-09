@@ -1,0 +1,21 @@
+//greedy,Pay attention to sorted by pair.second
+
+class Solution {
+public:
+    int findMinArrowShots(vector<pair<int, int>>& points) {
+        auto compare = [](const pair<int,int> &a, const pair<int,int> &b){
+            return a.second<b.second;  
+        };
+        sort(points.begin(),points.end(),compare);
+        int count=0,res=0,size = points.size(),end;
+        while(count<size){
+            end = points[count++].second;
+            ++res;
+            while(count<size&&points[count].first<=end){
+                ++count;
+            }
+        }
+        return res;
+    }
+};
+
