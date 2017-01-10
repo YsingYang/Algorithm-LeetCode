@@ -1,0 +1,52 @@
+//Solution with unordered_map,beat62%
+
+class Solution {
+public:
+    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        unordered_map<int,int> map_ab,map_cd;
+        int size = A.size();
+        for(int i=0;i<size;++i){
+            for(int j = 0;j<size;++j){
+                ++map_ab[A[i]+B[j]];
+            }
+        }
+        
+        for(int i=0;i<size;++i){
+            for(int j=0;j<size;++j){
+                ++map_cd[C[i]+D[j]];
+            }
+        }
+        int res = 0;
+        for(auto it:map_ab){
+            unordered_map<int,int>::iterator fit;
+            if((fit = map_cd.find(-it.first))!=map_cd.end())
+                res+=fit->second*it.second;
+        }
+        return res;
+        
+    }
+};
+
+//Obvirously,above solution easily be optimazed to O(size^2)space 
+class Solution {
+public:
+    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        unordered_map<int, int> mp;
+        int size = A.size();
+        for(int i=0;i<size;++i){
+            for(int j=0;j<size;++j){
+                ++mp[A[i]+B[j]];
+            }
+        }
+        int res = 0;
+        for(int i=0;i<size;++i){
+            for(int j=0;j<size;++j){
+                int target = C[i]+ D[j];
+                unordered_map<int,int>::iterator it;
+                if((it = mp.find(-target))!= mp.end())
+                    res += it->second;
+            }
+        }
+        return res;
+    }
+};
