@@ -1,0 +1,47 @@
+//brute force solution..1400++ms..
+
+class Solution {
+public:
+    bool find132pattern(vector<int>& nums) {
+        int size = nums.size(),index =0;
+        if(nums.empty())
+            return false;
+        //int ai = nums[index];
+        while(index<size){
+            while(index<size&&nums[index]>=nums[index+1]){
+                ++index;
+            }
+            int peak = index+1;
+            while(peak<size&&nums[peak]<=nums[peak+1]){
+                ++peak;
+            }
+            int j = peak+1;
+            while(j<size){
+                if(nums[peak]>nums[j]&&nums[j]>nums[index])
+                    return true;
+                ++j;
+            }
+            index = peak+1;
+        }
+        return false;
+    }
+};
+
+@jade86 posted his idea with stack..very impressive
+
+class Solution {
+public:
+    bool find132pattern(vector<int>& nums) {
+       stack<int> st;
+       int s3 = INT_MIN,size = nums.size();
+       for(int i = size-1;i>=0;--i){
+           if(nums[i]<s3) return true;
+           else while(!st.empty()&&nums[i]>st.top()){
+               s3 = st.top();
+               st.pop();
+           }
+           st.push(nums[i]);
+       }
+       return false;
+    }
+};
