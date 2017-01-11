@@ -1,0 +1,40 @@
+//brust force ,beat 12%
+
+class Solution {
+public:
+    bool repeatedSubstringPattern(string str) {
+        int size = str.size();
+        for(int i=1;i<=(size>>1);++i){
+            if(check(str,i,size))
+                return true;
+        }
+        return false;
+    }
+    
+    bool check(const string &s,int i,const int &size){
+        string temp = s.substr(0,i);
+        //cout<<temp<<endl;
+        for(int j=i;j<size;j+=i){
+            if(s.substr(j,i)!=temp)
+                return false;
+        }
+        return true;
+    }
+};
+
+/* fast idea with  str.substr(i) == str.substr(0, n - i),maybe you would ask how about substr repeat odd times,let's think about
+the situation about abcabcabc,substr(3)=abcabc,substr(0,n-3) = abcabc,Do you know want I mean?
+idar posted by @xiadong1994731's
+*/
+class Solution {
+public:
+    bool repeatedSubstringPattern(string str) {
+        int n = str.length();
+        for (int i = 1; i <= n / 2; i++){
+            if (n % i == 0 && str.substr(i) == str.substr(0, n - i)){
+                return true;
+            }
+        }
+        return false;
+    }
+};
