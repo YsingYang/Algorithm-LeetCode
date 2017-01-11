@@ -1,0 +1,93 @@
+//Simple solution
+
+class Solution {
+public:
+    int minMoves2(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int size = nums.size(),median = nums[size>>1],res =0;
+        for(int i:nums){
+            res += abs(i-median);
+        }
+        return res;
+    }
+};
+
+//kth element,due to the dataset , Due to the problem of data set, the time complexity is up to Ｏ（n^2）
+
+class Solution {
+public:
+    int minMoves2(vector<int>& nums) {
+        int size = nums.size();
+        int median = patition(nums,size>>1,0,size-1),res=0;
+        for(int i:nums){
+            res += abs(i-median);
+        }
+        return res;
+        
+    }
+    int patition(vector<int>&nums,const int index,int f,int l){
+        int pivot = nums[f],front = f,last = l;
+        while(front<last){
+            while(front<last&&nums[last]>pivot){
+                --last;
+            }
+            if(front<last){
+                swap(nums[front++],nums[last]);
+            }
+            while(front<last&&nums[front]<pivot){
+                ++front;
+            }
+            if(front<last){
+                swap(nums[front],nums[last--]);
+            }
+        }
+        nums[front] = pivot;
+        if(front < index)
+            return patition(nums,index ,front+1,l);
+        else if(front>index)
+            return patition(nums,index,f,front-1);
+        else
+            return pivot;
+    }
+};
+
+// just have rand() can solve this problem.
+
+class Solution {
+public:
+    int minMoves2(vector<int>& nums) {
+        int size = nums.size();
+        int median = patition(nums,size>>1,0,size-1),res=0;
+        for(int i:nums){
+            res += abs(i-median);
+        }
+        return res;
+        
+    }
+    int patition(vector<int>&nums,const int index,int f,int l){
+        int ran = rand()%(l+1-f)+f;
+        swap(nums[f],nums[ran]);
+        int pivot = nums[f],front = f,last = l;
+        while(front<last){
+            while(front<last&&nums[last]>pivot){
+                --last;
+            }
+            if(front<last){
+                swap(nums[front++],nums[last]);
+            }
+            while(front<last&&nums[front]<pivot){
+                ++front;
+            }
+            if(front<last){
+                swap(nums[front],nums[last--]);
+            }
+        }
+        nums[front] = pivot;
+        if(front < index)
+            return patition(nums,index ,front+1,l);
+        else if(front>index)
+            return patition(nums,index,f,front-1);
+        else
+            return pivot;
+    }
+};
