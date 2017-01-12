@@ -1,0 +1,20 @@
+//simple dp problem
+
+class Solution {
+public:
+    int findSubstringInWraproundString(string p) {
+        vector<int> dp(26);
+        int nowlen =0,res=0;
+        for(int i=0;i<p.size();++i){
+            int index  = p[i] -'a';
+            if(i>0&&p[i-1]-'a'!= (index+25)%26){
+                nowlen =0;
+            }
+            if(++nowlen > dp[index]){
+                res += nowlen - dp[index];
+                dp[index] = nowlen; 
+            }
+        }
+        return res;
+    }
+};
