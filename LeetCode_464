@@ -1,0 +1,39 @@
+/*
+   the problem is same as 292. Nim Game,but more difficult,
+    but it can be solved by many tricks like using bit to record visited index.
+*/
+
+
+class Solution {
+public:
+    bool canIWin(int maxChoosableInteger, int desiredTotal) {
+        unordered_map<int,bool> win_map;
+        if((((maxChoosableInteger+1)*maxChoosableInteger)>>1)<desiredTotal)
+            return false;
+        unsigned int used = (1<<maxChoosableInteger)-1;
+        return win(win_map,used,maxChoosableInteger,desiredTotal);
+    }
+    
+    bool win(unordered_map<int,bool> &win_map,unsigned int &used,const int &size,int target){
+        if(win_map.find(used)!=win_map.end())
+            return win_map[used];//existd
+        if(target<=size && used>=(1<<target-1)){//target 为10也有1<<9也有10位，且
+            win_map[used] = true;
+            return true;
+        }
+        int bit = 1;
+        for(int i=0;i<size;bit<<=1,++i){
+            if((bit&used)==0)
+                continue;
+            used^=bit;
+            if(!win(win_map,used,size,target-i-1)){
+                used |=bit;
+                win_map[used]=true;
+                return true;
+            }
+            used|=bit;//归位，给下一次循环使用
+        }
+        win_map[used] = false;
+        return false;
+    }
+};
