@@ -1,0 +1,24 @@
+//My solution
+class Solution {
+public:
+    int findComplement(int num) {
+        int bit_count=0,mask = 0;;
+        while((num>>bit_count)!=0){
+            ++bit_count;
+            mask = (mask<<1)|1;
+        }
+        return num^mask;
+    }
+};
+
+//less operation posted by @StefanPochmann
+
+int findComplement(int num) {
+    int mask = num;
+    mask |= mask >> 1;
+    mask |= mask >> 2;
+    mask |= mask >> 4;
+    mask |= mask >> 8;
+    mask |= mask >> 16;
+    return num ^ mask;
+}
