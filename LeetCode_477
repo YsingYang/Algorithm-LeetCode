@@ -1,0 +1,55 @@
+//Recording my optimaized process
+//first submission beat 10%,vector is redundant；
+class Solution {
+public:
+    int totalHammingDistance(vector<int>& nums) {
+        vector<pair<int,int>> bit_count(31);
+        int res = 0;
+        for(int i=0;i<31;++i){
+            for(int num:nums){
+                if((num>>i)&1)
+                    ++bit_count[i].first;
+                else
+                    ++bit_count[i].second;
+           }
+           res +=bit_count[i].first*bit_count[i].second;
+        }
+        return res;
+    }
+};
+
+//second submission beat_20%,just use int to  record one and zero can solve this problem.
+class Solution {
+public:
+    int totalHammingDistance(vector<int>& nums) {
+        int res = 0;
+        for(int i=0;i<31;++i){
+            pair<int,int> bit_count;
+            for(int num:nums){
+                if((num>>i)&1)
+                    ++bit_count.first;
+                else
+                    ++bit_count.second;
+           }
+           res +=bit_count.first*bit_count.second;
+        }
+        return res;
+    }
+};
+
+//third submission
+class Solution {
+public:
+    int totalHammingDistance(vector<int>& nums) {
+        int res = 0,size = nums.size();
+        for(int i=0;i<31;++i){
+            int zero=0;
+            for(int j=0;j<size;++j){
+                if((nums[j]>>i)&1)
+                    ++zero;
+           }
+           res +=zero * (size-zero);
+        }
+        return res;
+    }
+};
