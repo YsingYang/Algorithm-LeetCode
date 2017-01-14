@@ -1,0 +1,64 @@
+// basic 0-1Knapsack problem
+
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<vector<int>> dp(m+1,vector<int>(n+1));
+        for(int i=0;i<strs.size();++i){
+            int m_count=0,n_count=0;
+            for(int j=0;j<strs[i].size();++j){
+                if(strs[i][j]=='0')
+                    ++m_count;
+                if(strs[i][j]=='1')
+                    ++n_count;
+            }
+            for(int u = m;u>=m_count;--u){
+                for(int v = n;v>=n_count;--v){
+                    dp[u][v] = max(dp[u][v],dp[u-m_count][v-n_count]+1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};
+
+//faster BFS solution,but I think if test set be large ,it would not faster than dp,posted by @ayuanx 
+
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        uint max = 0;
+        unordered_map<short, uint> cand, pool, tmp; // Put {zeros, ones} into one short
+        pool.reserve(m * n);
+        tmp.reserve(m * n);
+        for (auto& s : strs) { // Combine similar candidates since only the counts of 0/1 matter
+            short zero = 0, one = 0;
+            for (auto& c : s) {
+                if (c == '0') zero++;
+                else one++;
+            }
+            if (zero <= m && one <= n) cand[zero << 8 | one]++;
+        }
+        pool.emplace(m << 8 | n, 0);
+        for (auto& c : cand) { // BFS, try to add each candidate into already built results
+            short zero = c.first >> 8, one = c.first & 0xFF;
+            tmp = pool;
+            for (auto& p : pool) {
+                short zero_left = p.first >> 8, one_left = p.first & 0xFF;
+                for (uint i = 1, ii = c.second; i <= ii; i++) { // Each candidate represents several similar strings
+                    if ((zero_left -= zero) >= 0 && (one_left -= one) >= 0) {
+                        auto it = tmp.find(zero_left << 8 | one_left);
+                        if (it == tmp.end()) tmp[zero_left << 8 | one_left] = p.second + i;
+                        else if (p.second + i > it->second) it->second = p.second + i;
+                    } else break;
+                }
+            }
+            pool.clear();
+            pool.swap(tmp);
+        }
+        for (auto& p : pool) {
+            if (p.second > max) max = p.second;
+        }
+        return max;
+    }
+};
