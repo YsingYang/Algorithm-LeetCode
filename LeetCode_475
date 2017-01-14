@@ -1,0 +1,19 @@
+//simple bs problem
+
+class Solution {
+public:
+    int findRadius(vector<int>& houses, vector<int>& heaters) {
+        sort(heaters.begin(),heaters.end());
+        int res = INT_MIN,size = heaters.size();
+        for(int i:houses){
+            int radius = INT_MAX;
+            auto it = lower_bound(heaters.begin(),heaters.end(),i);
+            if(it!=heaters.end())//lowerbound not less than val .mean val <=lowerbound
+                radius = min(*it-i,radius);
+            if(it!=heaters.begin())
+                radius = min(i-*(it-1),radius);
+            res = max(radius,res);
+        }
+        return res;
+    }
+};
