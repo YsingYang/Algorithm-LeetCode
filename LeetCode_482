@@ -1,0 +1,44 @@
+class Solution {
+public:
+    string licenseKeyFormatting(string S, int K) {
+        string res;
+        int count=0;
+        for(int i=S.size()-1;i>=0;--i){
+            if(S[i]=='-')   continue;
+            if((count!=0)&&count%K==0){
+                res.push_back('-');
+            }
+            res.push_back(toupper(S[i]));
+            ++count;
+        }
+        reverse(res.begin(),res.end());
+        return res;
+    }
+};
+
+//ostringstream 
+
+class Solution {
+public:
+    string licenseKeyFormatting(string S, int K) {
+        ostringstream os;
+        for(char c:S){
+            if(c!='-')
+                os<<(char)(toupper(c));
+        }
+        string res = os.str();
+       // cout<<res<<endl;
+        int resIndex = res.size()-1;
+        while(resIndex>=0){
+            int count=K;
+            while(count>0&&resIndex>=0){
+                --count;
+                --resIndex;
+            }
+          //  cout<<resIndex;
+            if(resIndex>=0)
+                res.insert(resIndex+1,1,'-');
+        }
+        return res;
+    }
+};
