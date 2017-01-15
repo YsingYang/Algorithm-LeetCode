@@ -1,0 +1,39 @@
+//first submisssion
+class Solution {
+public:
+    int magicalString(int n) {
+        if(n<=0)    return 0;
+        if(n==1||n==2||n==3)    return 1;
+        vector<int> nums(n+1);
+        nums[1] = 1,nums[2]=nums[3] = 2;
+        int countIndex = 3,nowIndex = 4,lastNum = 2,res =1;;
+        while(nowIndex<=n){
+            int thisNum = 3 - lastNum,count = nums[countIndex++];
+            nums[nowIndex++] = thisNum;
+            if(thisNum==1)  ++res;
+            if(count==2){
+                if(nowIndex>n)
+                    break;
+                nums[nowIndex++] = thisNum;
+                if(thisNum==1)  ++res;
+            }
+            lastNum = thisNum;
+        }
+        return res;
+    }
+};
+
+//idea posted by @StefanPochmann，we can get solution more concise;
+class Solution {
+public:
+    int magicalString(int n) {
+     string S = "122";
+     int i = 2,res=1;
+       while (S.size() < n){
+         if((S.back()^3)=='1')
+             res += (S[i] - '0');
+          S += string(S[i++] - '0', S.back() ^ 3);
+        }
+        return (S.size()>n&&S.back()=='1')||n==0?res-1:res;
+    }
+};
