@@ -1,0 +1,45 @@
+//simple merge sort
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int f = 0,l = lists.size()-1;
+        return divideAndConquer(lists,f,l);
+    }
+    ListNode* divideAndConquer(vector<ListNode*> &lists,int f,int l){
+        if(f>l)
+            return nullptr;
+        if(f==l)
+            return lists[f];
+        int mid = f + ((l-f)>>1);
+        ListNode *left = divideAndConquer(lists,f,mid);
+        ListNode *right = divideAndConquer(lists,mid+1,l);
+        return mergeSort(left,right);
+    }
+    
+    ListNode* mergeSort(ListNode *left,ListNode *right){
+        ListNode *head = new ListNode(0),*travelLeft =left,*travelRight = right,*travel = head;
+        while(travelLeft&&travelRight){
+            if(travelLeft->val<travelRight->val){
+                travel->next = travelLeft;
+                travel = travelLeft;
+                travelLeft = travelLeft -> next;
+            }
+            else{
+                travel->next = travelRight;
+                travel = travelRight;
+                travelRight  = travelRight->next;
+            }
+        }
+        travel->next = (travelLeft ==nullptr? travelRight : travelLeft);
+        return head ->next;
+    }
+};
