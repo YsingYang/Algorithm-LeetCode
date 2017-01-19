@@ -1,0 +1,65 @@
+//EditDistance refer to LeetCode 74
+
+//My solution
+class Solution {
+public:
+    bool isOneEditDistance(string s, string t) {
+        int ss = s.size(),ts = t.size();
+        if(abs(ss-ts))  return false;
+        if(ss>ts){//可以调用一次该函数，参数为（t,s）;
+            swap(s,t);
+        }
+        int sIndex=0,tIndex=0,edit=0;
+        while(sIndex<min(ss,ts)&&edit<2){
+            if(s[sIndex]!=t[tIndex]){
+                if(ss!=ts){
+                    ++tIndex;
+                    ++edit;
+                    continue;
+                }
+                ++edit;
+            }    
+            ++sIndex;
+            ++tIndex;
+        }
+        return (tIndex==max(ss,ts)&&edit==1)||(tIndex==min(ss,ts)&&ts!=ss&&!edit);
+    }
+};
+
+// @jianchao.li.fighter solution
+
+class Solution {
+public:
+    bool isOneEditDistance(string s, string t) {
+        int m = s.length(), n = t.length();
+        if (m > n) return isOneEditDistance(t, s);
+        if (n - m > 1) return false;
+        bool mismatch = false;
+        for (int i = 0; i < m; i++) {
+            if (s[i] != t[i]) {
+                if (m == n) s[i] = t[i];
+                else s.insert(i, 1, t[i]);
+                mismatch = true; 
+                break;
+            }
+        }
+        return (!mismatch && n - m == 1) || (mismatch && s == t);
+    }
+};
+
+//@ChengZhang solution . Brilliant solution by using JAVA
+public boolean isOneEditDistance(String s, String t) {
+    for (int i = 0; i < Math.min(s.length(), t.length()); i++) { 
+    	if (s.charAt(i) != t.charAt(i)) {
+    		if (s.length() == t.length()) // s has the same length as t, so the only possibility is replacing one char in s and t
+    			return s.substring(i + 1).equals(t.substring(i + 1));
+			else if (s.length() < t.length()) // t is longer than s, so the only possibility is deleting one char from t
+				return s.substring(i).equals(t.substring(i + 1));	        	
+			else // s is longer than t, so the only possibility is deleting one char from s
+				return t.substring(i).equals(s.substring(i + 1));
+    	}
+    }       
+    //All previous chars are the same, the only possibility is deleting the end char in the longer one of s and t 
+    return Math.abs(s.length() - t.length()) == 1;        
+}
+
