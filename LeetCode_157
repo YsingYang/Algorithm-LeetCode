@@ -1,0 +1,24 @@
+// Forward declaration of the read4 API.
+int read4(char *buf);
+
+class Solution {
+public:
+    /**
+     * @param buf Destination buffer
+     * @param n   Maximum number of characters to read
+     * @return    The number of characters read
+     */
+    int read(char *buf, int n) {
+        int temp,count=0;
+        while(n>0){
+            temp = min(read4(buf),n);//比如可能出现 read=0,但n>0的情况
+            count+=temp;
+            buf +=temp;
+            if(n<4)//由于上面的原因会报错，不加这句会报错
+                break;
+            n-=4;
+        }
+        return count;
+    }
+};
+
