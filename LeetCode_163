@@ -1,0 +1,45 @@
+//Pay attention to [INT_MIN,INT_MAX],it would due to rightNum+1 overflow
+
+//we can use get string get_range(int start, int end)
+    {
+        return start==end? to_string(start) : to_string(start)+"->"+to_string(end);
+    }
+   to get a more concise solution
+
+class Solution {
+public:
+    vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
+        int lNum=lower,rNum,size = nums.size();
+        vector<string> res;
+        string s;
+        for(int i=0;i<size;++i){
+            if(i!=size-1&&nums[i]==nums[i+1])
+                continue;
+            if(lNum==nums[i]){
+                ++lNum;
+            }
+            else{
+                rNum = nums[i]-1;
+                if(rNum==lNum){
+                    res.push_back(to_string(rNum));
+                }
+                else{
+                    s = to_string(lNum)+"->"+to_string(rNum);
+                    res.push_back(s);
+                    s.clear();
+                }
+                lNum = nums[i]+1;
+            }
+        }
+        if(lNum<=upper&&(lNum!=INT_MIN||size==0)){
+            if(lNum==upper){
+                res.push_back(to_string(lNum));
+            }
+            else{
+                s = to_string(lNum)+"->"+to_string(upper);
+                res.push_back(s);
+            }
+        }
+        return res;
+    }
+};
