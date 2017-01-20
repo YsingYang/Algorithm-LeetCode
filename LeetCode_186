@@ -1,0 +1,49 @@
+class Solution {
+public:
+    void reverseWords(string &s) {
+        int size = s.size(),right,left=0,flag=0;
+        while(left<size){
+            while(left<size&&s[left]==' '){
+                ++left;
+            }
+           // if(left>=size)	return ;
+            right = s.find_first_of(' ',left);
+            if(right==string::npos&&flag==0)
+                return;
+            
+            if(right==-1){   
+                right = size-1;
+                stringSwap(s,left,right);
+            }
+            else{
+                flag=1;
+                stringSwap(s,left,right-1);
+            }
+            left = right+1;
+        }
+        reverse(s.begin(),s.end());
+    }
+    
+    void stringSwap(string &s,int f,int l){
+        while(f<l){
+            swap(s[f++],s[l--]);
+        }
+    }
+};
+
+//idea posted by @jianchao.li.fighter 
+class Solution {
+public:
+    void reverseWords(string &s) {
+        int size = s.size(),right=0,left=0;
+        reverse(s.begin(),s.end());
+        while(right<size){
+            while(left<size&&isspace(s[left]))
+                ++left;
+            while(right<size&&!isspace(s[right]))
+                ++right;
+            reverse(s.begin()+left,s.begin()+right);
+            left = ++right;
+        }
+    }
+};
