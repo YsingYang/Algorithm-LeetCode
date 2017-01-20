@@ -1,0 +1,27 @@
+//We must use specific data_struct of specific issues for getting more faster running
+
+class TwoSum {
+unordered_map<int,int> hash;
+public:
+    /** Initialize your data structure here. */
+    TwoSum() {
+        
+    }
+    
+    /** Add the number to an internal data structure.. */
+    void add(int number) {
+        ++hash[number];
+    }
+    
+    /** Find if there exists any pair of numbers which sum is equal to the value. */
+    bool find(int value) {
+        int num;
+        for(auto it:hash){
+            num = value-it.first;
+            if(hash.find(num)!=hash.end()&&!(num==it.first&&it.second<=1)){
+                return true;
+            }
+        }
+        return false;
+    }
+};
