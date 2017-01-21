@@ -1,0 +1,27 @@
+//my solution the postion of word1==word2 could be set out of loop
+class Solution {
+public:
+    int shortestWordDistance(vector<string>& words, string word1, string word2) {
+        int w1=-1,w2=-1,res=INT_MAX;
+        int *address;
+        for(int i=0;i<words.size();++i){
+            if(words[i]==word1||words[i]==word2){
+                if(word1==word2){
+                    address = w1<w2?&w1:&w2;
+                }
+                else{
+                    if(words[i]==word1)
+                        address = &w1;
+                    else
+                        address = &w2;
+                }
+            *address = i;
+            }
+            if(w1!=-1&&w2!=-1)
+                res = min(res,abs(w2-w1));
+        }
+        return res;
+    }
+};
+
+clean and faster solution posted by @StefanPochmann
