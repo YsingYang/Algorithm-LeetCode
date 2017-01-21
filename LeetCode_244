@@ -1,0 +1,50 @@
+This problem need to think more about time complexity of preprocess and space complexity
+class WordDistance {
+unordered_map<string,vector<int>> hashTable;
+public:
+    WordDistance(vector<string> words) {
+        for(int i=0;i<words.size();++i){
+            hashTable[words[i]].push_back(i);
+        }
+    }
+    
+    int shortest(string word1, string word2) {
+        int w1=0,w2=0,dis =INT_MAX,id1,id2;
+        while(w1<hashTable[word1].size()&&w2<hashTable[word2].size()){
+            id1 = hashTable[word1][w1];
+            id2 = hashTable[word2][w2];
+            dis = min(dis,abs(id1-id2));
+            id1<id2?++w1:++w2;
+        }
+        return dis;
+    }
+};
+
+//n^2)preprocess and O(1) search is not suit for this problem,would got TLE ,like this
+class WordDistance {
+unordered_map<string,unordered_map<string,int>> hash;
+public:
+    WordDistance(vector<string> words) {
+        int size = words.size();
+        for(int i=0;i<size;++i){
+            for(int j=i+1;j<size;++j){
+                if(hash.find(words[i])!=hash.end()){
+                    if(hash[words[i]].find(words[j])!=hash[words[i]].end()){
+                        hash[words[i]][words[j]] = min(hash[words[i]][words[j]],j-i);
+                    }
+                    else{
+                        hash[words[i]][words[j]] = j-i;
+                    }
+                }
+                else{
+                    hash[words[i]][words[j]] =j-i;
+                }
+            }
+        }
+    }
+    
+    int shortest(string word1, string word2) {
+            return hash[word1].find(word2)==hash[word1].end()?hash[word2][word1]:hash[word2].find(word1)==hash[word2].end()?hash[word1][word2]:min(hash[word1][word2],hash[word2][word1]);
+        
+    }
+};
