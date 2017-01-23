@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<vector<string>> groupStrings(vector<string>& strings) {
+        int size = strings.size();
+        unordered_map<string,vector<string>> hash;
+        for(int i=0;i<size;++i){
+            string gap;
+            int ss = strings[i].size();
+            if((ss==1))
+                hash["0"].push_back(strings[i]);
+            else{
+                for(int j=1;j<ss;++j){
+                    gap += (char)((strings[i][j]-strings[i][j-1]+26)%26+'a');
+                }
+                hash[gap].push_back(strings[i]);
+            }
+        }
+        vector<vector<string>> res;
+        for(auto it:hash){
+            res.push_back(it.second);
+        }
+        return res;
+    }
+};
