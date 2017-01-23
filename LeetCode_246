@@ -1,0 +1,40 @@
+class Solution {
+public:
+    bool isStrobogrammatic(string num) {
+        int size = num.size(),f=0,l=size-1;
+        while(f<=l){
+            switch(num[f++]){
+                case '6' : if(num[l--]!='9')
+                                return false;
+                            break;
+                case '8' : if(num[l--]!='8')
+                                return false;
+                            break;
+                case '9' : if(num[l--]!='6')
+                                return false;
+                            break;
+                case '1' : if(num[l--]!='1')
+                                return false;
+                            break;
+                case '0' : if(num[l--]!='0')
+                                return false;
+                            break;
+                default :return false;
+            }
+        }
+        return true;
+    }
+};
+
+//using unordered_map 
+class Solution {
+public:
+    bool isStrobogrammatic(string num) {
+        unordered_map<char, char> lut{{'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
+        int n = num.length();
+        for (int l = 0, r = n - 1; l <= r; l++, r--)
+            if (lut.find(num[l]) == lut.end() || lut[num[l]] != num[r])
+                return false; 
+        return true; 
+    }
+};
