@@ -1,0 +1,76 @@
+//There are many idea to solve this problem
+//My solution,used more space but have faster runtime (13ms)
+class Vector2D {
+vector<vector<int>> vec2d;
+int vecIndex;
+int index;
+public:
+    Vector2D(vector<vector<int>>& vec2d) {
+        this->vec2d = vec2d;
+        this->vecIndex = 0;
+        this->index = 0;
+    }
+
+    int next() {
+        return vec2d[vecIndex][index++];
+    }
+
+    bool hasNext() {
+        while(vecIndex<vec2d.size()&&index>=vec2d[vecIndex].size()){
+            index = 0;
+            ++vecIndex;
+        }
+        return vecIndex<vec2d.size();
+    }
+};
+
+//@StefanPochmann ider O(1) space using iterator,but cost 18ms
+class Vector2D {
+vector<vector<int>> ::iterator begin,end;
+int index,size;
+public:
+    Vector2D(vector<vector<int>>& vec2d) {
+        this->begin = vec2d.begin();//因为传的是引用
+        this->end = vec2d.end();
+        this->index = 0;
+        this->size = vec2d.size();
+    }
+
+    int next() {
+        return (*begin)[index++];
+    }
+
+    bool hasNext() {
+        while(begin!=end&&index>=(*begin).size()){
+            index = 0;
+            ++begin;
+        }
+        return begin!=end;
+    }
+};
+
+@jianchao.li.fighter 's idea
+class Vector2D {
+public:
+    Vector2D(vector<vector<int>>& vec2d) {
+        int row = vec2d.size();
+        for (int r = 0; r < row; r++) {
+            int col = vec2d[r].size();
+            for (int c = 0; c < col; c++)
+                data.push_back(vec2d[r][c]);
+        }
+        idx = 0;
+    }
+
+    int next() {
+        return data[idx];
+    }
+
+    bool hasNext() {
+        return idx < data.size();
+    }
+private:
+    vector<int> data;
+    int idx;
+};
+
