@@ -1,0 +1,47 @@
+//My solution
+class Solution {
+public:
+    vector<string> findStrobogrammatic(int n) {
+        vector<pair<char,char>> dict= {{'0','0'},{'1','1'},{'6','9'},{'8','8'},{'9','6'}};
+        vector<string> res;
+        string num(n,'0');
+        recursion(res,0,n-1,num,dict);
+        return res;
+        
+    }
+    
+    void recursion(vector<string> &res,int f,int l,string &num,const vector<pair<char,char>> &dict){
+        if(f>l){
+            res.push_back(num);
+            return;
+        }
+        for(auto it:dict){
+            if((f==l&&(it.first=='6'||it.first=='9'))||(f==0&&l!=0&&it.first=='0'))
+                continue;
+            num[f] = it.first;
+            num[l] = it.second;
+            recursion(res,f+1,l-1,num,dict);
+        }
+    }
+};
+
+//I consider it's the answer the interviewer need
+class Solution {
+public:
+    vector<string> findStrobogrammatic(int n) {
+        return helper(n , n);
+    }
+    vector<string> helper(int m, int n){
+        if(m == 0) return vector<string>({""});
+        if(m == 1) return vector<string>({"0", "1", "8"});
+        vector<string> tmp = helper(m - 2, n), res;
+        for(int i = 0; i < tmp.size(); i++){
+            if(m != n) res.push_back("0" + tmp[i] + "0");
+            res.push_back("1" + tmp[i] + "1");
+            res.push_back("6" + tmp[i] + "9");
+            res.push_back("8" + tmp[i] + "8");
+            res.push_back("9" + tmp[i] + "6");
+        }
+        return res;
+    }
+};
