@@ -1,0 +1,66 @@
+//Solution 1(My solution)
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        sort(intervals.begin(),intervals.end(),[](Interval &a , Interval &b){
+           return a.start<b.start; 
+        });
+        vector<int> cacheRoom;
+        for(int i=0;i<intervals.size();++i){
+            if(!isMeeting(intervals[i],cacheRoom)){
+                cacheRoom.push_back(intervals[i].end);
+            }
+        }
+        return cacheRoom.size();
+    }
+    
+    bool isMeeting(const Interval &a,vector<int> &cache){
+        for(int i=0;i<cache.size();++i){
+            if(a.start>=cache[i]){
+                cache[i] = a.end;
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+//idea like above solution,but more concise
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        int size = intervals.size();
+        vector<int> startVec(size),endVec(size);
+        for(int i=0;i<size;++i){
+            startVec[i] = intervals[i].start;
+            endVec[i] = intervals[i].end;
+        }
+        sort(startVec.begin(),startVec.end());
+        sort(endVec.begin(),endVec.end());
+        int res=0,endPoint=0;
+        for(int i=0;i<size;++i){
+            if(startVec[i]<endVec[endPoint])
+                ++res;
+            else
+                ++endPoint;
+        }
+        return res;
+    }
+};
+//most fastest idea by using map
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        map<int,int> Meeting;
+        for(int i=0;i<intervals.size();++i){
+            ++Meeting[intervals[i].start];
+            --Meeting[intervals[i].end];
+        }
+        int cnt=0,maxcnt=0;
+        for(auto it : Meeting){
+            cnt += it.second;
+            maxcnt = max(cnt,maxcnt);
+        }
+        return maxcnt;
+    }
+};
