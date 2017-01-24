@@ -1,0 +1,14 @@
+class Solution {
+public:
+    bool canAttendMeetings(vector<Interval>& intervals) {
+        auto compare = [](const Interval &a,const Interval &b){
+            return a.start<b.start;
+        };
+        sort(intervals.begin(),intervals.end(),compare);
+        for(int i=1;i<intervals.size();++i){
+            if(intervals[i-1].end>intervals[i].start)
+                return false;
+        }
+        return true;
+    }
+};
