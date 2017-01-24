@@ -1,0 +1,64 @@
+//my solution by using recursion 
+class Solution {
+public:
+    bool verifyPreorder(vector<int>& preorder) {
+        int size = preorder.size();
+        return verify(preorder,0,size-1);
+    }
+    
+    bool verify(vector<int> &preorder,int f,int l){
+        if(f>=l) return true;
+        int mid = f+1;
+        while(mid<=l){
+            if(preorder[mid]>=preorder[f])
+                break;
+            ++mid;
+        }
+        if(!islarge(preorder,preorder[f],mid,l))
+            return false;
+        return verify(preorder,f+1,mid-1)&&verify(preorder,mid,l);
+    }
+    
+    bool islarge(const vector<int> &preorder,const int &num,int index,int l){
+        while(index<=l){
+            if(preorder[index++]<num)
+                return false;
+        }
+        return true;
+    }
+};
+
+//Solution by using stack  O(n)space;
+class Solution {
+public:
+    bool verifyPreorder(vector<int>& preorder) {
+        stack<int> st;
+        int lower = INT_MIN;
+        for(int i=0;i<preorder.size();++i){
+            if(preorder[i]<lower)
+                return false;
+            while(!st.empty()&&preorder[i]>=st.top()){
+                lower = st.top();
+                st.pop();
+            }
+            st.push(preorder[i]);
+        }
+        return true;
+    }
+};
+//optimized above solution to O(1) space posted by @StefanPochmann
+class Solution {
+public:
+    bool verifyPreorder(vector<int>& preorder) {
+        int lower = INT_MIN,parent=-1;
+        for(int i=0;i<preorder.size();++i){
+            if(preorder[i]<lower)
+                return false;
+            while(parent>=0&&preorder[i]>=preorder[parent]){
+                lower = preorder[parent--];
+            }
+            preorder[++parent] = preorder[i]; 
+        }
+        return true;
+    }
+};
