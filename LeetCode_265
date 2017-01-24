@@ -1,0 +1,75 @@
+//Interted dp problem
+//My solution with O(2nk) Time complexity,
+class Solution {
+public:
+    int minCostII(vector<vector<int>>& costs) {
+        if(costs.empty())    return 0;
+        int colorNum = costs[0].size();
+        if(colorNum==1){
+            return costs.size()==1?costs[0][0]:INT_MAX;
+        }
+        vector<int> pre(colorNum,0),cur(colorNum,0);
+        for(int i=0;i<costs.size();++i){
+            int minCost1=INT_MAX,color1=-1,minCost2=INT_MAX,color2=-1;
+            for(int j=0;j<colorNum;++j){
+                if(pre[j]<minCost1){
+                    swap(minCost1,minCost2);
+                    swap(color1,color2);
+                    minCost1 = pre[j];
+                    color1 = j;
+                }
+                else if(pre[j]<minCost2){
+                    minCost2 = pre[j];
+                    color2 = j;
+                }
+            }
+            for(int j=0;j<colorNum;++j){
+                if(j!=color1){
+                    cur[j] = pre[color1] +costs[i][j];
+                }
+                else{
+                    cur[j] = pre[color2] +costs[i][j];
+                }
+            }
+            pre = cur;
+        }
+        int res= INT_MAX;
+        for(int i=0;i<colorNum;++i){
+            res = min(res,cur[i]);
+        }
+        return res;
+    }
+};
+
+//We can optimazed it to O(nk)
+class Solution {
+public:
+    int minCostII(vector<vector<int>>& costs) {
+        if(costs.empty())    return 0;
+        int colorNum = costs[0].size();
+        if(colorNum==1){
+            return costs.size()==1?costs[0][0]:INT_MAX;
+        }
+        vector<int> cur(colorNum,0);
+        int minCost1,minCost2,preMin1,preMin2;
+        for(int i=0;i<costs.size();++i){
+            preMin1 = i==0? 0:minCost1;
+            preMin2 = i==0? 0:minCost2;
+            minCost1 = minCost2 = INT_MAX;
+            for(int j=0;j<colorNum;++j){
+                if(preMin1!=cur[j]||preMin1==preMin2)
+                    cur[j] = preMin1 + costs[i][j];
+                else{
+                    cur[j] = preMin2 + costs[i][j];
+                }
+                if(cur[j]<minCost1){
+                    swap(minCost1,minCost2);
+                    minCost1 = cur[j];
+                }
+                else if(cur[j]<minCost2)
+                    minCost2 = cur[j];
+            }
+        }
+        return minCost1;
+    }
+};
