@@ -1,0 +1,92 @@
+//dfs solution
+class Solution {
+public:
+    bool validTree(int n, vector<pair<int, int>>& edges) {
+        unordered_map<int,unordered_set<int>> graph;
+        for(int i=0;i<edges.size();++i){
+                graph[edges[i].second].insert(edges[i].first);
+                graph[edges[i].first].insert(edges[i].second);
+        }
+        vector<int> visited(n,0);
+        if(!dfs(graph,visited,0))
+            return false;
+        for(int i=0;i<n;++i){
+            if(visited[i]==0)
+                return false;
+        }
+        return true;
+    }
+    
+    bool dfs(unordered_map<int,unordered_set<int>> &graph,vector<int> &visited,int node){
+        visited[node] = 1;
+        for(auto i:graph[node]){
+            if(visited[i]==1){
+                return false;
+            }
+            graph[i].erase(node);
+            if(!visited[i]&&!dfs(graph,visited,i))
+                return false;
+        }
+        return true;
+    }
+};
+
+//bfs solution
+class Solution {
+public:
+    bool validTree(int n, vector<pair<int, int>>& edges) {
+        unordered_map<int,unordered_set<int>> graph;
+        vector<int> visited(n,0);
+        for(int i=0;i<edges.size();++i){
+            graph[edges[i].first].insert(edges[i].second);
+            graph[edges[i].second].insert(edges[i].first);
+        }
+        if(!bfs(graph,visited,0))
+            return false;
+        for(int i=0;i<n;++i){
+            if(visited[i]==0)
+                return false;
+        }
+        return true;
+    }
+    bool bfs(unordered_map<int,unordered_set<int>> &graph,vector<int> &visited,int node){
+        queue<int> que;
+        que.push(node);
+        while(!que.empty()){
+            int nodeIndex = que.front();
+            que.pop();
+            //cout<<nodeIndex<<"   ";
+            if(visited[nodeIndex]==1)
+                    return false;
+            visited[nodeIndex] = 1;
+            for(auto i:graph[nodeIndex]){
+                graph[i].erase(nodeIndex);
+                que.push(i);
+            }
+        }
+        return true;
+    }
+};
+
+//union_Find (more faster and suited for this problem) beat 95%
+class Solution {
+public:
+    bool validTree(int n, vector<pair<int, int>>& edges) {
+        vector<int> unionFind(n,-1);
+        int x,y;
+        for(int i=0;i<edges.size();++i){
+            x = find(unionFind,edges[i].first);
+            y = find(unionFind,edges[i].second);
+            
+            if(x==y)    return false;
+            unionFind[y] = x;
+        }
+        return edges.size()==n-1;
+    }
+    
+    int find(vector<int> &unionFind,int node){
+        if(unionFind[node]==-1)
+            return node;
+        return find(unionFind,unionFind[node]);
+    }
+};
