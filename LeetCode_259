@@ -1,0 +1,44 @@
+class Solution {
+public:
+    int threeSumSmaller(vector<int>& nums, int target) {
+        sort(nums.begin(),nums.end());
+        int size = nums.size(),f,l,res =0;
+        for(int i=0;i<size-2;++i){
+            f = i+1,l = size-1;
+            while(f<l){
+                if(nums[i]+nums[f]+nums[l]<target){
+                    res += l-f;
+                    ++f;
+                }
+                else{
+                    --l;
+                }
+            }
+        }
+        return res;
+    }
+};
+
+//加上剪枝
+class Solution {
+public:
+    int threeSumSmaller(vector<int>& nums, int target) {
+        sort(nums.begin(),nums.end());
+        int size = nums.size(),f,l,res =0;
+        for(int i=0;i<size-2;++i){
+            f = i+1,l = size-1;
+            if(nums[i]+nums[i+1]+nums[i+2]>=target)
+                break;//剪枝
+            while(f<l){
+                if(nums[i]+nums[f]+nums[l]<target){
+                    res += l-f;
+                    ++f;
+                }
+                else{
+                    --l;
+                }
+            }
+        }
+        return res;
+    }
+};
