@@ -1,0 +1,123 @@
+solution by using Inorder_Travel
+
+class Solution {
+public:
+    vector<int> closestKValues(TreeNode* root, double target, int k) {
+        stack<int> pre;
+        queue<int> suc;
+        vector<int> res;
+        InorderTravel(root,target,pre,suc);
+        int preVal,sucVal;
+        while(k>0){
+            //cout<<pre.size()<<"  "<<suc.size()<<endl;
+            preVal =pre.empty()?INT_MAX:pre.top();
+            sucVal = suc.empty()?INT_MIN:suc.front();
+           // cout<<preVal<<"    "<<sucVal<<endl;
+            if(preVal==INT_MAX||(preVal!=INT_MAX&&abs(preVal-target)>abs(sucVal-target))){
+                res.push_back(sucVal);
+                suc.pop();
+            }
+            else if(sucVal==INT_MIN||(sucVal!=INT_MIN&&abs(preVal-target)<=abs(sucVal-target))){
+                res.push_back(preVal);
+                pre.pop();
+            }
+            --k;
+        }
+        return res;
+    }
+    
+    void InorderTravel(TreeNode*root,double target,stack<int> &pre,queue<int> &suc){
+        if(root){
+            InorderTravel(root->left,target,pre,suc);
+            if(root->val>=target){
+                //cout<<root->val<<endl;
+                suc.push(root->val);
+            }
+            else
+                pre.push(root->val);
+            InorderTravel(root->right,target,pre,suc);
+        }
+    }
+};
+
+/*a O(klogN)solution posted by @qianzhige 
+  Impressive idea by recording TreeNode and get Next;
+*/
+public class Solution {
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        List<Integer> ret = new LinkedList<>();
+        Stack<TreeNode> succ = new Stack<>();
+        Stack<TreeNode> pred = new Stack<>();
+        initializePredecessorStack(root, target, pred);
+        initializeSuccessorStack(root, target, succ);
+        if(!succ.isEmpty() && !pred.isEmpty() && succ.peek().val == pred.peek().val) {
+            getNextPredecessor(pred);
+        }
+        while(k-- > 0) {
+            if(succ.isEmpty()) {
+                ret.add(getNextPredecessor(pred));
+            } else if(pred.isEmpty()) {
+                ret.add(getNextSuccessor(succ));
+            } else {
+                double succ_diff = Math.abs((double)succ.peek().val - target);
+                double pred_diff = Math.abs((double)pred.peek().val - target);
+                if(succ_diff < pred_diff) {
+                    ret.add(getNextSuccessor(succ));
+                } else {
+                    ret.add(getNextPredecessor(pred));
+                }
+            }
+        }
+        return ret;
+    }
+
+    private void initializeSuccessorStack(TreeNode root, double target, Stack<TreeNode> succ) {
+        while(root != null) {
+            if(root.val == target) {
+                succ.push(root);
+                break;
+            } else if(root.val > target) {
+                succ.push(root);
+                root = root.left;
+            } else {
+                root = root.right;
+            }
+        }
+    }
+
+    private void initializePredecessorStack(TreeNode root, double target, Stack<TreeNode> pred) {
+        while(root != null){
+            if(root.val == target){
+                pred.push(root);
+                break;
+            } else if(root.val < target){
+                pred.push(root);
+                root = root.right;
+            } else{
+                root = root.left;
+            }
+        }
+    }
+    
+    private int getNextSuccessor(Stack<TreeNode> succ) {
+        TreeNode curr = succ.pop();
+        int ret = curr.val;
+        curr = curr.right;
+        while(curr != null) {
+            succ.push(curr);
+            curr = curr.left;
+        }
+        return ret;
+    }
+
+    private int getNextPredecessor(Stack<TreeNode> pred) {
+        TreeNode curr = pred.pop();
+        int ret = curr.val;
+        curr = curr.left;
+        while(curr != null) {
+            pred.push(curr);
+            curr = curr.right;
+        }
+        return ret;
+    }
+}
