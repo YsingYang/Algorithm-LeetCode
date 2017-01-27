@@ -1,0 +1,56 @@
+My solution through Pruning
+// Forward declaration of the knows API.
+bool knows(int a, int b);
+
+class Solution {
+public:
+    int findCelebrity(int n) {
+        for(int i=0;i<n;++i){
+            if(isCelebrity(i,n)){
+                for(int j=0;j<n;++j){
+                    if(i==j)
+                        continue;
+                    if(!knows(j,i))
+                        return -1;
+                }
+                return i;
+            }
+        }
+        return -1;
+    }
+    bool isCelebrity(int i,const int &n){
+        for(int j=0;j<n;++j){
+            if(i==j)    
+                continue;
+            if(knows(i,j))
+                return false;
+        }
+        return true;
+    }
+};
+
+Brilliant idea posted by @hbsophia 
+// Forward declaration of the knows API.
+bool knows(int a, int b);
+
+class Solution {
+public:
+    int findCelebrity(int n) {
+        //if(n<=1) return n;
+        int candidate = 0;
+        for(int i=1; i<n; i++){
+            if ( !knows(i,candidate) ){
+                candidate = i;//if(i knows candidate i is not celebrity     if(i don't know candidate candidate is not celebrity)
+            }
+        }
+        for(int j=0; j<n; j++){
+            if(j== candidate) 
+                continue;
+            if( !knows(j,candidate) || knows(candidate,j) ){
+                return -1;
+            }
+        }
+        return candidate;
+  
+  }
+};
