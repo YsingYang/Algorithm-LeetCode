@@ -1,0 +1,40 @@
+//My solution with InorderTravel
+
+class Solution {
+public:
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p) {
+        stack<TreeNode*> st;
+        TreeNode *cur=root,*pre=nullptr;
+        
+        while(!st.empty()||cur!=nullptr){
+            while(cur){
+                st.push(cur);
+                cur = cur->left;
+            }
+            cur = st.top();
+            st.pop();
+            if(pre==p)
+                return cur;
+            pre=cur;
+            cur = cur->right;
+        }
+        return nullptr;
+    }
+};
+
+//elegant idea posted by @dietpepsi , Very good understanding of BST.
+class Solution {
+public:
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p) {
+        TreeNode *succ = nullptr;
+        while(root!=nullptr){
+            if(p->val<root->val){
+                succ = root;
+                root = root->left;
+            }
+            else
+                root = root->right;
+        }
+        return succ;
+    }
+};
