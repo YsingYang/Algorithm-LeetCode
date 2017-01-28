@@ -1,0 +1,53 @@
+//My solution
+class ZigzagIterator {
+vector<int>::iterator v1n,v1e,v2n,v2e;
+int flag;
+public:
+    ZigzagIterator(vector<int>& v1, vector<int>& v2) {
+        v1n = v1.begin();
+        v1e = v1.end();
+        v2n = v2.begin();
+        v2e = v2.end();
+        flag = 1;
+    }
+
+    int next() {
+        flag ^=1;
+        if((flag==0&&v1n!=v1e)||(flag==1&&v2n==v2e)){
+            return *(v1n++);
+        }
+        else{
+            return *(v2n++);
+        }
+    }
+
+    bool hasNext() {
+        return v1n!=v1e||v2n!=v2e;
+    }
+};
+
+//Solution posted by @lightmark could be extended to k-vector
+class ZigzagIterator {
+public:
+    ZigzagIterator(vector<int>& v1, vector<int>& v2) {
+        if (v1.size() != 0)
+            Q.push(make_pair(v1.begin(), v1.end()));
+        if (v2.size() != 0)
+            Q.push(make_pair(v2.begin(), v2.end()));
+    }
+
+    int next() {
+        vector<int>::iterator it = Q.front().first;
+        vector<int>::iterator endIt = Q.front().second;
+        Q.pop();
+        if (it + 1 != endIt)
+            Q.push(make_pair(it+1, endIt));
+        return *it;
+    }
+
+    bool hasNext() {
+        return !Q.empty();
+    }
+private:
+    queue<pair<vector<int>::iterator, vector<int>::iterator>> Q;
+};
