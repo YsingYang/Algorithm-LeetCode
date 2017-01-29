@@ -1,0 +1,30 @@
+//My solution
+class ValidWordAbbr {
+unordered_map<string,unordered_set<string>> dict;
+//unordered_map<string,int> dictCount;
+public:
+    ValidWordAbbr(vector<string> dictionary) {
+        string abv;
+        for(int i=0;i<dictionary.size();++i){
+            int size = dictionary[i].size();
+            abv = getAbbreviation(dictionary[i]);
+            dict[abv].insert(dictionary[i]);
+        }
+    }
+    
+    bool isUnique(string word) {
+        string abv = getAbbreviation(word);
+        return dict.find(abv)==dict.end()||(dict[abv].size()==1&&dict[abv].find(word)!=dict[abv].end());
+        //or return dict[abv].count(word)==dict[abv].size();
+    }
+    
+    string getAbbreviation(string s){
+        int size = s.size();
+        if(size<=2)
+            return s;
+        else{
+            return s.front()+to_string(size)+s.back();
+        }
+    }
+};
+
