@@ -1,0 +1,93 @@
+//first Solution,beat 4%
+class Solution {
+public:
+    void wallsAndGates(vector<vector<int>>& rooms) {
+        if(rooms.empty())   return;
+        int rs = rooms.size(),cs = rooms[0].size();
+        vector<vector<int>> visited(rs,vector<int> (cs));
+        pair<int,int> temp;
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                if(rooms[i][j]==0){
+                    BFSSearch(rooms,visited,i,j,rs,cs);
+                }
+            }
+        }
+    }
+    
+    void BFSSearch(vector<vector<int>> &rooms,vector<vector<int>> visited,int i,int j,const int &rs,const int &cs){
+        queue<pair<int,int>> que;
+        que.emplace(i,j);
+        visited[i][j] = 1;
+        pair<int,int> temp,*layer;
+        layer = &(que.back());
+        int dist = 0;
+        while(!que.empty()){
+            temp = que.front();
+            if(temp.first>0&&visited[temp.first-1][temp.second]!=1&&rooms[temp.first-1][temp.second]>0){
+                visited[temp.first-1][temp.second] = 1;
+                que.emplace(temp.first-1,temp.second);
+            }
+            if(temp.first<rs-1&&visited[temp.first+1][temp.second]!=1&&rooms[temp.first+1][temp.second]>0){
+                visited[temp.first+1][temp.second] = 1;
+                que.emplace(temp.first+1,temp.second);
+            }
+            if(temp.second>0&&visited[temp.first][temp.second-1]!=1&&rooms[temp.first][temp.second-1]>0){
+                visited[temp.first][temp.second-1] = 1;
+                que.emplace(temp.first,temp.second-1);
+            }
+            if(temp.second<cs-1&&visited[temp.first][temp.second+1]!=1&&rooms[temp.first][temp.second+1]>0){
+                visited[temp.first][temp.second+1] = 1;
+                que.emplace(temp.first,temp.second+1);
+            }
+            rooms[temp.first][temp.second] = min(rooms[temp.first][temp.second],dist);
+            if(layer == &(que.front())){
+                layer = &(que.back());
+                ++dist;
+            }
+            que.pop();
+        }
+    }
+};
+
+
+//Second solution beats 75%,Maybe we can use vector<int> (2) to improve performance instead of pair<int,int>;
+
+
+class Solution {
+public:
+    void wallsAndGates(vector<vector<int>>& rooms) {
+        if(rooms.empty())   return;
+        queue<pair<int,int>> que;
+        int rs = rooms.size(),cs = rooms[0].size();
+        //vector<vector<int>> visited(rs,vector<int> (cs));
+        pair<int,int> temp;
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                if(rooms[i][j]==0){
+                    que.emplace(i,j);
+                }
+            }
+        }
+        while(!que.empty()){
+            temp = que.front();
+            if(temp.first>0&&rooms[temp.first-1][temp.second]==INT_MAX){
+                rooms[temp.first-1][temp.second] = rooms[temp.first][temp.second]+1;
+                que.emplace(temp.first-1,temp.second);
+            }
+            if(temp.first<rs-1&&rooms[temp.first+1][temp.second]==INT_MAX){
+                rooms[temp.first+1][temp.second] = rooms[temp.first][temp.second]+1;
+                que.emplace(temp.first+1,temp.second);
+            }
+            if(temp.second>0&&rooms[temp.first][temp.second-1]==INT_MAX){
+                rooms[temp.first][temp.second-1] = rooms[temp.first][temp.second]+1;
+                que.emplace(temp.first,temp.second-1);
+            }
+            if(temp.second<cs-1&&rooms[temp.first][temp.second+1]==INT_MAX){
+                rooms[temp.first][temp.second+1] = rooms[temp.first][temp.second]+1;
+                que.emplace(temp.first,temp.second+1);
+            }
+            que.pop();
+        }
+    }
+};
