@@ -1,0 +1,32 @@
+//find out the median of vector,here is the optimal method by getSum;
+
+class Solution {
+public:
+    int minTotalDistance(vector<vector<int>>& grid) {
+        int rs = grid.size(),cs = grid[0].size();
+        vector<int> row(rs,0),col(cs,0);
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                row[i] += grid[i][j];
+                col[j] += grid[i][j];
+            }
+        }
+        return getSum(row,rs)+getSum(col,cs);
+    }
+    
+    int getSum(const vector<int> &vec,int &size){
+        int count=0,left=0,right=0,i=-1,j=size;
+        while(i<j){
+           // cout<<count<<"   "<<left<<"    "<<right<<endl;
+            if(left<right){
+                count += left;
+                left += vec[++i];
+            }
+            else{
+                count += right;
+                right += vec[--j];
+            }
+        }
+        return count;
+    }
+};
