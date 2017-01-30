@@ -1,0 +1,86 @@
+//Simple solution 760ms
+class Solution {
+public:
+    vector<vector<int>> multiply(vector<vector<int>>& A, vector<vector<int>>& B) {
+       // map<vector<int>,int> mp;
+        if(A.empty())   return {} ;
+        int DistRs = A.size(),DistCs = B[0].size(),intermediate = A[0].size();
+        vector<vector<int>> res(DistRs,vector<int> (DistCs));
+        int count;
+        for(int i = 0;i<DistRs;++i){
+            for(int j = 0 ; j<DistCs;++j){
+                count = 0;
+               /* if(mp.find(A[i])!=mp.end()){
+                    count = mp[A[i]];
+                }
+                else{*/
+                    for(int z = 0;z<intermediate;++z){
+                        count += A[i][z] * B[z][j];
+                    }
+                 //   mp[A[i]] = count;
+                //}
+                res[i][j] = count;
+            }
+        }
+        return res;
+    }
+};
+
+//using unordered_set to improve it ,
+typedef pair<pair<int,int>,int> pos_val;
+class Solution {
+public:
+    vector<vector<int>> multiply(vector<vector<int>>& A, vector<vector<int>>& B) {
+        if(A.empty()||A[0].empty()||B[0].empty()) return vector<vector<int>>();
+        vector<pos_val> map_A,map_B; //store nonzero values of A and B
+        int n=A.size(), m=B[0].size(),mid=B.size();
+        vector<vector<int>> C(n,vector<int>(m,0));
+        for(int i=0;i<n;++i){
+            for(int j=0;j<mid;++j){
+                if(A[i][j]!=0){
+                    pos_val tmp(pair<int,int>(i,j),A[i][j]);
+                    map_A.push_back(tmp);}
+                }
+          }
+         for(int i=0;i<mid;++i){
+            for(int j=0;j<m;++j){
+                if(B[i][j]!=0){
+                    pos_val tmp(pair<int,int>(i,j),B[i][j]);
+                    map_B.push_back(tmp);}
+                }
+          }
+        for(int i=0;i<map_A.size();++i){
+            for(int j=0;j<map_B.size();++j){
+                if(map_A[i].first.second==map_B[j].first.first)
+                   C[map_A[i].first.first][map_B[j].first.second]+=map_A[i].second*map_B[j].second;
+            }
+        }
+        
+        return C;
+        
+    }
+};
+
+//we can use little tricky to reduce space complexity
+class Solution {
+public:
+	vector<vector<int>> multiply(vector<vector<int>>& A, vector<vector<int>>& B) {
+		
+		if (A.empty() || B.empty()) return vector<vector<int>>();
+		// reserve spaces
+		vector<vector<int>> ret(A.size(), vector<int>(B[0].size()));
+		for (size_t i = 0; i < A.size(); i++) {
+			for (size_t k = 0; k < B.size(); k++) {
+			    // optimization
+			    if(A[i][k] == 0) {
+			        continue;
+			    }
+				for (size_t l = 0; l < B[0].size(); l++) {
+				    if(B[k][l] == 0)continue; // optimization 
+					ret[i][l] += (A[i][k] * B[k][l]);
+				}
+			}
+		}
+		return ret;
+	}
+};
