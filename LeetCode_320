@@ -1,0 +1,54 @@
+//Interesting backtracking problem , but why it's time complexity is O(N2^N);
+class Solution {
+public:
+    vector<string> generateAbbreviations(string word) {
+        vector<string> res;
+        int size = word.size();
+        backtracking(res,word,"",0,size,0);
+        return res;
+    }
+    
+    void backtracking(vector<string> &res,string s,string cur,int index,int size,int count){
+        if(index==size){
+            if(count>0) 
+                cur+=to_string(count);
+            res.push_back(cur);
+            return ;
+        }
+        backtracking(res,s,cur,index+1,size,count+1);
+        backtracking(res,s,cur+(count>0?to_string(count):"")+s[index],index+1,size,0);
+    }
+};
+
+//solution  of Bit-mantipulation ,But it's slower than above solution...
+class Solution {
+public:
+    vector<string> generateAbbreviations(string word) {
+        vector<string> res;
+        int size = word.size();
+        for(int i=0;i<(1<<size);++i){
+            res.push_back(getAbr(word,i));
+        }
+        return res;
+    }
+    
+    string getAbr(string &word,int n){
+        stringstream ss;
+        int cnt = 0;
+        for(int i=0;i<word.size();++i,n>>=1){
+            if((n&1)==0){
+                if(cnt>0){
+                    ss<<to_string(cnt);
+                    cnt = 0;
+                }
+                ss<<word[i];
+            }
+            else{
+                ++cnt;
+            }
+        }
+        if(cnt!=0)
+            ss<<to_string(cnt);
+        return ss.str();
+    }
+};
