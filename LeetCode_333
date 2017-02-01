@@ -1,0 +1,54 @@
+//Simple solution by validating each node
+class Solution {
+public:
+    int largestBSTSubtree(TreeNode* root) {
+        int count = 0;
+        if(isValidBST(root,count)){
+            return count;
+        }
+        else
+            return max(largestBSTSubtree(root->left),largestBSTSubtree(root->right));
+    }
+    
+    bool isValidBST(TreeNode* root,int &count) {
+        count  = 0;
+        TreeNode* prev = NULL;
+        return validate(root, prev,count);
+    }
+    bool validate(TreeNode* node, TreeNode* &prev,int &count) {
+        if (node == NULL) return true;
+        if (!validate(node->left, prev,count)) return false;
+        if (prev != NULL && prev->val >= node->val) return false;
+        prev = node;
+        ++count;
+        return validate(node->right, prev,count);
+    }
+};
+
+//O(n) travel solution posted by @mach7 
+class Result{
+public:
+        int size;
+        int maxVal;
+        int minVal;
+        Result(int s,int maxv,int minv):size(s),maxVal(maxv),minVal(minv){}
+ };    
+class Solution {
+
+public:
+    int largestBSTSubtree(TreeNode* root) {
+        int res = 0;
+        Travel(root,res);
+        return res;
+    }
+    Result* Travel(TreeNode* root,int &res){
+        if(!root)   return new Result(0,INT_MIN,INT_MAX);
+        Result  *leftResult = Travel(root->left,res),*rightResult = Travel(root->right,res);
+        if(leftResult->size==-1||leftResult->maxVal>=root->val||rightResult->size==-1||rightResult->minVal<=root->val){
+            return new Result(-1,0,0);
+        }
+        int cnt = 1+leftResult->size+rightResult->size;
+        res = max(res,cnt);
+        return new Result(cnt,max(rightResult->maxVal,root->val),min(root->val,leftResult->minVal));
+    }
+};
