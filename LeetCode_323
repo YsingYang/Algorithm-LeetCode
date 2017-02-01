@@ -1,0 +1,111 @@
+//BFS Solution
+class Solution {
+public:
+    int countComponents(int n, vector<pair<int, int>>& edges) {
+        int size = edges.size();
+        //为空
+        unordered_map<int,unordered_set<int>> graph;
+        vector<int> visited(n,1);
+        for(int i=0;i<size;++i){
+            graph[edges[i].first].insert(edges[i].second);
+            graph[edges[i].second].insert(edges[i].first);
+        }
+        int count = 0;
+        for(int i=0;i<n;++i){
+            //cout<<i<<endl;
+            if(visited[i]){
+                bfsSearch(graph,i,visited);
+                ++count;
+            }
+        }
+        return count;
+    }
+    
+    void bfsSearch(unordered_map<int,unordered_set<int>> &graph,int index,vector<int> &visited){
+        queue<int> que;
+        que.push(index);
+        visited[index] = 0;
+        while(!que.empty()){
+            int node = que.front();
+            que.pop();
+            for(auto i:graph[node]){
+                if(visited[i]){
+                    que.push(i);
+                    visited[i] = 0;
+                }
+            }
+        }
+    }
+};
+
+//My union-Find
+class Solution {
+public:
+    int countComponents(int n, vector<pair<int, int>>& edges) {
+        vector<int> unionFind(n,-1);
+        int count = 0,x,y;
+        for(int i = 0;i<edges.size();++i){
+            cout<<"11"<<endl;
+            x = Find(unionFind,edges[i].first);
+            y = Find(unionFind,edges[i].second);
+          if(x==y)
+                continue;
+           // cout<<x<<"   "<<y<<endl;
+            unionFind[y] = x;
+        }
+        for(int i=0;i<n;++i){
+            if(unionFind[i]==-1)
+                ++count;
+        }
+        return count;
+    }
+    
+    int Find(vector<int> &unionFind,int node){
+        if(unionFind[node] == -1)
+            return node;
+        return Find(unionFind,unionFind[node]);
+    }
+};
+
+//Thanks for @StefanPochmann share his idea ,so I modify my solution n-= (x!=y);Just use trick of Graph.
+class Solution {
+public:
+    int countComponents(int n, vector<pair<int, int>>& edges) {
+        vector<int> unionFind(n,-1);
+        //int count = 0;
+        int x,y;
+        for(int i = 0;i<edges.size();++i){
+            x = Find(unionFind,edges[i].first);
+            y = Find(unionFind,edges[i].second);
+          if(x==y)
+                continue;
+            unionFind[y] = x;
+            n-= (x!=y);
+        }
+        return n;
+    }
+    
+    int Find(vector<int> &unionFind,int node){
+        if(unionFind[node] == -1)
+            return node;
+        return Find(unionFind,unionFind[node]);
+    }
+};
+
+//@StefanPochmann Solution , beat 95%
+class Solution {
+public:
+    int countComponents(int n, vector<pair<int, int>>& edges) {
+    vector<int> p(n);
+    iota(begin(p), end(p), 0);//get incremented val
+    for (auto& edge : edges) {
+        int v = edge.first, w = edge.second;
+        while (p[v] != v) v = p[v] = p[p[v]];
+        while (p[w] != w) w = p[w] = p[p[w]];
+        p[v] = w;
+        n -= v != w;
+    }
+    return n;
+  }
+};
+//
