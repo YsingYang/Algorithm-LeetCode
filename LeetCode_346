@@ -1,0 +1,21 @@
+class MovingAverage {
+int nowSize;
+double sum;
+list<int> ls;
+public:
+    /** Initialize your data structure here. */
+    MovingAverage(int size) {
+        nowSize = size;
+        sum = 0.0;
+    }
+    
+    double next(int val) {
+        sum += val;
+        ls.push_back(val);
+        if(ls.size()>nowSize){
+            sum -= ls.front();
+            ls.pop_front();
+        }
+        return sum/ls.size();
+    }
+};
