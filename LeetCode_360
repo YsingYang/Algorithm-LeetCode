@@ -1,0 +1,60 @@
+class Solution {
+public:
+    vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) {
+        if(a<0)
+            return lower(nums,a,b,c);
+        return upper(nums,a,b,c);
+        
+    }
+    
+    vector<int> upper(vector<int> &nums,const int &a,const int &b,const int &c){
+        int size = nums.size();
+        vector<int> res(size);
+        int front = 0 ,rear = size-1,index = size - 1;
+        int fVal = calculate(nums[front],a,b,c),rVal = calculate(nums[rear],a,b,c);
+        while(front<=rear){
+            //cout<<index<<endl;
+            if(fVal<rVal){
+                res[index--] = rVal;
+                --rear;
+                if(rear>=0)
+                    rVal = calculate(nums[rear],a,b,c);
+            }
+            else{
+                res[index--] = fVal;
+                ++front;
+                if(front<size)
+                    fVal = calculate(nums[front],a,b,c);
+            }
+        }
+        return res;
+        
+    }
+    
+    vector<int> lower(vector<int> &nums,const int &a,const int &b,const int &c){
+        int size = nums.size();
+        vector<int> res(size);
+        int front = 0 ,rear = size-1,index = 0;
+        int fVal = calculate(nums[front],a,b,c),rVal = calculate(nums[rear],a,b,c);
+        while(front<=rear){
+           // cout<<index<<endl;
+            if(fVal>rVal){
+                res[index++] = rVal;
+                --rear;
+                if(rear>=0)
+                    rVal = calculate(nums[rear],a,b,c);
+            }
+            else{
+                res[index++] = fVal;
+                ++front;
+                if(front<size)
+                    fVal = calculate(nums[front],a,b,c);
+            }
+        }
+        return res;
+    }
+    
+    int calculate(const int &x,const int &a,const int &b,const int &c){
+        return a * pow(x,2) + b * x + c;
+    }
+};
