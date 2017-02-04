@@ -1,0 +1,47 @@
+//My c++ solution based on set
+class Solution {
+public:
+    bool isReflected(vector<pair<int, int>>& points) {
+        set<pair<int,int> > pointsSet;
+        int minVal = INT_MAX,maxVal = INT_MIN;
+        for(int i = 0;i<points.size() ; ++i){
+            minVal = min(points[i].first,minVal);
+            maxVal = max(points[i].first,maxVal);
+            pointsSet.insert(points[i]);
+        }
+        double y = minVal + (maxVal - minVal)/2.0;//We can choose not to divide 2.0,because,we have to use 2*y
+        for(int i = 0;i<points.size();++i){
+            pair<int,int> rf = {y + y - points[i].first,points[i].second};
+            if(pointsSet.find(rf)==pointsSet.end())
+                return false;
+        }
+        return true;
+    }
+};
+
+//C++ Solution based on unordered_map
+class Solution {
+public:
+    bool isReflected(vector<pair<int, int>>& points) {
+        if(points.empty()) return true;
+        int minx = INT_MAX;
+        int maxx = INT_MIN;
+        unordered_map<int, unordered_set<int> > dict;
+        for(auto point : points){
+            minx = min(minx, point.first);
+            maxx = max(maxx, point.first);
+            dict[point.first].insert(point.second);
+        }
+        int line = maxx + minx;
+        
+        for(auto it = dict.begin(); it != dict.end(); it++){
+            int x = line - it->first;
+            if(dict.find(x) == dict.end()) return false;
+            for(auto jt = it->second.begin(); jt != it->second.end(); jt++){
+                int y = *jt;
+                if(dict[x].find(y) == dict[x].end()) return false;
+            }
+        }
+        return true;
+    }
+};
