@@ -1,0 +1,51 @@
+//My c++ solution based on method of Next Greater Element I
+
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        //unordered_map<int,int> mp;
+        stack<pair<int,int>> st;
+        int size = nums.size();
+        vector<int> res(size,-1);
+        for(int i=0;i<size;++i){
+            while(!st.empty()&&nums[i]>st.top().first){
+                res[st.top().second] = nums[i];
+                st.pop();
+            }
+            st.emplace(nums[i],i);
+        }
+        for(int i=0;!st.empty()&&i<st.top().second;++i){
+            while(!st.empty()&&nums[i]>st.top().first){
+                res[st.top().second] = nums[i];
+                st.pop();
+            }
+        }
+        return res;
+    }
+};
+
+
+//using deque
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        deque<int> st;
+        int L = nums.size();
+        vector<int> ans(L, -1);
+        if(L == 0)
+            return ans;
+        st.push_front(0);
+        int i= 1%L;
+        for(int j=0;j<2*L;j++){
+            int v = nums[i];
+            while(!st.empty() && v > nums[st.front()]){
+                ans[st.front()] = v;
+                st.pop_front();
+            }
+            st.push_front(i);
+            i ++;
+            i %= L;
+        }
+        return ans;
+    }
+};
