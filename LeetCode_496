@@ -1,0 +1,49 @@
+//My solution
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
+        int s1 = findNums.size(),s2 = nums.size();
+        unordered_map<int,int> mp;
+        for(int i = 0;i<s2;++i){
+            mp[nums[i]] = i;
+        }
+        vector<int> res;
+        for(int i=0;i<s1;++i){
+            int index = mp[findNums[i]] + 1;
+            for(;index<s2;++index){
+                if(nums[index]>findNums[i]){
+                    res.push_back(nums[index]);
+                    break;
+                }
+            }
+            if(index==s2)
+                res.push_back(-1);
+        }
+        return res;
+    }
+};
+
+//using stack;
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
+        unordered_map<int,int> mp;
+        stack<int> st;
+        int s1 = findNums.size(),s2 = nums.size();
+        for(int i=0;i<s2;++i){
+            while(!st.empty()&&nums[i]>st.top()){
+                mp[st.top()] = nums[i];
+                st.pop();
+            }
+            st.push(nums[i]);
+        }
+        vector<int> res;
+        for(int i=0;i<s1;++i){
+            if(mp.find(findNums[i])!=mp.end())
+                res.push_back(mp[findNums[i]]);
+            else
+                res.push_back(-1);
+        }
+        return res;
+    }
+};
