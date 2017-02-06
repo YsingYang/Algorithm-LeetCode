@@ -1,0 +1,57 @@
+//My solution with get maxDepth
+class Solution {
+public:
+    int depthSumInverse(vector<NestedInteger>& nestedList) {
+        int depth = getMaxDepth(nestedList);
+        return getSum(nestedList,depth,0);
+    }
+    
+    int getMaxDepth(vector<NestedInteger>& nestedList){
+        int index =0,maxIndex = 0;
+        for(int i=0;i<nestedList.size();++i){
+            if(nestedList[i].isInteger())
+                index = max(index,1);
+            else
+                index = max(getMaxDepth(nestedList[i].getList())+1,index);
+        }
+        return index;
+    }
+    
+    int getSum(vector<NestedInteger>&nestedList,const int &maxDepth,int depth){
+        int sum = 0,weigh = maxDepth - depth;
+        for(int i=0;i<nestedList.size();++i){
+            if(nestedList[i].isInteger()){
+                sum += weigh * nestedList[i].getInteger();
+            }    
+            else{
+                sum += getSum(nestedList[i].getList(),maxDepth,depth+1);
+            }
+        }
+        return sum;
+    }
+};
+
+//@StefanPochmann's idea with cache subList and use unweight
+class Solution {
+public:
+    int depthSumInverse(vector<NestedInteger>& nestedList) {
+        int unweigh=0,weigh=0;
+        while(!nestedList.empty()){
+            vector<NestedInteger> temp;
+            for(NestedInteger i:nestedList){
+                if(i.isInteger()){
+                    unweigh += i.getInteger();
+                }
+                else{
+                    vector<NestedInteger> subList = i.getList();
+                    for(int j=0;j<subList.size();++j){
+                        temp.push_back(subList[j]);
+                    }
+                }
+            }
+            nestedList = temp;
+            weigh += unweigh;
+        }
+        return weigh;
+    }
+};
