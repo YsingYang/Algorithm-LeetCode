@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<vector<int>> findLeaves(TreeNode* root) {
+        vector<vector<int>> res;
+        vector<int> sol;
+        while(root!=NULL){
+            //cout<<root->val<<endl;
+            getLeaves(sol,root);
+            res.push_back(sol);
+            sol.clear();
+        }
+        return res;
+    }
+    
+    void getLeaves(vector<int> &sol,TreeNode*& root){//It must use reference to modify root to nullptr
+        if(root==nullptr)   return;
+        if(root->left==nullptr&&root->right==nullptr){
+            sol.push_back(root->val);
+            root=nullptr;
+            return;
+        }
+        getLeaves(sol,root->left);
+        getLeaves(sol,root->right);
+    }
+};
