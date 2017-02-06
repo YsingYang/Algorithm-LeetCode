@@ -1,0 +1,60 @@
+//My c++solution with reverse List
+class Solution {
+public:
+    ListNode* plusOne(ListNode* head) {
+        head = reverse(head);
+        ListNode *node = head;
+        int i = 1,res;
+        while(i){
+            res = node->val+1;
+            i = res/10;
+            node->val = res%10;
+            if(node->next==nullptr)
+                break;
+            node = node->next;
+        }
+        if(node->next==nullptr&&i){
+            ListNode* Ln = new ListNode(1);
+            node->next = Ln;
+        }
+        node = head;
+        head = reverse(head);
+        return head;
+        
+    }
+    
+    ListNode* reverse(ListNode* head){
+        ListNode *fake = new ListNode(0);
+        ListNode *node;
+        while(head){
+            node = head->next;
+            head ->next = fake->next;
+            fake ->next = head;
+            head = node;
+        }
+        return fake->next;
+    }
+};
+
+//Brillant idea with cache the first index of continuous 9 ,
+class Solution {
+public:
+    ListNode* plusOne(ListNode* head) {
+        ListNode *dummy = new ListNode(0);
+        dummy ->next = head;
+        ListNode *firstNotOf=dummy,*lastNode=dummy;
+        while(lastNode){
+            if(lastNode->val!=9){
+                firstNotOf = lastNode;
+            }
+            lastNode = lastNode->next;
+        }
+        ++firstNotOf->val;
+        firstNotOf = firstNotOf->next;
+        while(firstNotOf){
+            firstNotOf ->val = 0;
+            firstNotOf = firstNotOf->next;
+        }
+        return dummy->val==1?dummy:dummy->next;
+    }
+};
