@@ -23,3 +23,27 @@ public:
         getLeaves(sol,root->right);
     }
 };
+
+
+//Impressive solution posted by @sky-xu
+
+class Solution {
+public:
+    vector<vector<int>> findLeaves(TreeNode* root) {
+        vector<vector<int>> res;
+        getLevel(root,res);
+        return res;
+    }
+    
+private:
+    int getLevel(TreeNode* root,vector<vector<int>> &res){
+        if(!root)
+            return -1;
+        int level = 1 + max(getLevel(root->left,res),getLevel(root->right,res));
+        if(level>=res.size()){
+            res.push_back({});
+        }
+        res[level].push_back(root->val);
+        return level;
+    }
+};
