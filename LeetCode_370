@@ -1,0 +1,20 @@
+//In this problem , according the hint ,we don't need to update all element between i and j, we just need to update the first element,and 
+ lastIndex plus 1 in the array minus this value,
+
+class Solution {
+public:
+    vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
+        vector<int> array(length,0);
+        for(int i=0;i<updates.size();++i){
+            array[updates[i][0]]+= updates[i][2];
+            if(updates[i][1]+1<length){
+                array[updates[i][1]+1] -= updates[i][2];
+            }
+        }
+        
+        for(int i=1;i<length;++i){
+            array[i]+= array[i-1];
+        }
+        return array;
+    }
+};
