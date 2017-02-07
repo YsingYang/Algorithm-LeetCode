@@ -1,0 +1,44 @@
+//My c++ solution
+class Solution {
+public:
+    bool validWordAbbreviation(string word, string abbr) {
+        int si = 0, ai =0,s1 = word.size(),s2 = abbr.size(),abbrnum;
+        while(ai<s2){
+            if(abbr[ai]!='0'&&isdigit(abbr[ai])){
+                int first = ai;
+                while(isdigit(abbr[ai])){
+                    ++ai;
+                }
+                abbrnum = stoi(abbr.substr(first,ai-first));
+                si += abbrnum;
+            }
+            else{
+                if(si>=s1||word[si]!=abbr[ai]){
+                    return false;
+                }
+                ++si;
+                ++ai;
+            }
+        }
+        return si==s1;
+    }
+};
+
+//more concise solution posted by @zyoppy008 
+class Solution {
+public:
+    bool validWordAbbreviation(string word, string abbr) {
+        int i = 0, j = 0;
+        while (i < word.size() && j < abbr.size()) {
+            if (isdigit(abbr[j])) {
+                if (abbr[j] == '0') return false;
+                int val = 0;
+                while (j < abbr.size() && isdigit(abbr[j])) 
+                    val = val * 10 + abbr[j++] - '0';
+                i += val;
+            }
+            else if (word[i++] != abbr[j++]) return false;
+        }
+        return i == word.size() && j == abbr.size();
+    }
+};
