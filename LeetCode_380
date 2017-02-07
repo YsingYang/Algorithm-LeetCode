@@ -1,0 +1,40 @@
+//simple ider that using swap(nums[removeval],nums[back]) pass the test
+
+class RandomizedSet {
+unordered_map<int,int> mp;
+vector<int> get;
+int count;
+public:
+    /** Initialize your data structure here. */
+    RandomizedSet() {
+        count = 0;
+    }
+    
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    bool insert(int val) {
+        if(mp.find(val)!=mp.end())
+            return false;
+        mp[val] = count;
+        get.push_back(val);
+        ++count;
+        return true;
+    }
+    
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    bool remove(int val) {
+        if(mp.find(val)==mp.end())
+            return false;
+        int temp = get.back(),valIndex = mp[val];
+        mp[temp] = valIndex;
+        --count;
+        swap(get[valIndex],get[count]);
+        mp.erase(val);
+        get.pop_back();
+        return true;
+    }
+    
+    /** Get a random element from the set. */
+    int getRandom() {
+       return get[rand()%count];
+    }
+};
