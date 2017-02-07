@@ -1,0 +1,94 @@
+//My c++ solution beat 100%,maybe we could improve it by replacing the unordered_set to vector;
+class RandomizedCollection {
+vector<int> numbers;
+unordered_map<int,unordered_set<int>> mp;
+int count;
+public:
+    /** Initialize your data structure here. */
+    RandomizedCollection() {
+        count = 0;
+    }
+    
+    /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
+    bool insert(int val) {
+        bool res = mp.find(val)!=mp.end()&&mp[val].size()>0;
+        numbers.push_back(val);
+        mp[val].insert(count++);
+        return !res;
+    }
+    
+    /** Removes a value from the collection. Returns true if the collection contained the specified element. */
+    bool remove(int val) {
+        if(mp.find(val)==mp.end()||mp[val].size()==0)
+            return false;
+        if(val==numbers.back()){
+            mp[val].erase(--count);
+        }
+        else{
+            int temp = numbers.back(),index = *(mp[val].begin());
+            swap(numbers[--count],numbers[index]);
+            mp[temp].erase(count);
+            mp[val].erase(index);
+            mp[temp].insert(index);
+        }
+        numbers.pop_back();
+        return true;
+        
+    }
+    
+    /** Get a random element from the collection. */
+    int getRandom() {
+        return numbers[rand()%count];
+    }
+};
+
+//Other solution with unordered_multimap,I hadn't used it,so I can learn a lot things in it;
+class RandomizedCollection {
+private:
+    std::vector<int> nums;
+    std::unordered_multimap<int, int> pcmap; 
+public:
+    /** Initialize your data structure here. */
+    RandomizedCollection()  {
+    }
+    
+    /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
+    bool insert(int val) {
+        nums.push_back(val);
+        int count = pcmap.count(val);
+        pcmap.insert(std::make_pair(val, nums.size() - 1));
+        return count == 0;
+    }
+    
+    /** Removes a value from the collection. Returns true if the collection contained the specified element. */
+    bool remove(int val) {
+        auto iter = pcmap.find(val);
+        if (iter == pcmap.end())
+            return false;
+        
+        int pos = iter->second;
+        pcmap.erase(iter, std::next(iter));   //same as(erase(iter,++iter)? It's a good way to erase a elements but not erase all of key of value;
+        
+        int lastVal = nums.back();
+        nums[pos] = lastVal;
+        
+        // Special case in consideration: remove the last inserted value (count: 0->1)
+        for (auto iterLast = pcmap.find(lastVal); iterLast != pcmap.end(); iterLast++) {
+            if (iterLast->second == nums.size() - 1) {
+                pcmap.erase(iterLast, std::next(iterLast));
+                pcmap.insert(std::make_pair(lastVal, pos));
+                break; // break early to avoid meaningless loops
+            }  
+        } 
+        
+        nums.pop_back();  // pop last 
+       
+        return true;
+    }
+    
+    /** Get a random element from the collection. */
+    int getRandom() {
+        int pos = rand() % nums.size();
+        return nums[pos];
+    }
+};
