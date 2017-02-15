@@ -1,0 +1,99 @@
+This problem is similar to Reverse Pair 495?
+
+//solution with binary Tree 
+class Solution {
+
+class TreeNode{
+public:
+    int val,count;
+    TreeNode *left,*right;
+    TreeNode(int v): val(v),count(1),left(nullptr),right(nullptr){}
+};
+public:
+    vector<int> countSmaller(vector<int>& nums) {
+        int size = nums.size();
+        vector<int> res(size);
+        if(nums.empty())
+            return res;
+        TreeNode *root = new TreeNode(nums[size-1]);
+        for(int i=size-2;i>=0;--i){
+            res[i] = CountNum(root,nums[i]);
+            insert(root,nums[i]);
+        }
+        return res;
+    }
+    
+    int CountNum(TreeNode *root,const int val){
+        if(!root)
+            return 0;
+        if(val>root->val){
+            return root->count + CountNum(root->right,val);
+        }
+        else{
+            return CountNum(root->left,val);
+        }
+    }
+    
+    TreeNode* insert(TreeNode *root,int val){
+        if(!root){
+            root = new TreeNode(val);
+            return root;
+        }
+        if(root->val==val){
+            ++root->count;
+            return root;
+        }
+        else if(root->val>val){
+            ++root->count;
+            root->left =  insert(root->left,val);
+            return root;
+        }
+        else{
+            root->right = insert(root->right,val);
+            return root;
+        }
+    }
+};
+
+//solution with binary indexed tree , But I still confused in what's points in it;
+class Solution {
+public:
+    vector<int> countSmaller(vector<int>& nums) {
+        if(nums.empty())
+            return {};
+        int size = nums.size();
+        vector<int> res(size,0);
+        int minVal = INT_MAX,maxVal = INT_MIN;
+        for(int i=0;i<size;++i){
+            minVal = min(minVal,nums[i]);
+        }
+        vector<int> array(size);
+        for(int i=0;i<size;++i){
+            array[i] = nums[i] - minVal +1;
+            maxVal = max(array[i],maxVal);
+        }
+        vector<int> tree(maxVal+1);
+        for(int i=size-1;i>=0;--i){
+            res[i] = read(tree,array[i]-1);
+            update(tree,array[i]);    
+        }
+        return res;
+    }
+    
+private:
+    int read(vector<int>&bit,int indexed){
+        int count = 0;
+        while(indexed > 0){
+            count += bit[indexed];
+            indexed -= (indexed & (-indexed));
+        }
+        return count;
+    }
+    
+    void update(vector<int>&bit,int indexed){
+        while(indexed < bit.size()){
+            ++bit[indexed];
+            indexed += (indexed & (-indexed));
+        }
+    }
+};
