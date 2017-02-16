@@ -1,0 +1,18 @@
+//Solution with sliding windows
+
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) {
+        vector<int> mp(128);
+        int l=0,r=0,distCount = 0,size = s.size(),res = 0;
+        while(r<size){
+            distCount  += (++mp[s[r++]]==1);
+            while(distCount>k){
+                if((--mp[s[l++]])==0)
+                    --distCount;
+            }
+            res = max(res,r-l);
+        }
+        return res;
+    }
+};
