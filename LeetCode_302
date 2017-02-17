@@ -1,0 +1,49 @@
+//BinarySearch,
+
+class Solution {
+//当二分查找的右边缘为数组的size时，找不到对象返回的是数组的end(),相当于偏右操作，在偏右操作情况下，f = mid +1 ,l = mid不会出现死循环
+public:
+    int minArea(vector<vector<char>>& image, int x, int y) {
+        if(image.empty())
+            return 0;
+        int rs = image.size(),cs = image[0].size();
+        int yr = binarySearchCol(image,y+1,cs,rs,true);
+        int yl = binarySearchCol(image,0,y,rs,false);
+        //cout<<yr<<"  "<<yl<<endl;
+        int xt = binarySearchRow(image,0,x,yl,yr,false);
+        int xb = binarySearchRow(image,x+1,rs,yl,yr,true);
+        //cout<<xt<<"   "<<xb<<endl;
+        return (xb-xt)*(yr-yl);
+    }
+    
+    int binarySearchCol(vector<vector<char>> &image,int f,int l,int bottom,bool opt){
+        int mid;
+        while(f<l){
+            mid  = f + ((l-f)>>1);
+            //cout<<mid<<endl;
+            int i=0;
+            while(i<bottom&&image[i][mid]=='0')
+                ++i;
+            if((i!=bottom)==opt)
+                f = mid+1;
+            else
+                l = mid;
+        }
+        return f;
+    }
+    
+    int binarySearchRow(vector<vector<char>>&image,int f,int l,int top,int bottom,bool opt){
+        int mid;
+        while(f<l){
+            mid  = f + ((l-f)>>1);
+            int i=top;
+            while(i<bottom&&image[mid][i]=='0')
+                ++i;
+            if((i!=bottom)==opt)
+                f = mid+1;
+            else
+                l = mid;
+        }
+        return f;
+    }
+};
