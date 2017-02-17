@@ -1,0 +1,44 @@
+/*
+  My solution with using unordered_map and u_set,unordered_map is used to record a pattern letter point to a substring,
+  if we meet the same letter after,matching the substring ,if they are same substr,continue to matched next letter;
+
+*/
+class Solution {
+public:
+    bool wordPatternMatch(string pattern, string str) {
+        unordered_map<char,string> mp;
+                //one pattern matched one substr
+        unordered_set<string> matched;
+                //recording which string had be matched
+        return backtracking(pattern,str,mp,0,0,matched);
+    }
+private:
+    bool backtracking(const string&pattern,const string &str,unordered_map<char,string> &mp,int pindex,int sindex,unordered_set<string> &matched){
+        int ps = pattern.size(), ss = str.size();
+        if(pindex==ps)
+            return sindex==ss;
+                //Recursive export
+        if(mp.find(pattern[pindex])!=mp.end()){
+            string tmp = mp[pattern[pindex]];
+            if(str.substr(sindex,tmp.size())!=tmp)
+                return false;
+            return backtracking(pattern,str,mp,pindex+1,sindex+tmp.size(),matched)
+                
+        }
+        else {
+            for(int j=sindex;j<=ss-ps+pindex;++j){
+                int len = j-sindex+1;
+                string tmp = str.substr(sindex,len);
+                if(matched.find(tmp)!=matched.end())
+                    continue;
+                mp[pattern[pindex]]  = tmp;
+                matched.insert(tmp);
+                if(backtracking(pattern,str,mp,pindex+1,sindex+len,matched))
+                    return true;
+                matched.erase(tmp);
+            }
+            mp.erase(pattern[pindex]);
+        }
+        return false;
+    }
+};
