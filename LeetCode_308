@@ -1,0 +1,54 @@
+//My solution with bianry indexed tree
+
+class NumMatrix {
+vector<vector<int>> BIT;
+int rs,cs;
+
+
+void BITUpdate(int x,int y,int val){
+    x += 1;
+    int inity = y+1;
+    while(x<=rs){
+        y = inity;
+        while(y<=cs){
+            BIT[x][y] += val;
+            y += (y&-y);
+        }
+        x += (x&-x);
+    }
+}//update val in BIT;
+
+int BITRead(int x,int y){
+    int count = 0,inity = y;
+    while(x>0){
+        y = inity;
+        while(y>0){
+            count += BIT[x][y];
+            y -= (y&-y);
+        }
+        x -= (x&-x);
+    }
+    return count;//read val in BIT[x][y]
+}
+public:
+    NumMatrix(vector<vector<int>> matrix) {
+        if(!matrix.empty()){
+            rs = matrix.size();
+            cs = matrix[0].size();
+            BIT = vector<vector<int>> (rs+1,vector<int>(cs+1));
+            for(int i = 0;i<rs;++i){
+                for(int j=0;j<cs;++j){
+                    BITUpdate(i,j,matrix[i][j]);
+                }
+            }
+        }
+    }
+    void update(int row, int col, int val) {
+        val -= BITRead(row+1,col+1) + BITRead(row,col) - BITRead(row+1,col) - BITRead(row,col+1);
+        BITUpdate(row,col,val);
+    }
+    
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        return BITRead(row2+1,col2+1)+BITRead(row1,col1)-BITRead(row2+1,col1)-BITRead(row1,col2+1);//considering we want to get sum of the region,It's not just BITRead(row2+1,col+1) - BITRead(row1,col2+1),if done it ,we get the region about region like a reverse "L" ,
+    }
+};
