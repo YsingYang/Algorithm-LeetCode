@@ -1,0 +1,100 @@
+//My solution,I think it would be faster if we begin at the building index instead of '0';
+
+class Solution {
+public:
+    int shortestDistance(vector<vector<int>>& grid) {
+        //BFS到达的第一次是不是最短距离
+        if(grid.empty())
+            return -1;
+        int res = INT_MAX;
+        vector<vector<int>> direction = {{-1,0},{1,0},{0,-1},{0,1}};
+        int rs = grid.size(),cs = grid[0].size(),count = 0;
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                if(grid[i][j] == 1)
+                    ++count;
+            }
+        }
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                if(grid[i][j] == 0){
+                    res = min(res,BFStravel(grid,rs,cs,i,j,direction,count));
+                }
+            }
+        }
+        /*while(!pq.empty()){
+            cout<<pq.top()<<"  ";
+            pq.pop();
+        }*/
+        return res==INT_MAX?-1:res;
+    }
+    
+    int BFStravel(vector<vector<int>> grid,const int &rs,const int &cs,int x,int y,const vector<vector<int>> &dir,int cnt){
+        queue<pair<int,int>> que;
+        int count = 0,step = 0;
+        que.emplace(x,y);
+        int row,col,nextRow,nextCol;
+        while(!que.empty()){
+            int size = que.size();
+            for(int i=0;i<size;++i){
+                row = que.front().first,col= que.front().second;
+                que.pop();
+                if(grid[row][col]==3){
+                    //cout<<step<<"  "<<row<<"    "<<col<<endl;
+                    --cnt;
+                    count += step;
+                    continue;
+                }
+                for(int j=0;j<4;++j){
+                    nextRow = row + dir[j][0];
+                    nextCol = col + dir[j][1];
+                    if(nextRow>=0&&nextRow<rs&&nextCol>=0&&nextCol<cs&&(grid[nextRow][nextCol]==0||grid[nextRow][nextCol]==1)){
+                        que.emplace(nextRow,nextCol);//emplace使用的条件是？
+                        grid[nextRow][nextCol] |= 2;
+                    }
+                }
+            }
+            ++step;
+            //cout<<que.size()<<"    "<<step<<endl;
+        }
+        return cnt!=0?INT_MAX:count;
+    }
+};
+
+//faster idea
+class Solution {
+public:
+    int shortestDistance(vector<vector<int>> grid) {
+    int m = grid.size(), n = grid[0].size();
+    auto total = grid;
+    int walk = 0, mindist, delta[] = {0, 1, 0, -1, 0};
+    for (int i=0; i<m; ++i) {
+        for (int j=0; j<n; ++j) {
+            if (grid[i][j] == 1) {
+                mindist = -1;
+                auto dist = grid;
+                queue<pair<int, int>> q;
+                q.emplace(i, j);
+                while (q.size()) {
+                    auto ij = q.front();
+                    q.pop();
+                    for (int d=0; d<4; ++d) {
+                        int i = ij.first + delta[d];
+                        int j = ij.second + delta[d+1];
+                        if (i >= 0 && i < m && j >= 0 && j < n && grid[i][j] == walk) {
+                            grid[i][j]--;
+                            dist[i][j] = dist[ij.first][ij.second] + 1;//因为从build
+                            total[i][j] += dist[i][j] - 1;//因为从build开始，building起始值为１
+                            q.emplace(i, j);
+                            if (mindist < 0 || mindist > total[i][j])
+                                mindist = total[i][j];
+                        }
+                    }
+                }
+                walk--;
+            }
+        }
+    }
+    return mindist;
+    }
+};
