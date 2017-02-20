@@ -1,0 +1,64 @@
+
+class Solution {
+//according to a post in discuss,We just use pair is enough,therefore ,we don's have to write a overload operator,just use pair<int,char>
+struct letter{
+public:
+    int count;
+    char alpha;
+    letter(char c):count(1),alpha(c){};
+};
+
+struct nodecompare{
+    bool operator() (const letter* a,const letter* b){
+        if(a->count!=b->count)
+            return a->count<b->count;
+        else{
+            return a->alpha>b->alpha;
+        }
+    };
+};
+
+
+public:
+    string rearrangeString(string s, int k) {
+        int size = s.size();
+        if(k==0)
+            return s;
+        vector<letter*> mp(26,nullptr);
+        for(int i=0;i<size;++i){
+            if(mp[s[i]-'a']==nullptr){
+                letter *lt = new letter(s[i]);
+                mp[s[i]-'a'] = lt;
+            }
+            else{
+                ++mp[s[i]-'a']->count;
+            }
+        }
+        priority_queue<letter*,vector<letter*>,nodecompare> pq;
+        for(int i=0;i<26;++i){
+            if(mp[i]!=nullptr)
+                pq.push(mp[i]);
+        }
+        string res;
+        int length;
+        while(!pq.empty()){//每次push_back,最小长度min(k,size),由于size是逐渐变化的，贪心的准则是多的先放，放完length进入下一个循环，
+            vector<letter*> cache;
+            length = min(k,size);
+            for(int i=0;i<length;++i){
+                if(pq.empty())
+                    return "";
+                letter* tmp = pq.top();
+                pq.pop();
+                res.push_back(tmp->alpha);
+                if(--tmp->count!=0){
+                    cache.push_back(tmp);
+                }
+                --size;
+            }
+            for(int i=0;i<cache.size();++i){
+                pq.push(cache[i]);
+            }
+        }
+        return res;
+    }
+};
