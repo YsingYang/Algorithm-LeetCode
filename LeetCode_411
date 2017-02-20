@@ -1,0 +1,60 @@
+//brute force solution...just skip the TLE/MLE case = =..
+
+class Solution {
+public:
+    string minAbbreviation(string target, vector<string>& dictionary) {
+        if(dictionary.empty())
+            return to_string(target.size());
+        vector<pair<int,string>> pq;
+        pq = generalized(target);
+        int size = target.size();
+        sort(pq.begin(),pq.end(),[](const pair<int,string> &p1,const pair<int,string> &p2){
+           return p1.first>p2.first; 
+        });
+        while(!pq.empty()){
+            string s = pq.back().second;
+            int i=0;
+            for(;i<dictionary.size();++i){
+                if(dictionary[i].size()==size&&validWordAbbreviation(dictionary[i],s)){
+                    pq.pop_back();
+                    break;
+                }
+            }
+            if(i==dictionary.size())
+                return s;
+        }
+        return "null";
+    }
+    
+    bool validWordAbbreviation(const string &word, const string &abbr) {
+        int i = 0, j = 0;
+        while (i < word.size() && j < abbr.size()) {
+            if (isdigit(abbr[j])) {
+                if (abbr[j] == '0') return false;
+                int val = 0;
+                while (j < abbr.size() && isdigit(abbr[j])) 
+                    val = val * 10 + abbr[j++] - '0';
+                i += val;
+            }
+            else if (word[i++] != abbr[j++]) return false;
+        }
+        return i == word.size() && j == abbr.size();
+    }
+     
+    vector<pair<int,string>> generalized(const string &s){
+        vector<pair<int, string>> pq;
+        generalizedAbbre(pq,s,"",0,0,0);
+        return pq;
+    }
+    
+    void generalizedAbbre( vector<pair<int,string>> &pq,const string &s,string cur,int index,int count,int cnt){
+        if(index == s.size()){
+            if(count>0)
+                cur += to_string(count);
+            pq.emplace_back(cnt,cur);
+            return;
+        }
+        generalizedAbbre(pq,s,cur,index+1,count+1,cnt + (count==0));
+        generalizedAbbre(pq,s,cur+(count>0?to_string(count):"")+s[index],index+1,0,cnt+1);
+    }
+};
