@@ -58,3 +58,82 @@ public:
         generalizedAbbre(pq,s,cur+(count>0?to_string(count):"")+s[index],index+1,0,cnt+1);
     }
 };
+
+
+
+
+@topcoder007 solution with bit manipulation'
+
+class Solution {
+int size , bn ,candidate,minLen=INT_MAX,minAbbr;
+vector<int> dict;
+//size -> target.size(),bn -> bitBound,candidate->bit candidate,minLen->current minLen,minAbbr record cur minAbbr;
+//If the bit is appropriate,it would not &dict ==0，0
+
+private:
+    int getAbbrLen(int mask){//bit为0时，为缩写
+        int count = size;
+        for(int i=3;i<bn;i<<=1){
+            if((i&mask)==0)
+                --count;
+        }
+        return count;
+    }
+    
+    void dfs(int bit,int mask){
+        int len = getAbbrLen(mask);
+        if(len>=minLen){
+            return;
+        }
+        int match = true;
+        for(int i=0;i<dict.size();++i){
+            if((mask&dict[i])==0){
+                match = false;
+                break;
+            }
+        }
+        if(match){
+            minAbbr = mask;
+            minLen = len;
+        }
+        else{
+            for(int i=bit;i<bn;i<<=1){
+                if(candidate&i){
+                    dfs(i<<1,mask+i);
+                }
+            }
+        }
+    }
+public:
+    string minAbbreviation(string target, vector<string>& dictionary) {
+        size = target.size(),bn = 1<<size,candidate = 0;
+        for(int i=0;i<dictionary.size();++i){
+            int word = 0;
+            if(dictionary[i].size()!=size)
+                continue;
+            for(int bit = 1,j=size-1;j>=0;bit<<=1,--j){
+                if(dictionary[i][j]!=target[j]){
+                    word += bit;
+                }
+            }
+            dict.push_back(word);
+            candidate |= word;
+        }
+        dfs(1,0);
+        //reconstructor
+        string res;
+        int count = 0;
+        for(int i=0;i<size;++i){
+            if((minAbbr>>(size-i-1))&1){
+                res += (count>0?to_string(count):"") + target[i];
+                count = 0;
+            }
+            else{
+                ++count;
+            }
+        }
+        if(count>0)
+            res += to_string(count);
+        return res;
+    }
+};
