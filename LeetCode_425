@@ -1,0 +1,70 @@
+//solution with using trie(字典/前缀树),also,you can use hash_map to cache prefix of words[i]
+
+class Solution {
+    //使用字典树记录前缀;
+private:
+    struct Trie{
+        public:
+            Trie(){
+                dict.resize(26,nullptr);
+            }
+            vector<int> index;
+            vector<Trie*> dict;
+    };
+    
+    
+    Trie* buildTrie(vector<string> &words){
+        Trie *root = new Trie();
+        for(int i=0;i<words.size();++i){
+            Trie *tmp = root;
+            root->index.push_back(i);
+            for(int j=0;j<words[i].size();++j){
+                if(tmp->dict[words[i][j]-'a']==nullptr){
+                    tmp->dict[words[i][j]-'a'] = new Trie();
+                }    
+                tmp = tmp->dict[words[i][j]-'a'];
+                tmp->index.push_back(i);
+            }
+        }
+        return root;
+    }
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) {
+        vector<vector<string>> res;
+        if(words.empty()){
+            return res;
+        }
+        Trie *root = buildTrie(words);
+        int bound = words[0].size();
+        vector<string> sol(bound);
+        int size = words.size();
+        backtracking(words,res,sol,0,bound,root);
+        return res;
+        
+    }
+    
+    void backtracking(const vector<string>& words,vector<vector<string>> &res,vector<string> &sol,int index,const int &bound,Trie *root){//将Trie变成const
+        if(index == bound){
+            res.push_back(sol);
+            return ;
+        }
+        string prefix;
+        for(int i=0;i<index;++i){
+            prefix += sol[i][index];
+        }
+        
+        //记录组合成的Square前缀;
+        Trie *tmp = root;
+        for(int i=0;i<prefix.size();++i){
+            if(tmp->dict[prefix[i]-'a']==nullptr)
+                return;
+            tmp = tmp->dict[prefix[i]-'a'];
+        }
+        for(int i=0;i<tmp->index.size();++i){
+
+            sol[index] = words[tmp->index[i]];
+            backtracking(words,res,sol,index+1,bound,root);
+        }
+
+    }
+};
