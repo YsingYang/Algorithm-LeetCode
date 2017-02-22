@@ -1,0 +1,53 @@
+//simple naive　solution
+
+class Solution {
+//simple DFS solution
+public:
+    int minTransfers(vector<vector<int>>& transactions) {
+        unordered_map<int,long> mp;
+        /*
+          将每个人的debt算入一个unordered_map中，以计算最后这个人是欠债还是支出。
+        */
+        for(auto &i:transactions){
+            mp[i[0]] -= i[2];
+            mp[i[1]] += i[2];
+        }
+        for(auto &i:mp){
+            if(i.second!=0){
+                debt.push_back(i.second);//push非０的值，因为如果为０这个人相当于没收入也没支出
+            }
+        }
+        size = debt.size();
+        return DFS(0,0);
+        
+    }
+ 
+private:
+    int DFS(int index,int count){
+    /*
+      DFS搜索，相当于穷举，debt[i]|debt[j]<0，证明一个i与j可以相互抵资，进行进一步dfs搜索，否则continue;
+    
+    */
+    
+        int res = INT_MAX;
+        while(index<size&&debt[index]==0){
+            ++index;//跳过０值
+        }
+        for(int i=index+1;i<size;++i){
+            if((debt[i]|debt[index])<0){
+                debt[i] += debt[index];
+                res = min(res,DFS(index+1,count+1));
+                debt[i] -= debt[index];
+            }
+        }
+        /*
+        
+          res有两种情况，一种for循环中没有找到一个符合的值，所以res=INT_MAX,返回dfs深度count(有num个人最多只有num步);
+          
+        */
+        return res==INT_MAX?count:res;
+    }
+    vector<long> debt;
+    int size;
+        
+};
