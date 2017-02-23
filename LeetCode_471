@@ -1,0 +1,38 @@
+//开始我还想用O(n^2)解决这一道题，然后发现我还是too young to simple
+class Solution {
+    
+    vector<vector<string>> dp;
+    string canEncoding(const string &s,int i,int step){
+        string tmp = s.substr(i,step);
+        size_t pos = (tmp+tmp).find(tmp,1);
+        if(pos>=tmp.size()){
+            return tmp;
+        }
+        return to_string(tmp.size()/pos) +'[' + dp[i][i+pos-1] + ']';
+    }
+    
+public:
+    string encode(string s) {
+        int size = s.size();
+        dp = vector<vector<string>> (size,vector<string> (size));
+        for(int step = 1;step <= size;++step){//每个string开始跨步的步长
+            for(int i = 0; i+step-1<size;++i){//string的起始点
+                int j = i + step -1;             //substr的截止下标
+                dp[i][j] = s.substr(i,step);
+                for(int k = i; k<j;++k){//开始判断每个substr能否encoding
+                    string left = dp[i][k],right = dp[k+1][j];
+                    if(left.size()+right.size()<dp[i][j].size()){
+                        dp[i][j] = left + right;
+                    }
+                }
+                if(step>4){
+                    string tmp = canEncoding(s,i,step);
+                        if(tmp.size()<dp[i][j].size()){
+                        dp[i][j] = tmp;
+                    }
+                }
+            }
+        }
+        return dp[0][size-1];
+    }
+};
