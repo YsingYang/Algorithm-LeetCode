@@ -1,0 +1,94 @@
+/*
+    声明一个类成员windows,存储windows下的数组，当相应windows在原数组中移动时，push进新成员，并采用直插法，同时pop掉就数组元素
+    runtime 380ms ,
+*/
+
+class Solution {
+vector<int> windows;
+public:
+    vector<double> medianSlidingWindow(vector<int>& nums, int k) {
+        vector<double> res;
+        int begin = 0;
+        for(int i=0;i<nums.size();++i){
+            int size = windows.size();
+            if(size<k){
+                windows.push_back(nums[i]);
+                int j = size;
+                while(j>0&&windows[j]<windows[j-1]){
+                    swap(windows[j],windows[j-1]);
+                    --j;
+                }
+                if((size+1)==k){
+                    res.push_back(windows[(size>>1)]/2.0+windows[(size+1)>>1]/2.0);//avoid overflowing
+                    int pos = findPos(nums[begin]);
+                    ++begin;
+                    while(pos<size){
+                        swap(windows[pos],windows[pos+1]);
+                        ++pos;
+                    }
+                    windows.pop_back();
+                    /*
+                        找到begin元素，pop出相应数组
+                    */
+                }
+            }
+        }
+        return res;
+    }
+    
+    int findPos(int num){//可以用二分查找优化
+        int front = 0,rear = windows.size(),mid;
+        while(front<=rear){
+            mid = front + ((rear-front)>>1);
+            if(windows[mid] == num)
+                return mid;
+            else if(windows[mid]>num){
+                rear = mid -1;
+            }
+            else 
+                front = mid + 1;
+        }
+        return -1;
+    }
+};
+
+
+
+//solution with multiset,significant idea that using ++mid and --mid iterator,and this operator just O(1) time-complexity to find 
+//median in next windows
+
+/*
+    声明一个类成员windows,
+    
+    template <class ForwardIterator>
+        ForwardIterator next (ForwardIterator it,
+            typename iterator_traits<ForwardIterator>::difference_type n = 1);
+*/
+
+class Solution {
+public:
+    vector<double> medianSlidingWindow(vector<int>& nums, int k) {
+        multiset<int> windows(nums.begin(), nums.begin() + k);
+        vector<double> res;
+        auto pos = next(windows.begin(),k>>1);//先提前找到mid的位置。
+        int begin = 0;
+        for(int i=k;;++i){
+            //int size = windows.size();
+            double median =  *pos/2.0 + *next(pos,k%2-1)/2.0;
+            res.push_back(median);//avoid overflowing
+            if(i==nums.size())
+                return res;
+            windows.insert(nums[i]);
+            if(nums[i]<*pos){
+                --pos;//大于等于是插入到后部，对mid没有影响
+            }
+            if(nums[i-k]<=*pos){
+                ++pos;//这里等于会起影响，删除前部需要++pos,
+            }
+            /*
+                起始上面两个判断选择同一个方向就好， 不管前部还是后部,判断大于好像会报runtime error , 应该是++pos操作指向了end(),而且如果要改的话应该还要改上median的求法，因为该median 是指向中位偏高一位的数的
+            */
+            windows.erase(windows.lower_bound(nums[i-k]));
+        }
+    }
+};
