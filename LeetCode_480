@@ -63,7 +63,11 @@ public:
     template <class ForwardIterator>
         ForwardIterator next (ForwardIterator it,
             typename iterator_traits<ForwardIterator>::difference_type n = 1);
+            
 */
+
+
+//multiset iterator -> bidirectional iterator
 
 class Solution {
 public:
