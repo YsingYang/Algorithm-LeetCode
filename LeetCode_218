@@ -51,3 +51,34 @@ public:
 };
 
 
+class Solution {
+public:
+    vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
+        vector<pair<int,int>> mp;
+        for(int i=0;i<buildings.size();++i){
+            mp.emplace_back(buildings[i][0],-buildings[i][2]);
+            mp.emplace_back(buildings[i][1],buildings[i][2]);
+        }
+        
+        sort(mp.begin(),mp.end());
+        vector<pair<int,int>> res;
+        multiset<int> heigh = {0};
+        int pre = -1,heighest;
+        pair<int,int> temp;
+        for(int i=0;i<mp.size();++i){
+            temp = mp[i];
+            if(temp.second<0)
+                heigh.insert(-temp.second);
+            else
+                heigh.erase(heigh.find(temp.second));//不存在0?
+            
+            heighest = *heigh.rbegin();
+            if(heighest != pre){
+                res.emplace_back(temp.first,heighest);
+                pre = heighest;
+            }
+        }
+        return res;
+        
+    }
+
