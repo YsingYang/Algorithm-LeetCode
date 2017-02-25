@@ -27,12 +27,12 @@ public:
                 }
             }
             if(!res.empty()&&buildings[i][0]==res.back().first){
-                res.pop_back();
+                res.pop_back();//避免重复以及批邻的点
             }
             pq.push(buildings[i]);
             vector<int> tmp = pq.top();
             if(res.empty()||(tmp[0]>res.back().first&&tmp[2]!=res.back().second)){
-                res.emplace_back(tmp[0],tmp[2]);
+                res.emplace_back(tmp[0],tmp[2]);//避免队列中重复的点
             }
         }
         while(!pq.empty()){
@@ -45,7 +45,9 @@ public:
                         continue;
                 res.emplace_back(LastEnd,NextHeigh);
             }
-        }
+        }//最后循环完后，确定最后一个点的位置
         return res;
     }
 };
+
+
