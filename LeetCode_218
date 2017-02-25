@@ -1,0 +1,51 @@
+//My solution with priority_queue
+
+class Solution {
+struct vectorCompare{
+    bool operator()(vector<int> const &v1,vector<int> const&v2){
+        return v1[2]<v2[2];
+    }
+};
+public:
+    vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
+        vector<pair<int,int>> res;
+        if(buildings.empty())
+            return res;
+        priority_queue<vector<int>,vector<vector<int>>,vectorCompare> pq;
+        pq.push(buildings[0]);
+        int size = buildings.size();
+        for(int i=0;i<size;++i){
+            while(!pq.empty()&&buildings[i][0]>=pq.top()[1]){
+                int LastEnd = pq.top()[1];
+                while(!pq.empty()&&pq.top()[1]<=LastEnd)
+                    pq.pop();
+                int NextHeigh = pq.empty()?0:pq.top()[2];
+                if(LastEnd > res.back().first){
+                    if(NextHeigh == res.back().second)
+                        continue;
+                    res.emplace_back(LastEnd,NextHeigh);
+                }
+            }
+            if(!res.empty()&&buildings[i][0]==res.back().first){
+                res.pop_back();
+            }
+            pq.push(buildings[i]);
+            vector<int> tmp = pq.top();
+            if(res.empty()||(tmp[0]>res.back().first&&tmp[2]!=res.back().second)){
+                res.emplace_back(tmp[0],tmp[2]);
+            }
+        }
+        while(!pq.empty()){
+            int LastEnd = pq.top()[1];
+            while(!pq.empty()&&pq.top()[1]<=LastEnd)
+                pq.pop();
+            int NextHeigh = pq.empty()?0:pq.top()[2];
+            if(LastEnd > res.back().first){
+                if(NextHeigh == res.back().second)
+                        continue;
+                res.emplace_back(LastEnd,NextHeigh);
+            }
+        }
+        return res;
+    }
+};
