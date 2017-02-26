@@ -1,0 +1,45 @@
+//PreCode
+class Solution {
+public:
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int preSum = 0;
+        unordered_map<int,pair<int,int>> mp;
+        mp[0] = {-1,0};
+        for(int i=0;i<nums.size();++i){
+            preSum += nums[i];
+            int diff = (k==0?preSum:preSum%k);
+            //cout<<diff<<mp[diff].second<<endl;
+            //cout<<int(mp.find(diff)!=mp.end())<<"  "<<(int)(i-mp[diff].first>1)<<"  "<<(int)(((k==0&&preSum==0)||(preSum-mp[diff].second)%k==0))<<endl;
+            if(mp.find(diff)!=mp.end()&&i-mp[diff].first>1&&((k==0&&preSum==0)||(preSum-mp[diff].second)%k==0))
+                return true;
+            
+            if(mp.find(diff)==mp.end())
+                mp[diff] = {i,preSum};
+            //cout<<preSum-mp[diff].second<<endl;
+        }
+        return false;
+    }
+};
+
+
+//modify
+
+
+class Solution {
+public:
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int preSum = 0;
+        unordered_map<int,int> mp;
+        mp[0] = -1;
+        for(int i=0;i<nums.size();++i){
+            preSum += nums[i];
+            int diff = (k==0?preSum:preSum%k);
+            if(mp.find(diff)!=mp.end()&&i-mp[diff]>1)
+                return true;
+            if(mp.find(diff)==mp.end())
+                mp[diff] = i;
+            //cout<<preSum-mp[diff].second<<endl;
+        }
+        return false;
+    }
+};
