@@ -1,0 +1,52 @@
+class Solution {
+int rsize ,csize;
+vector<vector<int>> temp;
+queue<vector<int>> que;
+public:
+    vector<vector<char>> updateBoard(vector<vector<char>>& board, vector<int>& click) {
+        rsize = board.size();
+        csize = board[0].size();
+        que.push(click);
+        while(!que.empty()){
+            vector<int> check = que.front();
+            que.pop();
+            if(board[check[0]][check[1]] == 'M'){
+                board[check[0]][check[1]] = 'X';
+                return board;
+            }
+            else{
+                int count = checkSquare(board,check[0],check[1]);
+                if(count>0){
+                    board[check[0]][check[1]] = count+ '0';
+                }
+                else{
+                    board[check[0]][check[1]] = 'B';
+                    for(auto i:temp){
+                        board[i[0]][i[1]] = 'W';
+                        que.emplace(i[0],i[1]);//不能emplace一个vector吗
+                    }
+                }
+                temp.clear();
+            }
+        }
+        return board;
+    }
+    int checkSquare(const vector<vector<char>> &board,int row,int col){
+        int rstart = row-1<0?0:row-1,cstart = col-1<0?0:col-1;
+        int rend = row+1>=rsize?rsize-1:row+1,cend = col+1>=csize?csize-1:col+1;
+        int count = 0;
+        for(int i=rstart;i<=rend;++i){
+            for(int j=cstart;j<=cend;++j){
+                if(i==row&&j==col)
+                    continue;
+                if(board[i][j]=='M'){
+                    ++count;
+                }
+                else if(board[i][j] == 'E'){
+                    temp.push_back(vector<int>{i,j});
+                }
+            }
+        }
+        return count;
+    }
+};
