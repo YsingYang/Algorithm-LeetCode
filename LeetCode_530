@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int getMinimumDifference(TreeNode* root) {
+        //int maxdiff = INT_MAX;
+        return get(root);
+
+    }
+    
+    int get(TreeNode *root){
+        if(!root)
+            return INT_MAX;
+        int left = get(root->left);
+        int right = get(root->right);
+        int val;
+        //int thisdiff = min(abs(root->val-findMin(root->left,0)),abs(root->val - findMin(root->right,1)));
+        int leftdiff = ((val = findMin(root->left,0))==INT_MIN?INT_MAX:abs(root->val-val));
+        int rightdiff = ((val= findMin(root->right,1))==INT_MIN?INT_MAX:abs(root->val-val));
+        return min(left,min(right,min(leftdiff,rightdiff)));
+        
+    }
+    
+    int findMin(TreeNode *root,int flag){
+        if(flag==0&&root){
+            if(root->right)
+                return findMin(root->right,flag);
+            else
+                return root->val;
+        }
+        else if(flag&&root){
+            if(root->left)
+                return findMin(root->left,flag);
+            else
+                return root->val;
+        }
+        else 
+            return root?root->val:INT_MIN;
+    }
+    
+    
+};
