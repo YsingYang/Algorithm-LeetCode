@@ -1,0 +1,48 @@
+/*
+
+    Simple DFS solution,这道题有几个难点
+    1.对于头为0串的处理。
+    2.由于乘法的存在，运算优先级的处理
+    3.处理的数不一定是单个个位数
+    
+    依次，最简单想到的方法就是backtracking方法，每个backtracking中有一个loop,该loop不是循环index ,而是决定当前处理多少个substr的数
+    ，同时记录pvNum(上次处理的数)，和curCnt（当前的和）,pvNum主要是处理*法优先级问题的。我们可以通过curCnt-pvNum + pvNum *n改变上一次运算的结果
+    使得他与这一次乘法的乘数相乘，再加上上上次运算的结果
+    
+    runtime(120ms) beat80%
+    time complxity :估计大概有n3^n?;
+*/
+
+class Solution {
+public:
+    vector<string> addOperators(string num, int target) {
+        int size = num.size();
+        dfs(num,target,0,0,0,"");
+        return res;
+    }
+    
+    void dfs(const string &num,const int &target,int pos,long long curCnt,long long pvNum,string candidata){
+        if(pos==num.size()&&curCnt == target){
+            res.push_back(candidata);
+            return ;
+        }
+        for(int i=1;i<=num.size()-pos;++i){
+            //cout<<i<<endl;
+            string tmp = num.substr(pos,i);
+           // cout<<tmp<<endl;
+            long long n = stol(tmp);
+            if(i>1&&tmp[0]=='0')
+                continue;
+            if(pos==0){
+                dfs(num,target,i,n,n,tmp);
+                continue;
+            }
+            dfs(num,target,pos+i,curCnt+n,n,candidata + '+' + tmp);
+            dfs(num,target,pos+i,curCnt-n,-n,candidata + '-' + tmp);
+            dfs(num,target,pos+i,curCnt-pvNum + pvNum *n,pvNum*n,candidata + '*' + tmp);
+        }
+    }
+    
+private:
+    vector<string> res;
+};
