@@ -1,0 +1,80 @@
+/*
+    其实跟之前想的差别不了多少，主要是一个地方想错了，如果碰到一个比当前st.top()高的，补仅仅是height[i] - st.top()，而是应该
+    st.pop()后，取min(height[i],height[s.top()],- 刚刚pop出来的值，就是可以加水的槽，另外一点是，注意0也是要push进去的，不然3,0,2,1这样的case
+    就与正确值不符合了
+
+*/
+
+
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        stack<int> s;
+        int max_water(0);
+        int i(0);
+        while (i<height.size()) {
+            if (s.empty()||height[i]<=height[s.top()]) {
+                s.push(i++);
+            } else {
+                int bot=height[s.top()];
+                s.pop();
+                max_water+=s.empty()?0:((min(height[i],height[s.top()])-bot)*(i-s.top()-1));//与我之前想的区别关键在这一步
+            }
+        }
+        return max_water;
+    }
+};
+
+/*
+    Two point 方法，每次选取一个最小的值，与level做比较，这一level算是除去最大值外能作为障碍的一个点
+    通过level - lower能得到每个点能加入水的高度
+
+*/
+
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int l=0,r = height.size()-1;
+        int res =0,level=0,lower =0;
+        while(l<=r){
+            lower = height[height[l]>height[r]?r--:l++];
+            level = max(level,lower);
+            res += (level - lower);
+        }
+        return res;
+    }
+};
+
+
+/*
+  Solution-3 ,其实为solution-2复杂化的解决方法，思路差不多
+*/
+
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int left = 0,right = height.size()-1,res = 0;
+        int maxLVal=0,maxRVal=0;
+        while(left<=right){
+            if(height[left]<=height[right]){
+                if(height[left]<maxLVal){
+                    res += maxLVal - height[left];
+                }
+                else{
+                    maxLVal = height[left];
+                }
+                ++left;
+            }
+            else{
+                if(height[right]<maxRVal){
+                    res += maxRVal - height[right];
+                }
+                else{
+                    maxRVal = height[right];
+                }
+                --right;
+            }
+        }
+        return res;
+    }
+};
