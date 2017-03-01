@@ -1,0 +1,32 @@
+/*
+
+    buttom-up的dynamic programming 方法，但我感觉这种buttom up得有点奇怪，优先对于该子解
+    他的buttom 应该是基于数组的每个元素，因为剩下他们自己一个时，他们的最优解就是自身
+    但该buttom是基于step的，dp的bottom为连续元素的解，等到下一次step时，如up：left = 0,i =1, right =3
+    由于step2时已经记录下了bottom:left =1 i =2 right =3,所以相当于up中得到的解+上bottm的解 就是left 0,-right 3的解
+
+*/
+
+
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        int size = nums.size();
+        vector<int> cache(size+2);
+        int n=1;
+        for(;n<=size;++n){
+            cache[n] =  nums[n-1];
+        }
+        cache[0] = cache[n++] = 1;
+        vector<vector<int>> dp(n,vector<int> (n,0));
+        for(int k=2;k<n;++k){//step
+            for(int left = 0;left<n-k;++left){//left num
+                int right = left +k;//right num
+                for(int i=left+1;i<right;++i){
+                    dp[left][right] = max(dp[left][right],cache[left]*cache[i]*cache[right] + dp[left][i] + dp[i][right]);
+                }
+            }
+        }
+        return dp[0][n-1];
+    }
+};
