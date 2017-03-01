@@ -30,3 +30,40 @@ public:
         return dp[0][n-1];
     }
 };
+
+
+/*
+    Divide and Conquer up to bottom.这种divide and conque 基于top to bottom的方向且using Memoization的方法，得到跟dp一样的数组。
+    只是更新的方向不同，时间复杂度上差不多，d&c方法稍微比较好理解，但是相对来说还是dp的方法更快一些，在某种程度上Memoization避免了递归的重复子问题
+    但是避免不了的是d&c方法始终都会往重复子问题上搜，从而出现了无意义的递归，返回一个曾经记录了的值，只是减少了大量的乘法运算而已
+    
+
+*/
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        int size = nums.size();
+        vector<int> cache(size+2);
+        int n=1;
+        for(;n<=size;++n){
+            cache[n] =  nums[n-1];
+        }
+        cache[0] = cache[n++] = 1;
+        vector<vector<int>> dp(n,vector<int> (n,0));
+        return divideAndConquer(dp,cache,0,n-1);
+    }
+    
+    int divideAndConquer(vector<vector<int>> &dp,vector<int> &nums,int left,int right){
+        if(left==right-1){
+            return 0;
+        }
+        if(dp[left][right]>0)
+            return dp[left][right];
+        int res=0;
+        for(int i=left+1;i<right;++i){//divide and conquer in the same step
+            res = max(res,nums[left] * nums[i] * nums[right] + divideAndConquer(dp,nums,left,i) + divideAndConquer(dp,nums,i,right));
+        }
+        dp[left][right] = res;
+        return res;
+    }
+};
