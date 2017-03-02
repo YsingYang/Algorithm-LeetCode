@@ -1,0 +1,37 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ /*
+    采用深度优先搜索的方法，不过如果处理顺序不当会导致TLE的发生，考虑问题还是要全面是些，如果把子问题转化为最终的解
+    首先，这个问题的结局方法是，当前的根要或者不要，要的话就是连接左右的，所以程序处理的无非就是
+    1. 该根节点要，求左右子树的sum,如果<0抛弃<0的自树，返回给上一层，作为上一层的子树
+    2. 同时，得出的root->val + subleft = subright，还要与总的res进行比较
+    3. 注意res初始化给INT_MIN，否则会错在[-3]这个点。
+*/ 
+class Solution {
+    int subPathSum(TreeNode* root,int &sum){
+        if(!root)
+            return 0;
+        int l = subPathSum(root->left,sum),r = subPathSum(root->right,sum);
+        if(l<0)
+            l = 0;
+        if(r<0)
+            r = 0;
+        if((l + r + root->val)>sum)
+            sum = l + r + root->val;
+        return root->val + max(l,r);
+            
+    }
+public:
+    int maxPathSum(TreeNode* root) {
+        int res = INT_MIN;//是0的话，如果单为负数节点会报错
+        subPathSum(root,res);
+        return res;
+    }
+};
