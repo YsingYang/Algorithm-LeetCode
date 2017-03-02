@@ -1,3 +1,36 @@
+//一开始用了个TLE的方法，其实就是顺序不对，因为先处理根在处理字数，那么问题的时间复杂度就为2^n?
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+    int subPathSum(TreeNode* root,int &sum){
+        if(!root)
+            return 0;
+        int l = subPathSum(root->left,sum),r = subPathSum(root->right,sum);
+        if(l<0)
+            l = 0;
+        if(r<0)
+            r = 0;
+        if((l + r + root->val)>sum)
+            sum = l + r + root->val;
+        return root->val + max(l,r);
+            
+    }
+public:
+    int maxPathSum(TreeNode* root) {
+        int res = 0;
+        subPathSum(root,res);
+        return res;
+    }
+};
+
+
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
