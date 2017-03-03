@@ -32,3 +32,24 @@ public:
         return res;
     }
 };
+
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        set<int> mp;
+        for(auto &i:nums)
+            mp.insert(i);
+        int res = 0;
+        for(auto &it:mp){
+            if(mp.find(it-1)==mp.end()){
+                int m=it,n = m+1;
+                while(mp.find(n)!=mp.end()){
+                    ++n;
+                }
+                res = max(n-m,res);
+            }
+        }
+        return res;
+    }
+};
