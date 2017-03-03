@@ -1,0 +1,102 @@
+
+
+ /*
+ 
+    简单的inorder travel 的思想，通过找出相应节点交换val值即可，
+    注意一点 如果first ==nullptr  则记录first为pre节点， second 为 cur节点
+    如果继续发现了不符合的节点，则更新second 为cur节点
+ 
+ */
+class Solution {
+public:
+    void recoverTree(TreeNode* root) {
+        TreeNode *pre=nullptr,*first=nullptr,*second=nullptr;
+        InOrderTravel(root,pre,first,second);
+        swap(first->val,second->val);
+        
+    }
+    
+    void InOrderTravel(TreeNode* root,TreeNode *&pre,TreeNode *& first,TreeNode *& second){
+        if(root){
+            InOrderTravel(root->left,pre,first,second);
+            if(pre!=nullptr){
+                if(pre->val>=root->val){
+                    if(first==nullptr){
+                        first = pre;
+                    }
+                    if(first!=nullptr){
+                        second = root;
+                    }
+                }
+            }
+            pre = root;
+            InOrderTravel(root->right,pre,first,second);
+        }
+    }
+};
+
+
+ /*
+    Morris Travel ,基于线索二叉树的思想，看似时间复杂度为（O(nlgn)）一般情况下为(On),且空间复杂度为O（1）；下面方法基于中序遍历
+    步骤：
+
+1. 如果当前节点的左孩子为空，则输出当前节点并将其右孩子作为当前节点。
+
+2. 如果当前节点的左孩子不为空，在当前节点的左子树中找到当前节点在中序遍历下的前驱节点。
+
+   a) 如果前驱节点的右孩子为空，将它的右孩子设置为当前节点。当前节点更新为当前节点的左孩子。
+
+   b) 如果前驱节点的右孩子为当前节点，将它的右孩子重新设为空（恢复树的形状）。输出当前节点。当前节点更新为当前节点的右孩子。
+
+3. 重复以上1、2直到当前节点为空。
+ 
+ */
+class Solution {
+public:
+    void recoverTree(TreeNode* root) {
+        TreeNode *pre = nullptr,*cur = root;
+        TreeNode *ppre=nullptr,*first=nullptr,*second = nullptr;
+        while(cur){
+            if(cur->left==nullptr){
+                if(ppre!=nullptr){
+                    if(ppre->val>=cur->val){
+                        if(first==nullptr){
+                            first = ppre;
+                            second = cur;
+                        }
+                        else
+                            second = cur;
+                    }
+                }
+                ppre = cur;
+                cur = cur->right;
+            }
+            else{
+                pre = cur->left;
+                while(pre->right!=nullptr&&pre->right!=cur){
+                    pre = pre->right;
+                }
+                if(pre->right==nullptr){
+                    pre->right = cur;
+                    cur = cur->left;
+                }
+                else{
+                    pre->right = nullptr;
+                    if(ppre!=nullptr){
+                    if(ppre->val>=cur->val){
+                        if(first==nullptr){
+                            first = ppre;
+                            second = cur;
+                        }
+                        else
+                            second = cur;
+                    }
+                    ppre = cur;
+                }
+                    cur = cur->right;
+                }
+            }
+        }
+        swap(first->val,second->val);
+    }
+};
