@@ -33,3 +33,27 @@ public:
         return i+1;
     }
 };
+
+
+/*
+    该方法用了交换的特点，把符合范围的正数放到相应的位置（nums[i]-1），注意这里要用while循环，否则会遗漏数字，因为交换可能会把后面的数给交换到前面来
+    如果用if会直接跳过这个数字
+    最后一遍for循环找到num[i] != i+1的就是所要找的答案了
+
+*/
+
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        int size = nums.size();
+        for(int i=0;i<size;++i){
+            while(nums[i]>0&&nums[i]<=size&&nums[nums[i]-1]!=nums[i]){//注意这里不能写if
+                swap(nums[i],nums[nums[i]-1]);
+            }
+        }
+        int i=0;
+        while(i<size&&nums[i]==i+1)
+            ++i;
+        return i+1;
+    }
+};
