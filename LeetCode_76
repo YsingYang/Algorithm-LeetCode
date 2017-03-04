@@ -32,3 +32,30 @@ public:
         return windows;
     }
 };
+
+
+/*
+    缩短了两句
+*/
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        vector<int> mp(128,0);
+        int count = t.size();
+        for(int i=0;i<count;++i){
+            ++mp[t[i]];
+        }
+        int left = 0,right=0;
+        string windows;
+        while(right<s.size()){
+            count -= ((--mp[s[right]])>=0);//这里会不会出错？
+            while(left<=right&&count==0){
+                if(windows.size()==0||(right-left)<windows.size())
+                    windows = s.substr(left,right-left+1);
+                count += ((++mp[s[left++]])>0);
+            }
+            ++right;
+        }
+        return windows;
+    }
+};
