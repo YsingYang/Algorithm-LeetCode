@@ -1,0 +1,66 @@
+/*
+    实现再复杂点可以成为双向哈希？
+    该方法最坏情况下inc  dec的操作为O(n);
+    因为为了使链表保证有序。
+    哈希为string->链表迭代器的哈希（同时这个hash记录下该有的string）.
+
+*/
+
+
+class AllOne {
+list<pair<int,string>> counter;
+unordered_map<string,list<pair<int,string>>::iterator> mp;
+public:
+    /** Initialize your data structure here. */
+    AllOne() {
+        
+    }
+    
+    /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
+    void inc(string key) {
+        if(mp.find(key)==mp.end()||mp[key] == counter.end()){
+            mp[key] = counter.insert(counter.begin(),{1,key});
+        }
+        else{
+            auto it = mp[key];
+            ++(it->first);
+            auto pos = next(it,1);
+            while(pos != counter.end()&&it->first>pos->first){
+                pos = next(pos,1);
+            }
+            swap(*it,*(--pos));
+            mp[it->second] = it;
+            mp[pos->second] = pos;
+        }
+    }
+    
+    /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
+    void dec(string key) {
+        if(mp.find(key)==mp.end()||mp[key] == counter.end())
+            return;
+        auto it = mp[key];
+         --(it->first);
+        if(it->first==0){
+            counter.erase(it);
+            mp[key] = counter.end();
+            return;
+        }
+        auto pos = next(it,-1);
+        while(pos!=counter.cend()&&it->first<pos->first){
+            pos = next(pos,-1);
+        }
+        swap(*it,*(++pos));
+        mp[it->second] = it;
+        mp[pos->second] = pos;
+    }
+    
+    /** Returns one of the keys with maximal value. */
+    string getMaxKey() {
+        return counter.empty()?"":counter.back().second;
+    }
+    
+    /** Returns one of the keys with Minimal value. */
+    string getMinKey() {
+        return counter.empty()?"":counter.front().second;
+    }
+};
