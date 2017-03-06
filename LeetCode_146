@@ -103,3 +103,92 @@ private:
     int size,capacity;
     List *ls;
 };
+
+//After writed method
+class LRUCache {
+    struct ListNode{
+        int val,key;
+        ListNode *front,*next;
+        ListNode(int val_,int key_):val(val_),key(key_),front(nullptr),next(nullptr){}
+    };
+    
+    struct List{
+        ListNode *begin,*end;
+        List(){
+            ListNode *dummy = new ListNode(-1,-1);
+            begin = dummy;
+            end = dummy;
+        }
+
+        List &insert(ListNode *node){
+            node->next = begin->next;
+            if(end == begin)
+                end = node;
+            else
+                begin->next->front = node;
+            begin->next = node;
+            node->front = begin;
+            return *this;
+        }
+        
+        List &erase(ListNode *node){
+            
+            node->front->next = node->next;
+            if(node ==this->end){
+                end = node->front;
+            }
+            else{
+                node->next->front = node->front;
+            }
+            return *this;
+        }
+    };
+public:
+    LRUCache(int capacity) {
+        size = capacity;
+        ls= new List(); 
+    }
+    
+    int get(int key) {
+        if(mp.find(key)==mp.end()||mp[key]==ls->begin){
+            return -1;
+        }
+        ListNode *tmp = mp[key];
+        if(tmp!=ls->begin->next){
+            ls->erase(tmp);//erase操作
+        //插入头
+            ls->insert(tmp);
+        }
+        return tmp->val;
+    }
+    
+    void put(int key, int value) {
+        ListNode *node;
+        if(size>0&&(mp.find(key)==mp.end()||mp[key]==ls->begin)){
+            node = new ListNode(value,key);
+            ls->insert(node);
+            --size;
+        }
+        else{
+            //key在ls中
+            if(mp.find(key)!=mp.end()&&mp[key]!=ls->begin){
+                node = mp[key];
+                node->val = value;
+                ls->erase(node);
+            }
+            else{
+                node = ls->end;
+                ls->erase(node);
+                mp[node->key] = ls->begin;
+                node->key = key;
+                node->val = value;
+            }
+            ls->insert(node);
+        }
+        mp[key] = node;
+    }
+private:
+    unordered_map<int,ListNode*> mp;
+    int size;
+    List *ls;
+};
