@@ -1,0 +1,105 @@
+/*
+    脑子一热想实现下双向链表。。。。发现多余的操作好多...不过为了实现还没有简化修改代码。实现思路挺简单的
+    就是一个hash[key]指向ListNode,如果get了之后将该节点插入至链头。
+    put如果是相同的节点 插入对头即可（不过好像要判断这个点在不在结尾）
+    如果不是相同的key，拿出最尾的节点，修改员原hash ,和节点值（减少delete操作），同时使原hash[key]指向ls.begin(dummy头)
+
+*/
+class LRUCache {
+    struct ListNode{
+        int val,key;
+        ListNode *front,*next;
+        ListNode(int val_,int key_):val(val_),key(key_),front(nullptr),next(nullptr){}
+    };
+    
+    struct List{
+        ListNode *begin,*end;
+        List(){
+            ListNode *dummy = new ListNode(-1,-1);
+            begin = dummy;
+            end = dummy;
+        }
+        
+        ListNode &insert(int key,int val){
+            ListNode *node = new ListNode(val,key);
+            node->next = begin->next;
+            if(end == begin)
+                end = node;
+            else
+                begin->next->front = node;
+            begin->next = node;
+            node->front = begin;
+            return *node;
+        }
+    };
+public:
+    LRUCache(int capacity) {
+        //this->capacity = capacity;
+        this->size = capacity;
+        ls= new List(); 
+    }
+    
+    int get(int key) {
+        if(mp.find(key)==mp.end()||mp[key]==ls->begin){
+            return -1;
+        }
+        ListNode *tmp = mp[key];
+        if(tmp!=ls->begin->next){
+            tmp->front->next = tmp->next;
+            if(tmp==ls->end)
+                ls->end = tmp->front;//先把尾指针弄好
+            else{
+                tmp->next->front = tmp->front;
+            }   
+        //插入头
+            tmp->next = ls->begin->next;
+            ls->begin->next->front = tmp;
+            ls->begin->next = tmp;
+            tmp->front = ls->begin;
+        }
+        return tmp->val;
+    }
+    
+    void put(int key, int value) {
+        if(size>0&&(mp.find(key)==mp.end()||mp[key]==ls->begin)){
+            ListNode *node = &(ls->insert(key,value));
+            mp[key] = node;
+            --size;
+        }
+        else{//分size != 1 或者==1
+            //key在ls中
+            ListNode *node;
+            if(mp.find(key)!=mp.end()&&mp[key]!=ls->begin){
+                node = mp[key];
+                node->val = value;
+                if(node==ls->end)
+                    ls->end = node->front;
+                else
+                    node->next->front = node->front;
+                    
+               // node->front->next= node->next;
+            }
+            else{
+                node = ls->end;
+                ls->end = node->front;
+                mp[node->key] = ls->begin;
+                node->key = key;
+                node->val = value;
+            }
+            
+            node->front->next = node->next;
+            node->next = ls->begin->next;
+            if(ls->end == ls->begin)//capati ==1的情况
+                ls->end = node;
+            else
+                ls->begin->next->front = node;
+            ls->begin->next = node;
+            node->front = ls->begin;
+            mp[key] = node;
+        }
+    }
+private:
+    unordered_map<int,ListNode*> mp;
+    int size,capacity;
+    List *ls;
+};
