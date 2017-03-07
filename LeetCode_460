@@ -1,0 +1,139 @@
+class LFUCache {
+    
+    /*
+        注意该 LFU的实现
+        1.get与set都会影响计数器操作
+        2.如果key不在cache中，不对其计数器做任何操作
+        3.当key被移除出cache中，计数器归0（erase）
+    
+        算法简单实现为2个哈希，相当于一个二维链表
+        list A (list B->->)
+        |
+        list A(level)
+        |
+        list A(level)
+        |
+        A链表表示frq的增长链表，frq越高，越靠近listA.end()
+        listA内的listB为LRUcache ,不做过多的讲述
+        
+    
+    */
+    
+public:
+    LFUCache(int capacity) {
+        size = capacity;
+    }
+    
+    int get(int key) {
+        //cout<<key<<endl;
+        if(mp.find(key)==mp.end())
+            return -1;
+        //get之后LRU cache看看。
+        ++counter[key];
+        int count = counter[key];
+        pair<list<LFU>::iterator,list<pair<int,int>>::iterator> tmp = mp[key];
+        
+        pair<int,int> data = *(tmp.second);
+        (tmp.first)->LRU.erase(tmp.second);
+        auto nextIt = next(tmp.first,1);
+        if(tmp.first->LRU.empty())//删除后如果为空，删除链表
+            ls.erase(tmp.first);
+        if(nextIt == ls.end()||nextIt->level != count){
+            nextIt = ls.insert(nextIt,LFU(count));
+        }
+        mp[key] = {nextIt,nextIt->LRU.insert(nextIt->LRU.begin(),data)};
+     /*   for(auto i:ls){
+            cout<<i.level<<"    ";
+            for(auto j:i.LRU){
+                cout<<"pair :" << j.first<<" "<<j.second<<"     ";
+            }
+            cout<<endl;
+        }*/
+        return mp[key].second->second;
+    }
+    
+    void put(int key, int value) {
+        //cout<<key<<"   "<<value<<endl;
+        if(counter.find(key)==counter.end())
+                counter[key] = 0;
+        int count = ++counter[key];
+        if(mp.find(key)!=mp.end()){//先处理存在该点的情况  这种情况不用删除其他节点
+            pair<list<LFU>::iterator,list<pair<int,int>>::iterator> tmp = mp[key];
+            auto it = next(tmp.first,1);
+            if(it==ls.end()||it->level>count){//注意这里会不会出错，修改了一下
+                LFU lv = LFU(count);
+                it = ls.insert(it,lv);
+            }
+            tmp.first->LRU.erase(tmp.second);//删除旧节点
+            if(tmp.first->LRU.empty())
+                ls.erase(tmp.first);
+            mp[key] = {it,it->LRU.insert(it->LRU.begin(),{key,value})};
+            return ;
+        }
+        if(size>0){//大于0的情况，可以不删除插入
+            auto it = ls.begin();
+            while(it!=ls.end()&&it->level<count){
+                ++it;
+            }
+            if(it==ls.end()||it->level>count){    //当count对应的level不存在时
+                LFU lv = LFU(count);
+                it = ls.insert(it,lv);
+            }
+            mp[key] = {it,it->LRU.insert(it->LRU.begin(),{key,value})};  //it->level==count直接插入即可
+            --size;
+        }
+        else{//当size==0，需要删除节点
+            if(ls.begin()==ls.end())
+                return ;
+            //先删后插
+            auto ababdonKey = ls.begin()->LRU.back();
+            auto abandon = mp[ababdonKey.first];//pair<list<LFU>::iterator,list<pair<int,int>>::iterator>
+            ls.begin()->LRU.erase(abandon.second);
+            mp.erase(ababdonKey.first);
+            if(count!=ls.begin()->level&&ls.begin()->LRU.empty()){
+                ls.erase(abandon.first);
+            }
+            counter.erase(ababdonKey.first);
+            
+            
+            //下面为插入新节点操作。
+            auto it = ls.begin();
+            while(it!=ls.end()&&it->level<count){
+                    ++it;
+            }
+            if(it==ls.end()||it->level>count){    //当count对应的level不存在时
+                LFU lv = LFU(count);
+                it = ls.insert(it,lv);
+            }
+            mp[key] = {it,it->LRU.insert(it->LRU.begin(),{key,value})};  //it->level==count直接插入即可
+        }
+    /*    for(auto i:ls){
+            cout<<i.level<<"    ";
+            for(auto j:i.LRU){
+                cout<<"pair :" << j.first<<" "<<j.second<<"     ";
+            }
+            cout<<endl;
+        }*/
+    }
+private:
+
+struct LFU{
+    int level;
+    list<pair<int,int>> LRU; //key . val
+    LFU(int level_):level(level_){}
+};
+
+list<LFU> ls;
+unordered_map<int,int> counter;//计数器，记录出现的频率
+unordered_map<int,pair<list<LFU>::iterator,list<pair<int,int>>::iterator>> mp;
+int size;//capacity;
+};
+
+/**
+ * get 也算引用计数
+ * 不在组中好像不加入引用计数
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache obj = new LFUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
