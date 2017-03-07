@@ -64,3 +64,101 @@ public:
         return counter.empty()?"":counter.front().second;
     }
 };
+
+
+
+
+/*
+    优化了上次的操作，主要是完全保证所有都是O（1）的操作，保存每层（layer）有一个变量为他的层数，
+    当inc或者dec操作时，都是对val++,--的操作，所以只是检测它的shang（下）有无对应没layer,(没有new 一个)，然后直接在对应layer 的list里面进行操作即可
+    
+*/
+
+struct level{
+    level(int val_):val(val_){}
+    int val;
+    list<string> key;
+};
+
+
+class AllOne {
+list<level*> layer;
+unordered_map<string,pair<list<level*>::iterator,list<string>::iterator>> mp;
+public:
+    /** Initialize your data structure here. */
+    AllOne() {
+        
+    }
+    
+    /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
+    void inc(string key) {
+        if(mp.find(key)==mp.end()){
+            level *lv;
+            if(layer.empty()||(*(layer.begin()))->val!=1){
+                lv = new level(1);//记得delete;
+                layer.insert(layer.begin(),lv);
+            }
+            else{
+                lv = *(layer.begin());
+            }
+            mp[key] = {layer.begin(),lv->key.insert(lv->key.begin(),key)};
+        }
+        else{
+            pair<list<level*>::iterator,list<string>::iterator> tmp  = mp[key];
+            level *lv = *(tmp.first);
+            auto nextLayer = next(tmp.first,1);
+            if(nextLayer == layer.end()||(*nextLayer)->val!=lv->val+1){
+                level *nextlv = new level(lv->val+1);//如果没有插入
+                nextLayer = layer.insert(nextLayer,nextlv);
+            }
+            (*(tmp.first))->key.erase(tmp.second);
+            if((*(tmp.first))->key.empty()){
+                layer.erase(tmp.first);//删除旧节点
+                delete(*(tmp.first));//如果不存在任何key delete
+            }
+            mp[key] = {nextLayer,(*nextLayer)->key.insert((*nextLayer)->key.begin(),key)};
+        }
+        
+    }
+    
+    /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
+    void dec(string key) {
+        if(mp.find(key)==mp.end())
+            return ;
+        pair<list<level*>::iterator,list<string>::iterator> tmp = mp[key];
+        int thisLevel = (*tmp.first)->val;
+        
+        if(thisLevel==1){
+            (*tmp.first)->key.erase(tmp.second);
+            if((*tmp.first)->key.empty()){
+                layer.erase(tmp.first);
+            }
+            delete(tmp.first)//注意内存泄漏
+            mp.erase(key);
+            return;
+        }//如果为1 删除
+        //cout<<key<<"  "<<(*tmp.first)->val<<endl;
+        auto front = next(tmp.first,-1);
+        if(front==layer.cend()||(*front)->val!=thisLevel-1){
+            level *lv = new level(thisLevel-1);
+            front = layer.insert(tmp.first,lv);//front指向了lv吗
+        }
+        (*tmp.first)->key.erase(tmp.second);
+        if((*tmp.first)->key.empty())
+            layer.erase(tmp.first);
+        mp[key] = {front,(*front)->key.insert((*front)->key.begin(),key)};
+        
+        
+        
+    }
+    
+    /** Returns one of the keys with maximal value. */
+    string getMaxKey() {
+        return layer.empty()? "":*(layer.back()->key.begin());
+    }
+    
+    /** Returns one of the keys with Minimal value. */
+    string getMinKey() {
+        return layer.empty()?"":*(layer.front()->key.begin());
+    }
+};
