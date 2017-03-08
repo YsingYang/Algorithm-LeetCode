@@ -1,0 +1,42 @@
+class Solution {
+/*
+    非常有创意的方法，先从left到right判断)是否溢出，
+    然后reverse(s),在执行一次，同时交换parenthneses中的'(',')'
+    再进行一次判断，到right->left也执行完毕，移除结束，可以push进res里
+    
+    这道题主要是基于子串的的考虑，而不是对字符串的每一个字符考虑，，所以对于一道题，决定好切入点对于解决题目很有帮助
+    (主要是考虑好状态转换关系)
+
+*/
+public:
+    vector<string> removeInvalidParentheses(string s) {
+        vector<char> parenthneses = {'(',')'};
+        vector<string> res;
+        dfs(s,res,0,0,parenthneses);
+        return res;
+        
+    }
+    
+    void dfs(string s,vector<string> &res,int last_i,int last_j,vector<char> parenthneses){
+        for(int stack = 0,i=last_i;i<s.size();++i){
+            if(s[i]==parenthneses[0])
+                ++stack;
+            else if(s[i]==parenthneses[1])
+                --stack;
+            if(stack>=0)
+                continue;
+            for(int j=last_j;j<=i;++j){
+                if(s[j]==parenthneses[1]&&(j==last_j||s[j]!=s[j-1]))//这个判断会错吗
+                    dfs(s.substr(0,j)+s.substr(j+1),res,i,j,parenthneses);
+            }
+            return;//出现错误，子串继续check,返回后直接return ,不用继续搜索后面的结果
+        }
+        //cout<<"执行"<<endl;
+        reverse(s.begin(),s.end());//泛型函数
+        if(parenthneses[0]=='(')
+            dfs(s,res,0,0,{')','('});//finish left to right
+        else{
+            res.push_back(s);//finish right to left
+        }
+    }
+};
