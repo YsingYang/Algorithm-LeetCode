@@ -40,3 +40,57 @@ public:
         }
     }
 };
+
+
+class Solution {
+    /*
+        BFS solution
+        也是拆分字符串进行分别处理
+        精髓在与Found这个bool变量。下面有解释
+        
+        
+    */
+public:
+    vector<string> removeInvalidParentheses(string s) {
+        vector<string> res;
+        unordered_set<string> mp;
+        queue<string> que;
+        que.push(s);
+        bool haveFound = false;
+        mp.insert(s);
+        while(!que.empty()){
+            string tmp = que.front();
+            que.pop();
+            if(check(tmp)){
+                res.push_back(tmp);
+                haveFound = true;
+            }
+            if(haveFound)//这个很重要，BFS意义在于，最短步内找到符合的值，这样就不会得到多删的结果。
+                continue;
+            for(int i=0;i<tmp.size();++i){
+                if(islower(tmp[i]))
+                    continue;
+                string next = tmp.substr(0,i)+tmp.substr(i+1);
+                if(mp.find(next)==mp.end()){
+                    mp.insert(next);
+                    que.push(next);
+                }
+            }
+        }
+        return res;
+    }
+    
+    bool check(const string &s){
+        int count=0;
+        for(int i=0;i<s.size();++i){
+            if(s[i]=='(')
+                ++count;
+            else if(s[i]==')'){
+                if(--count<0){
+                    return false;
+                }
+            }
+        }
+        return count == 0;
+    }
+};
