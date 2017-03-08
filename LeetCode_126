@@ -1,0 +1,56 @@
+class Solution {
+/*
+    BFS solution
+*/
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> mp(wordList.begin(),wordList.end());
+        queue<vector<string>> que;
+        vector<vector<string>> res;
+        vector<string> candidata;
+        candidata.push_back(beginWord);
+        que.push(candidata);
+        bool isFound = false;
+        while(!que.empty()){
+            vector<string> used;
+            int size = que.size();
+            for(int i=0;i<size;++i){
+                candidata = que.front();
+                que.pop();
+                if(candidata.back() == endWord){
+                    res.push_back(candidata);
+                    isFound = true;
+                }
+                if(isFound)
+                    continue;
+                checkWord(candidata,que,mp,used);
+            }
+            for(int i=0;i<used.size();++i){
+                if(mp.find(used[i])!=mp.end())
+                    mp.erase(used[i]);
+            }
+        }
+        return res;
+    }
+    
+    void checkWord(vector<string> vs,queue<vector<string>> &que,unordered_set<string> &mp,vector<string> &used){
+/*        for(auto i:vs){
+            cout<<i<<"  ";
+        }
+        cout<<endl;
+        cout<<(int)(mp.find("lot")==mp.end())<<endl;*/
+        string word = vs.back();
+        vs.resize(vs.size()+1);
+        for(int i=0;i<word.size();++i){
+            string tmp = word;
+            for(int k=0;k<26;++k){
+                tmp[i] = 'a'+k;
+                if(mp.find(tmp)!=mp.end()){
+                    vs.back() = tmp;
+                    que.push(vs);//调用vector构造函数?
+                    used.push_back(tmp);
+                }
+            }
+        }
+    }
+};
