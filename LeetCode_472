@@ -1,0 +1,134 @@
+class Solution {
+/*
+    dfs solution,算法先将words的顺序排列好（短的单词是不会符合要求的），然后这样就可以边遍历边插入单词进入mp中
+*/
+public:
+    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) {
+        vector<string> res;
+        sort(words.begin(),words.end(),[](const string &s1,const string &s2){
+            return s1.size()<s2.size();
+        });
+        unordered_set<string> mp;
+        for(int i=0;i<words.size();++i){
+            string tmp = "";
+            if(dfs(words[i],0,tmp,0,mp))
+                res.push_back(words[i]);
+            else
+                mp.insert(words[i]);//这里相当于一个剪枝算法，因为如果可以push进res的话，一定能由其他单词组成
+        }
+        return res;
+    }
+    
+    bool dfs(const string &s,int pos,string &str,int cnt,unordered_set<string> &mp){
+        if(pos==s.size()){
+            if(mp.find(str)!=mp.end()&&cnt>0){
+                return true;
+            }
+            return false;
+        }
+        str.push_back(s[pos]);
+        if(mp.find(str)!=mp.end()){
+            string tmp = "";
+            if(dfs(s,pos+1,tmp,cnt+1,mp))
+                return true;
+        }
+        if(dfs(s,pos+1,str,cnt,mp))
+            return true;
+        else
+            return false;
+    }
+};
+
+
+//  TLE  solution using Trie
+
+struct Trie{
+    bool endWord;
+    vector<Trie*> next;
+    Trie(){
+        endWord = false;
+        next.resize(26,nullptr);
+    }
+};
+
+Trie* build(vector<string> &words){
+    Trie *root= new Trie();
+    for(auto str:words){
+        Trie *node = root;
+        for(auto c:str){
+            if(node->next[c-'a'] == nullptr){
+                node->next[c-'a'] = new Trie();
+            }
+            node = node->next[c-'a'];
+        }
+        node->endWord = true;
+    }
+    return root;
+}
+
+class Solution {
+/*
+    采用dfs search;
+*/
+public:
+    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) {
+        Trie *root = build(words);
+        vector<string> res;
+        for(auto str:words){
+            //cout<<str<<endl;
+            if(bfs(str,root)){
+                res.push_back(str);
+            }
+        }
+        return res;
+    }
+
+private:
+  /*  int dfs(const string &s,Trie *root,int begin){//这个Trie +const 会有错吗，返回值怎么处理？
+        int i = begin,count=0;
+        Trie* node = root;
+        for(;i<s.size();++i){
+            if(root->next[s[i]-'a']==nullptr){
+                break;//找不下去就停下来
+            }
+            root = root->next[s[i]-'a'];
+            //cout<<s[i]<<"   "<<(int)(root->endWord)<<"   ";
+            if(root->endWord==true){
+                //cout<<" where  in  "<<i<<endl;
+                int nextCount = dfs(s,node,i+1);
+                //cout<<nextCount<<"   "<<s<<" and cut letter  "<<s[i]<<endl<<endl;
+                if(nextCount!=-1)
+                    return 1+nextCount;
+            }
+        }
+        return i==s.size()&&begin!=s.size()?1:-1;
+    }*/
+    
+    bool bfs(const string &s,Trie *root){
+        queue<int> que;
+        que.push(0);
+        int count = 0,index=-1;
+        //cout<<s<<endl;
+        while(!que.empty()){
+            int size = que.size();
+            for(int i=0;i<size;++i){
+                index = que.front();
+               // cout<<s[index]<<"  and  "<<count<<endl;
+                if(index==s.size()&&count>1)
+                    return true;
+                que.pop();
+                Trie *tmp =  root;
+                for(int j = index;j<s.size();++j){
+                    if(tmp->next[s[j]-'a'] == nullptr)
+                        break;
+                    tmp = tmp->next[s[j]-'a'];
+                    if(tmp->endWord==true)
+                        que.push(j+1);
+                }
+            }
+            ++count;
+        }
+        //cout<<endl;
+        return false;
+    }
+};
