@@ -60,6 +60,10 @@ class Solution {
         这方法很有借鉴意义，相对于原本的DFS减少了许多重复的搜索
         每个节点存储了当前的最长路径，如果搜到某个节点能到底该节点，直接利用该节点的值
         从而避免了重复搜索的复杂度，有点类似于我在做maze2的方法
+        
+        update:
+                但是这种memorization解决的是没有4个分支不会相互导致回路的问题！！但是MazeII中各部分的路径是会导致回路的。
+                (所以只用一个dist数组就可以，不用visited)
     */
     vector<vector<int>> visited;
     int height = 0, width = 0;
