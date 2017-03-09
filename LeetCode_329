@@ -1,0 +1,54 @@
+class Solution {
+/*
+    DFS + memorization的方法，对于每一个节点进行dfs搜索，寻找递增路径
+    如果当前路径<memorization，证明已经找到了合适的路径直接return 
+    注意处理visited数组
+
+*/
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        if(matrix.empty())
+            return 0;
+        rs = matrix.size(),cs = matrix[0].size();
+        vector<vector<int>> memoization(rs,vector<int>(cs,0));
+        int maxPath = 0;
+        vector<vector<bool>> visited(rs,vector<bool> (cs,true));//如果需要循环使用，那么最好是dfs完后置为true,不然会TLE ，因为每次构造一个rs *cs的数组复杂度为O(RS * CS);
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                visited[i][j] = false;
+                dfs(matrix,visited,memoization,maxPath,i,j,1);
+                visited[i][j] = true;
+            }
+        /*    for(auto i:memoization){
+                for(auto j:i){
+                    cout<<j<<"   ";
+                }
+                cout<<endl;
+            }
+            cout<<endl<<endl;*/
+        }
+        return maxPath;
+    }
+    
+    
+    void dfs(vector<vector<int>> &matrix,vector<vector<bool>> &visited,vector<vector<int>> &memoization,int &maxPath,int i,int j,int nowLen){
+            if(nowLen<=memoization[i][j]){
+                return ;
+            }
+            memoization[i][j] = nowLen;
+            maxPath = max(nowLen,maxPath);
+            for(int k=0;k<4;++k){
+                int nowi = i+direction[k][0],nowj  = j+direction[k][1];
+                if(nowi<0||nowi>=rs||nowj<0||nowj>=cs||visited[nowi][nowj]==false||matrix[nowi][nowj]<=matrix[i][j])
+                    continue;
+                    //  continue条件，1.越界2 .访问过3.不是递增路径
+                visited[i][j] = false;
+                dfs(matrix,visited,memoization,maxPath,nowi,nowj,nowLen+1);
+                visited[i][j] = true;
+            }
+    }
+    
+private:
+int rs,cs;
+vector<vector<int>> direction = {{1,0},{-1,0},{0,1},{0,-1}};
+};
