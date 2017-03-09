@@ -52,3 +52,50 @@ private:
 int rs,cs;
 vector<vector<int>> direction = {{1,0},{-1,0},{0,1},{0,-1}};
 };
+
+
+
+class Solution {
+    /*
+        这方法很有借鉴意义，相对于原本的DFS减少了许多重复的搜索
+        每个节点存储了当前的最长路径，如果搜到某个节点能到底该节点，直接利用该节点的值
+        从而避免了重复搜索的复杂度，有点类似于我在做maze2的方法
+    */
+    vector<vector<int>> visited;
+    int height = 0, width = 0;
+    int floodfill(vector<vector<int>>& matrix, int cur, int i, int j)
+    {
+        if (i < 0 || i >= height || j < 0 || j >= width )
+            return 0;
+        if (matrix[i][j] <= cur)
+            return 0;
+        if (visited[i][j] > 0)
+            return visited[i][j];
+        int r = floodfill(matrix, matrix[i][j], i + 1, j);
+        int l = floodfill(matrix, matrix[i][j], i - 1, j);
+        int u = floodfill(matrix, matrix[i][j], i, j + 1);
+        int d = floodfill(matrix, matrix[i][j], i, j - 1);
+        visited[i][j] = max(r, max(l, max(u, d))) + 1;
+        return visited[i][j];
+    }
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        if (matrix.empty())
+            return 0;
+        height = matrix.size(), width = matrix[0].size();
+        visited.resize(height, vector<int>(width));
+        int max_len = 0;
+        for (int i = 0; i < height; ++i)
+            for (int j = 0; j < width; ++j){
+                max_len = max(max_len, floodfill(matrix, INT_MIN, i, j));
+                for(auto k:visited){
+                    for(auto z:k){
+                        cout<<z<<"   ";
+                    }
+                    cout<<endl;
+                }
+                cout<<endl<<endl;
+            }
+        return max_len;
+    }
+};
