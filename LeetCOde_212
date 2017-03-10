@@ -1,0 +1,81 @@
+class Solution {
+/*
+    用backtracking 实现Trie，再进行搜索，backtracking实现前缀树可能时间复杂度会比较高
+    其实我觉得这道题应该分两种情况
+    1.矩阵较小，且检查字母较多
+    2.字符串较少，矩阵较大
+    
+    那么我们应该根据不同的情况建造Trie
+    
+    
+    本题基本用到Trie的性质，通过字典树的查找，优化了backtracking的方法
+*/
+struct Trie{
+    vector<Trie*> next;
+    bool endWord;
+    Trie(){
+        next.resize(26,nullptr);
+        endWord = false;
+    }
+};
+
+Trie* Build(const string &s,Trie * &root){
+    Trie *node = root;
+    for(int i=0;i<s.size();++i){
+        if(node->next[s[i]-'a']==nullptr)
+            node->next[s[i]-'a'] = new Trie();
+        node = node->next[s[i]-'a'];
+    }
+    node->endWord = true;
+    return root;
+}
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        if(board.empty())
+            return {};
+        Trie *root = new Trie();
+        rs = board.size();
+        cs = board[0].size();
+        
+        for(auto word:words){
+            root = Build(word,root);
+        }//Trie Build完毕
+        set<string> mp;
+        for(int i=0;i<rs;++i){//好像不会有重复的问题？
+            for(int j=0;j<cs;++j){
+                string word = "";
+                wordSearch(board,root->next[board[i][j]-'a'],mp,i,j,word);
+            }
+        }
+        vector<string> res(mp.begin(),mp.end());
+        return res;
+    }
+    
+    void wordSearch(vector<vector<char>> &board,Trie *root,set<string> &res,int i,int j,string &word){//通过修改board,再修改回来节省visited的空间使用
+        if(root==nullptr){
+            return ;
+        }
+        word.push_back(board[i][j]);
+        //cout<<word<<endl;
+        if(root->endWord==true)
+            res.insert(word);//找到一个应该不用急着return;
+        char tmp = board[i][j];
+        board[i][j] = 'X';
+        for(int k = 0;k<4;++k){//direction
+            int nowi = i+direction[k][0],nowj = j+direction[k][1];
+            if(nowi<0||nowi>=rs||nowj<0||nowj>=cs||board[nowi][nowj] == 'X'){
+                continue;
+            }
+            //cout<<board[nowi][nowj]<<"   ";
+            wordSearch(board,root->next[board[nowi][nowj]-'a'],res,nowi,nowj,word);//DFS搜索
+        }
+        //cout<<endl;
+        word.pop_back();
+        board[i][j] = tmp;
+        return ;
+    
+    
+    }
+int rs,cs;
+vector<vector<int>> direction = {{1,0},{0,1},{-1,0},{0,-1}};
+};
