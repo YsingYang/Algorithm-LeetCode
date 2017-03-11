@@ -1,0 +1,34 @@
+class Solution {
+/*
+    简单的用随机数算法生成6位长的字符串作为TinyURL,前缀固定为"http://tinyurl.com/",同时维持两个hash（数据库）
+    一个为tinyURL->URL的映射
+    另一个的URL->tinyURL的映射
+
+*/
+unordered_map<string,string> TinyMap;
+unordered_map<string,string> retriveTiny;
+public:
+    static string candidataChar;
+    static string basicHost;
+    // Encodes a URL to a shortened URL.
+    string encode(string longUrl) {
+        string Tiny(6,' ');
+        do{
+            for(int i=0;i<5;++i){
+                Tiny[i] = candidataChar[rand()%candidataChar.size()];
+            }
+        }while(retriveTiny.find(Tiny)!=retriveTiny.end());
+        string shortURL = basicHost + Tiny;
+        TinyMap[longUrl] = shortURL;
+        retriveTiny[shortURL] = longUrl;
+        return shortURL;
+    }
+
+    // Decodes a shortened URL to its original URL.
+    string decode(string shortUrl) {
+        return retriveTiny[shortUrl];
+    }
+};
+
+string Solution::basicHost = "http://tinyurl.com/";
+string Solution::candidataChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
