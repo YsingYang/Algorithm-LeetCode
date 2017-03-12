@@ -1,0 +1,67 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+/*
+    相当于stack解决表达式问题，这道题这样的coding不会出现左nullptr 右有子节点的情况？
+    
+    注意几个问题
+    1. string s push一个'('在最后，避免出现纯数字情况
+    2. 可能需要一个falg记录当前有无数字？
+    3. 注意可能会出现负数
+*/
+public:
+    TreeNode* str2tree(string s) {
+        if(s.empty())
+            return nullptr;
+        s.push_back('(');
+        stack<TreeNode *> st;
+        int index = 0,size = s.size();
+        int num = 0;//注意没有初始化
+        int sign = 1;
+        bool flag = false;
+        while(index<size){ //=='-'的时候是做什么？
+            if(isdigit(s[index])||s[index]=='-'){
+                if(s[index]=='-')
+                    sign = -1;
+                else
+                    num = num * 10 + s[index]-'0';
+                flag = true;
+            }
+            else if(s[index]=='('&&flag){
+                TreeNode * node = new TreeNode(num*sign);
+                flag = num = 0;
+                sign = 1;
+                st.push(node);
+            }
+            else if(s[index]==')'){
+                TreeNode *node;
+                if(flag){
+                    node = new TreeNode(num*sign);
+                    flag = num = 0;
+                    sign = 1;
+                }
+                else{
+                    node = st.top();
+                    st.pop();
+                }
+                TreeNode *tmp = st.top();
+                if(tmp->left==nullptr)
+                    tmp->left = node;
+                else
+                    tmp->right = node;
+
+            }
+            ++index;
+        }
+        //cout<<st.size()<<endl;
+        //return nullptr;
+        return st.top();
+    }
+};
