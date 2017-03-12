@@ -1,0 +1,26 @@
+class Solution {
+/***
+ * 没什么特别注意的，简单的应用flag记录是否是当前字符串需要reverse
+ * 
+ * 1.注意rightBound是否会越界
+ * 
+ * 
+***/
+public:
+    string reverseStr(string s, int k) {
+        int flag = 0,size = s.size();
+        int left = 0;
+        while(left<size){
+            int right = (left+k-1<size?left+k-1:size-1);
+            if(flag==0){
+                int i=left,j = right;
+                while(i<j){
+                    swap(s[i++],s[j--]);
+                }
+            }
+            left += k;
+            flag ^=1;
+        }
+        return s;
+    }
+};
