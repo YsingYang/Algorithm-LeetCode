@@ -1,0 +1,60 @@
+class Solution {
+    
+/***
+ * 基本思路为先对字符串进行排序，这里碰到一个问题，为什么lamda表达式最后比较到相同的return true会报runtime error
+ * 
+ * 排完序列后，进行前后比较，注意比较完后如果 last - first(hour)>=12，证明前后可能存在一个最小值 比如00:00 23.59
+ * 但是如果last-first(hour)<12就没有必要进行比较了
+ * 
+ * 
+ * 
+***/
+public:
+    int findMinDifference(vector<string>& timePoints) {
+        sort(timePoints.begin(),timePoints.end(),[](const string &s1,const string &s2){
+            int index = 0;
+            while(index<5){
+                if(s1[index]==s2[index])
+                    ++index;
+                else
+                    return s1[index]<s2[index];
+            }
+            //cout<<s1<<"  "<<s2<<endl;
+            return false;;
+        });
+        int res = INT_MAX;
+        //先对字符串进行排序
+        int size =  timePoints.size(),index = 1;
+        while(index<timePoints.size()){
+            //cout<<res<<endl;
+            res = min(res,getDiff(timePoints[index-1],timePoints[index]));//如过相等
+            ++index;
+        }
+        if(abs(Mystoi(timePoints[size-1],0,1)-Mystoi(timePoints[0],0,1))>=12)
+            res = min(res,getDiff(timePoints[size-1],timePoints[0]));
+        return res;
+        
+        
+        
+        //最后还要比较头尾的差值
+        /*for(int i=0;i<timePoints.size();++i){
+            cout<<timePoints[i]<<"   ";
+        }*/
+        
+    }
+    
+    int Mystoi(const string &s,int begin,int end){
+        int res =0;
+        while(begin<=end){
+            res = res * 10 + s[begin++];
+        }
+        return res;
+    }
+    
+    int getDiff(const string &s1,const string &s2){
+        int HousDiff = min(abs(Mystoi(s1,0,1)-Mystoi(s2,0,1)),24 - abs(Mystoi(s1,0,1)-Mystoi(s2,0,1)));
+        int leftMin = Mystoi(s1,3,4) ,rightMin = Mystoi(s2,3,4);
+        int res =  HousDiff * 60 - leftMin + rightMin;//感觉HousDiff相等是会有问题
+        return res;
+    }
+};
