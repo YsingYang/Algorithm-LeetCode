@@ -1,0 +1,43 @@
+class Solution {
+/*
+    两个链表都加上头结点的话可以相应的减少代码量
+    
+    以下是没有头结点的做法，主要运用到了label是唯一的性质，然后通过哈希，存储相应的label->node
+*/
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        unordered_map<int,RandomListNode*> mp;
+        if(head==nullptr)
+            return nullptr;
+        RandomListNode *search = head;
+        RandomListNode *dummy = new RandomListNode(search->label),*rear = dummy;
+        while(search->next!=nullptr){
+            RandomListNode *next,*random;
+            int nlabel = search->next->label;
+            if(mp.find(nlabel)==mp.end()){
+                next = new RandomListNode(nlabel);
+                mp[nlabel] = next;
+            }
+            rear->next = mp[nlabel];
+            if(search->random!=nullptr){
+                int rlabel = search->random->label;
+                if(mp.find(rlabel)==mp.end()){
+                    random = new RandomListNode(rlabel);
+                    mp[rlabel] = random;
+                }
+                rear->random = mp[rlabel];
+            }
+            search = search->next;
+            rear = rear->next;
+        }
+        rear->next = nullptr;
+        if(search->random!=nullptr){
+            int rlabel = search->random->label;
+            if(mp.find(rlabel)==mp.end())
+                rear->random = new RandomListNode(rlabel);
+            else
+               rear->random = mp[rlabel];
+        }
+        return dummy;
+    }
+};
