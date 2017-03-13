@@ -1,0 +1,77 @@
+class Solution {
+/*
+    vector长度为n,string 长度为k,该时间复杂度为O(n*k^2)；判断语句能否再写得优雅一点
+    该算法对每一个string 考虑每一个string index是否可以作为分割点，（分割后一部分为palindrome ，另一部分为则需要在mp中寻找）
+    其实一开始mp插入string时可以插入reverse后的string,就不需要找到分割点后，reverse string后查找。（虽然时间复杂度看起来是差不多的）
+    需要考虑四种情况，右补为pair,左补为pair
+*/
+public:
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        unordered_map<string,int> mp;
+        for(int i=0;i<words.size();++i){
+            mp[words[i]] = i;
+        }
+        set<vector<int>> cache;
+        for(int i=0;i<words.size();++i){
+            int size = words[i].size();
+            for(int j=size-1;j>=size/2;--j){//需要>=2  还是>2
+            //    cout<<i<<" "<<j<<"     ";
+                int right = j+1,left = j;//无基准情况  这两种情况应该可以合成一种，直接取substr判断是否为palindrome就可以了
+                searchRightCandidata(words[i],left,right,size,cache,mp,i);
+                //有基准情况
+                right = j+1,left = j-1;
+                searchRightCandidata(words[i],left,right,size,cache,mp,i);
+            }
+            for(int j=0;j<=size/2;++j){
+                int left =j-1,right = j;//无基准情况
+                searchLeftCandidata(words[i],left,right,size,cache,mp,i);
+                //有基准情况
+                left = j-1,right = j+1;
+                searchLeftCandidata(words[i],left,right,size,cache,mp,i);
+            }
+        }
+        vector<vector<int>> res(cache.begin(),cache.end());
+        return res;
+    }
+    
+    string getString(const string &s,int end,int begin){
+        string res;
+        while(end>=begin){
+            res += s[end--];
+        }
+        return res;
+    }
+    
+    void searchRightCandidata(const string &s,int left,int right,int size,set<vector<int>> &cache,unordered_map<string,int> &mp,int index){
+        while(right<size&&s[right] == s[left]){
+                    ++right;
+                    --left;
+        }
+        if(right==size){
+            string tmp = getString(s,left,0);
+            if(mp.find(tmp)!=mp.end()){
+                if(tmp!=s)
+                    cache.insert({index,mp[tmp]});//如果函数声明map为const  就不能使用下标操作
+                else if(mp.find("")!=mp.end()&&s!="")
+                    cache.insert({index,mp[""]});
+                    
+            }
+        }
+    }
+    
+    void searchLeftCandidata(const string &s,int left,int right,int size,set<vector<int>> &cache,unordered_map<string,int> &mp,int index){
+        while(left>=0&&s[left]==s[right]){
+            ++right;
+            --left;
+        }
+        if(left<0){
+            string tmp = getString(s,size-1,right);//这里get不知道会不会出错
+            if(mp.find(tmp)!=mp.end()){
+                if(tmp!=s)
+                    cache.insert({mp[tmp],index});
+                else if(mp.find("")!=mp.end()&&s!="")
+                    cache.insert({mp[""],index});
+            }
+        }
+    }
+};
