@@ -1,0 +1,66 @@
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+ 
+struct myhash {
+        size_t operator()(const pair<int,int>& p) const {
+            return p.first ^ p.second * 3;
+        }
+    };
+//学会定制自己的hash操作，其实也是定制operator()，返回一个size_t;,传入一个类，计算其hash
+
+
+class Solution {
+    /***
+        这里注意一点，使用float,double作为hash的key值是很危险的，常常因为精度的不准确而得不到想要的结果,gcd的话如果碰到点为float值不就不准了吗
+        
+        1.解题思路其实挺简单，for外部的循环，就是作为两点连线中的一点，对其与其他点产生的斜率进行hash,注意（如果直接用float->int的哈希可能会由于精度问题而导致WA）
+        2.所以对于采用gcd处理一些大数，那么我们就可以使用pair类存储其dx/gcdxy,dy/gcdxy,得到其中的key值（相当于对斜率做了相应的变形，改为存储最小质数）这样做还有一个优点就是不用考虑垂直的线（即y/x=MAX）。
+        3.关于与points[i]点重复的数单独进行处理，最后加上即可
+    
+    ***/
+public:
+    int maxPoints(vector<Point>& points) {
+        unordered_map<pair<int,int>,int,myhash> mp; //考虑到unordered_map<float,int> mp对于大数mp的不准确
+        int res = 0,size = points.size();
+        for(int i=0;i<size;++i){
+            mp.clear();
+            int duplicate = 1;
+            for(int j=i+1;j<size;++j){
+                //处理相同的点
+                if(points[i].x == points[j].x&&points[j].y == points[i].y){
+                    ++duplicate;
+                    continue;
+                }
+                int dx = points[j].x - points[i].x;
+                int dy = points[j].y - points[i].y;
+                int gcdxy = gcd(dx,dy);
+                mp[{dx/gcdxy,dy/gcdxy}]++;
+            }
+            res = max(res,duplicate);//这个地方是为了处理case中仅有单一的数据集的时候用的。
+            for(auto it:mp){
+                if(it.second + duplicate>res)
+                    res =it.second + duplicate;
+            }
+        }
+        return res;
+        
+        
+    }
+    
+    int gcd(int x,int y){
+        //无所谓x,y谁大，如果x比y小，第一次就回swap过来
+        while(y){
+            int tmp = y;
+            y = x%y;
+            x = tmp;
+        }
+        return x;
+    }
+};
