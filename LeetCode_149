@@ -13,6 +13,15 @@ struct myhash {
             return p.first ^ p.second * 3;
         }
     };
+    
+struct pairhash {
+public:
+  template <typename T, typename U>
+  std::size_t operator()(const std::pair<T, U> &x) const
+  {
+    return std::hash<T>()(x.first) ^ std::hash<U>()(x.second);
+  }
+};
 //学会定制自己的hash操作，其实也是定制operator()，返回一个size_t;,传入一个类，计算其hash
 
 
