@@ -42,3 +42,44 @@ public:
         return res;
     }
 };
+
+
+// backtracking 方法，当遇到没有答案的 case很容易 TLE，而且不适合解决一些极端的case
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        //用过了就不能再用了        
+        size = s.size();
+        unordered_set<string> mp(wordDict.begin(),wordDict.end());
+        vector<string> res;
+        string str = "";
+        backtracking(s,res,str,0,0,mp);
+        return res;
+        
+    }
+    
+    void backtracking(const string &s,vector<string> &res,string &str,int begin,int count,unordered_set<string> &mp){
+        if(begin==size&&count>0){
+            res.push_back(str);
+            return;
+        }
+        for(int i=begin;i<size;++i){
+            string tmp = s.substr(begin,i-begin+1);
+            if(mp.find(tmp)!=mp.end()){
+                //mp.erase(tmp);
+                str = (str.empty()?str+tmp:str+' '+tmp);
+                backtracking(s,res,str,i+1,count+1,mp);
+                if(str.size()==tmp.size()){
+                    str.clear();
+                }
+                else{
+                    str.erase(str.size()-tmp.size()-1);
+                }
+                //mp.insert(tmp);
+            }
+        }
+    }
+private:
+    int size;
+    
+};
