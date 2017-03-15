@@ -1,0 +1,42 @@
+class Solution {
+/**
+ * 编程之美上有道题，这道题其实是有规律可寻的，
+ * 基本思路，根据位数，加其位数所出现的1的个数
+ * 比如拿134，我们需要计算10位有多少个1，
+ * 那么134/100（divi=100,(计算位数+1 *10)） *10，即是百位后所能提供的的10的个数
+ * 那么剩下的怎么算呢，需要做进一步的判断
+ * 我们需要用134%100得到remain,对remain进行判断
+ * if(remain/multi(divi/10)<1)证明现在计算的位并没有提供1
+ * 
+ * else if ==1，那么它提供的1的位数有他后面的数字决定，remain%multi+1，注意+1！！！（10也是提供1个10位的1的）
+ * 
+ * else >1 ,那么证明该位现在是满1的，所以+ multi;
+ * 
+ * 题目有说注意溢出，但注意的溢出不是res的溢出，而是divi的溢出，下面有解释
+ */
+public:
+    int countDigitOne(int n) {
+        if(n<=0)
+            return 0;
+        int res = 0;
+        long divi =10,multi = divi/10;//题目提醒了注意long，这里注意的long不是注意res,而是注意divi,因为divi是比n大的，取（n的位数+1 *10）
+        
+        while(n/multi){//从个位的1算起
+            res += n/divi*multi;
+            int remain = n%divi;
+            if(remain/multi<1){
+                res += 0;//这里是continue吗；
+            }
+            else if(remain/multi==1){
+                res += (remain%multi+1);
+            }
+            else{
+                res += multi;
+            }
+            multi *=10;
+            divi *=10;
+            
+        }
+        return res;
+    }
+};
