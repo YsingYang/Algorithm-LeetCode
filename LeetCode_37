@@ -1,4 +1,15 @@
 class Solution {
+/*
+    基本的backtracking方法，利用hash记录每行 每列，每个方块已用和可用的的数据，利用vector<bool>存，因为数据连续，也可以随机访问
+    
+    然后通过一个index进行backtracking，当index到达81时，整个块已经搜索完毕，返回true，这里相当于将二维数组展开成一维数组。
+    
+    int row = index/9;//检测行数
+    int col = index%9;
+    if(board[row][col]!='.')
+        return backtracking(board,index+1);
+    int squareIdx = row/3*3+ col/3;
+*/
 public:
     void solveSudoku(vector<vector<char>>& board) {
         for(int i=0;i<9;++i){
