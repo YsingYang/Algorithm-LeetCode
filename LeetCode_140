@@ -1,0 +1,44 @@
+/**
+ * 自顶向下的基于dp memorization方法
+ * 采用递归方法解决子问题，同时记录当前的string是否曾经解决过，如果解决过直接返回
+ * 子问题的解决过程是for一遍s,当如果s.substr(i)存在
+ * 那么递归搜索子问题s.substr(0,i);
+ * 得到结果后合并在一起；
+ *
+ 
+ */
+
+class Solution {
+unordered_map<string,vector<string>> mp;
+unordered_set<string> wd;
+vector<string> getVs(string word,vector<string> pre){
+    for(int i=0;i<pre.size();++i){
+        pre[i] += " " + word;
+    }
+    return pre;
+}
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        wd = unordered_set<string>(wordDict.begin(),wordDict.end());
+        return Break(s);
+    }
+    
+    vector<string> Break(string s){
+        if(mp.find(s)!=mp.end())
+            return mp[s];//自顶向下搜，基于memorization,遇到直接返回
+        vector<string>  res;
+        if(wd.find(s)!=wd.end())
+            res.push_back(s);//本身可成为单词
+        for(int i=1;i<s.size();++i){
+            string tmp = s.substr(i);
+            if(wd.find(tmp)!=wd.end()){
+                string remain = s.substr(0,i);
+                vector<string> pre = getVs(tmp,Break(remain));//remain string res + tmp;
+                res.insert(res.end(),pre.begin(),pre.end());
+            }
+        }
+        
+        mp[s] = res;
+        return res;
+    }
+};
