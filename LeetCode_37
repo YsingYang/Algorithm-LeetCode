@@ -1,0 +1,51 @@
+class Solution {
+public:
+    void solveSudoku(vector<vector<char>>& board) {
+        for(int i=0;i<9;++i){
+            rows[i]=vector<bool>(9,false);
+            cols[i]=vector<bool>(9,false);
+            square[i]=vector<bool>(9,false);
+        }//初始化
+        
+        for(int i=0;i<9;++i){
+            for(int j=0;j<9;++j){
+                if(board[i][j]!='.'){
+                    rows[i][board[i][j]-'1'] = true;//被访问过
+                    cols[j][board[i][j]-'1'] = true;
+                    square[i/3*3+j/3][board[i][j]-'1'] = true;
+                }
+            }
+        }
+        backtracking(board,0);
+    }
+        
+        bool backtracking(vector<vector<char>>&board,int index){
+            if(index==81)
+                return true;
+            //如果是数字，跳过进行下一个
+            
+            int row = index/9;//检测行数
+            int col = index%9;
+            if(board[row][col]!='.')
+                return backtracking(board,index+1);
+            int squareIdx = row/3*3+ col/3;
+            
+            for(int i=0;i<9;++i){
+                if(rows[row][i]==false&&cols[col][i]==false&&square[squareIdx][i]==false){//这里的i会不会有问题，1-9而不是0-9
+                    rows[row][i] = cols[col][i] = square[squareIdx][i] = true;
+                    board[row][col] = i+'1';
+                    if(backtracking(board,index+1))
+                        return true;
+                    board[row][col] = '.';
+                    rows[row][i] = cols[col][i] = square[squareIdx][i] = false;
+                }
+            }
+            return false;
+            
+        }
+    
+private:
+    unordered_map<int,vector<bool>> rows;
+    unordered_map<int,vector<bool>> cols;
+    unordered_map<int,vector<bool>> square;
+};
