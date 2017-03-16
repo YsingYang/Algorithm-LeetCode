@@ -1,0 +1,21 @@
+class Solution {
+/**
+ * dp状态的巧妙用法，因为只能做两次买卖，那么我们就可以定义四种状态，
+ * 1.第一次卖，2.第二次卖，3.第三次卖，4.第四次卖
+ * 2.通过描述之间的转换关系，我们就能得到dp关系从而解答出这一道提
+ * 
+ */
+public:
+    int maxProfit(vector<int>& prices) {
+        int firstHold = INT_MIN,secondHold = INT_MIN;//定义四种状态
+        int firstSold = 0,secondSold = 0;//主要是与for循环处理四种状态的顺序有关
+        for(int i=0;i<prices.size();++i){
+            secondSold = max(secondSold,secondHold + prices[i]);
+            secondHold = max(secondHold,firstSold - prices[i]);
+            firstSold = max(firstSold,firstHold + prices[i]);
+            firstHold = max(firstHold,-prices[i]);
+           // cout<<firstHold<<"    "<< firstSold<<"    "<<secondHold<<"   "<<secondSold<<endl;
+        }
+        return secondSold;
+    }
+};
