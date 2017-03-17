@@ -32,3 +32,34 @@ public:
         return res;
     }
 };
+
+class Solution {
+/***
+ * 利用stack记录，当且仅当满足时才pop出占，否则push下标
+ * 循环结束如果stack还非空
+ * 那么通过right-left-1得出中间pop出过几个符合的
+ */
+public:
+    int longestValidParentheses(string s) {
+        stack<int> st;
+        int size = s.size();
+        for(int i=0;i<size;++i){
+            if(s[i]==')'&&!st.empty()&&s[st.top()]=='(')
+                st.pop();
+            else
+                st.push(i);
+        }
+        if(st.empty())
+            return size;
+        int left,right =size;
+        int res= 0;
+        while(!st.empty()){
+            left = st.top();
+            res = max(res,right-left -1);
+            st.pop();
+            right = left;
+        }
+        res = max(res,right);//注意这一句一定要加上，否则会出现问题，如())情况
+        return res;
+    }
+};
