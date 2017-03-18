@@ -1,0 +1,72 @@
+//直接简单的方法，直接找interval的插入位置
+class Solution {
+public:
+    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+        vector<Interval> res;
+        int start = newInterval.start,end = newInterval.end,size = intervals.size();
+        int index = 0;
+        sort(intervals.begin(),intervals.end(),[](const Interval &a1,const Interval &a2){
+           return a1.start<a2.start; 
+        });
+        while(index<size&&newInterval.start>intervals[index].end){
+            res.push_back(intervals[index]);//插入直到碰到interval位置
+            ++index;
+        }
+        int nstart,nend;//确定start
+        if(index==size||intervals[index].start>newInterval.start){
+            nstart = newInterval.start;
+        }
+        else{
+            nstart = intervals[index].start;
+        }
+        //确定end
+            while(index<size&&end>intervals[index].end){
+                ++index;
+            }
+            if(index==size||end<intervals[index].start)
+                nend = end;
+            else{
+                nend = intervals[index].end;
+                ++index;
+            }
+        res.push_back(Interval(nstart,nend));
+        while(index<size){
+            res.push_back(intervals[index++]);
+        }
+        return res;
+    }
+};
+
+class Solution {
+/****
+ * 一种方法是直接解决方法，该方法用了一种比较巧妙的方法，大大的减少了代码量
+ * 
+ * 1.  分别新建left,right的数组，然后将left的intervals,right的intervals的push进去
+ * 2、 如果left.size() + right.size() == size那么证明么有重叠，
+ * 3.  start = min(start,intervals[left.size()].start);
+            end = max(end,intervals[size-right.size()-1].end);生成一个新的interval即可
+ * 
+ * 
+ */
+public:
+    vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+       // using vec = intervals;
+        //using newIt = newInterval;
+        int size = intervals.size();
+        vector<Interval> left,right;
+        for(int i=0;i<size;++i){
+            if(newInterval.start>intervals[i].end)
+                left.push_back(intervals[i]);
+            if(newInterval.end<intervals[i].start)
+                right.push_back(intervals[i]);
+        }
+        int start = newInterval.start,end = newInterval.end;
+        if(left.size()+right.size()!=size){
+            start = min(start,intervals[left.size()].start);
+            end = max(end,intervals[size-right.size()-1].end);
+        }
+        left.push_back(Interval(start,end));
+        left.insert(left.end(),right.begin(),right.end());
+        return left;
+    }
+};
