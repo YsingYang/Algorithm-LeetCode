@@ -1,0 +1,33 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+/**
+ * １．最大高度有两种情况，一种，选择自己两边子树通过自己连接
+ * ２．选择左右子树中最大高度，返回给跟节点
+ * 
+ * 
+ */
+int res;
+public:
+    int diameterOfBinaryTree(TreeNode* root) {
+        res = 0;
+        getMaxHight(root);
+        return res;
+    }
+    
+    int getMaxHight(TreeNode *root){
+        if(!root)
+            return 0;
+        int left = getMaxHight(root->left);
+        int right = getMaxHight(root->right);
+        res = max(left+right,res);
+        return max(left,right) + 1;
+    }
+};
