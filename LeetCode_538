@@ -1,0 +1,50 @@
+class Solution {
+/**
+ * 两遍遍历做法
+ * 
+ */
+vector<int> vec;
+public:
+    TreeNode* convertBST(TreeNode* root) {
+        int sum = 0;
+        int index = 0;
+        Inordered(root,0,sum,index);
+        Inordered(root,1,sum,index);
+        return root;
+    }
+    void Inordered(TreeNode *root,int flag,int &sum,int &index){
+        if(!root)
+            return;
+        Inordered(root->left,flag,sum,index);
+        if(flag==0){
+            vec.push_back(root->val);
+            sum += root->val;
+        }
+        else{
+            root->val += (sum -= vec[index++]);
+        }
+        Inordered(root->right,flag,sum,index);
+    }
+};
+
+class Solution {
+/**
+ * 右根左做法
+ */
+public:
+    TreeNode* convertBST(TreeNode* root) {
+        int sum = 0;
+        Travel(root,sum);
+        return root;
+    }
+    
+    void Travel(TreeNode* root,int &sum){
+        if(!root)
+            return;
+        Travel(root->right,sum);
+        int tmp = root->val;
+        root->val += sum;
+        sum += tmp;
+        Travel(root->left,sum);
+    }
+};
