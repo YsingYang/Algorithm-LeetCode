@@ -1,0 +1,47 @@
+class Solution {
+/**
+ * 利用bfs进行搜索，注意之前出现TLE的原因
+ * 1. 在queue中初始化一个m*n的数组，这样每次的复杂度都是O(m*n)的
+ * 2. 广度优先最好考虑proprocesss就像再这里，一次性push0点进队列好过　for()循环中遇到0再push
+ * 3. 注意下面蓝色字体的问题
+ */ 
+public:
+    vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
+        rs = matrix.size(),cs = matrix[0].size();
+        queue<pair<int,int>> que;
+        for(int i=0;i<rs;++i){
+            for(int j=0;j<cs;++j){
+                if(matrix[i][j]==1)
+                    matrix[i][j] = INT_MAX;
+                else{
+                    que.emplace(i,j);
+                }
+            }
+        }
+        int dist = 0;
+                     
+        while(!que.empty()){
+            int size = que.size();
+            for(int count=0;count<size;++count){
+                int idxi = que.front().first,idxj = que.front().second;
+                que.pop();
+                matrix[idxi][idxj] = min(dist,matrix[idxi][idxj]);
+                /**这一句还是很有必要的，否则会出现错误，因为当dist ==1时，碰到1会更新，但同时，１后面的1也会push进去，所以再下一次时，它会是２，不巧，这个２之前被更新成了１，它会被覆盖［０１０］[0,1，0]
+                 */
+                for(int k=0;k<4;++k){
+                    int curi = idxi + direction[k][0] ,curj = idxj + direction[k][1];
+                    if(curi<0||curi>=rs||curj<0||curj>=cs||matrix[curi][curj]<=dist)
+                        continue;
+                              //  visited[curi][curj] = 1;
+                    que.emplace(curi,curj);
+                }
+            }
+            ++dist;
+        }
+        return matrix;
+    }
+    
+private:
+    int rs,cs;
+    vector<vector<int>> direction = {{1,0},{0,1},{0,-1},{-1,0}};
+};
