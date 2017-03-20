@@ -1,0 +1,41 @@
+
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int maxdist = 0,size = nums.size(),step = 0;
+        for(int i=0;i<size&&maxdist<size-1;++i){
+            int curMax  = maxdist;
+            for(int j=i;j<=curMax;++j){
+                maxdist = max(maxdist,nums[j]+j);
+            }
+            ++step;
+        }
+        return step;
+    }
+};
+
+
+//optimazed
+class Solution {
+/**
+ * 这里用到了BFS方法，虽然之中没有队列，但是其实大概的思路是和BFS一样的
+ * 因为对于BFS我们都需要弹队列，但我们不保证每次都能弹出最大值，所以这里抽象一个maxend记录每次遍历的最大值
+ * 里面的for循环，就相当于一次层次遍历，下一个层次的start就等于这一次end+1;end就等于maxend
+ */
+public:
+    int jump(vector<int>& nums) {
+        int n = nums.size(), step = 0, start = 0, end = 0;
+        while(end<n-1){//当==n-1时循环结束
+            int maxdist = end;
+            ++step;
+            for(int i=start;i<=end;++i){
+                maxdist = max(maxdist,i+nums[i]);
+                if(maxdist>=n-1)
+                    return step;
+            }
+            start = end+1;
+            end = maxdist;
+        }
+        return step;
+    }
+};
