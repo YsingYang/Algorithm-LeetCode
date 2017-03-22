@@ -1,0 +1,58 @@
+class Solution {
+public:
+    int getMaxRepetitions(string s1, int n1, string s2, int n2) {
+        vector<int> pass2s(s2.size()+1u,-1);
+        vector<int> idx2s(s2.size()+1u,-1);
+        pass2s[0] = 0;
+        idx2s[0] = 0;
+        
+        int pass2 = 0;
+        int idx2 = 0;
+        
+        for(int pass1 =1 ;pass1 <= n1;++pass1){//这里为什么是n1
+            /****
+             * 这里相当于求pattern的过程
+             * 
+             */
+            for(int idx1 =0;idx1<s1.size();++idx1){
+                if(s1[idx1]==s2[idx2]){
+                    ++idx2;
+                    if(idx2==s2.size()){
+                        ++pass2;
+                        idx2 = 0;
+                    }
+                }
+            }
+             /****
+              * 这一次pattern我能到达哪个位置，同时获得pass的个数是多少
+              * 
+              */
+            pass2s[pass1] = pass2;
+			idx2s[pass1] = idx2;
+			
+            /****
+             * 检测之前是否有重复的点
+             */
+            for (int prevPass1 = 0; prevPass1 < pass1; ++prevPass1) {
+				if (idx2s[prevPass1] == idx2) {//出现与当前同样的结束index
+					// prevRepeat1 and pass1 share the same idx2,
+					// repetitive part is found
+
+					int repeatCount = (n1 - prevPass1) / (pass1 - prevPass1);//看总数是重复出现数量的几倍
+					int remainPass1count = (n1 - prevPass1) % (pass1 - prevPass1);//求余,因为不一定是整除的
+
+					int prefixPass2Num = pass2s[prevPass1]; // prefix part
+					int repetitivePass2Num = repeatCount * (pass2s[pass1] - pass2s[prevPass1]); // repetitive part重复部分计数和
+					int suffixPass2Num = pass2s[prevPass1 + remainPass1count] - pass2s[prevPass1];//余数部分，相当于没有满一个整数倍，加上即可
+					/***
+					 * 这里采取的是减的部分，
+					 */
+					
+					int overallPass2Num = prefixPass2Num + repetitivePass2Num + suffixPass2Num;
+					return overallPass2Num / n2;
+				}
+			}
+        }
+        return pass2s[n1] / n2;
+    }
+};
