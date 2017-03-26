@@ -1,0 +1,35 @@
+class Solution {
+/***
+ * 玄学般的遍历方式.....
+ * 首先注意一点，中间点是不大印的，中间点仅当位叶子节点的时候才打印
+ * 那么我们需要确立以下flag,标记leftboundary,rightboundary,mid;
+ * root->定为0唯一一个0
+ * leftBoundary，当根节点有叶子节点时，最左排的节点都位LeftBoundary,（如果flag为1且没有左子树，那么右子节点也为leftboundary）
+ * mid,不为1，2，仅当为叶子节点的时候才push进mid
+ * post 相当遍历最有节点，那么需要注意的是，如果是先序遍历，那么得到的顺序是与结果顺序相反的，可以考虑用stack解决这个问题
+ * 
+ */
+public:
+    vector<int> boundaryOfBinaryTree(TreeNode* root) {
+        vector<int> pre,mid,post;
+        preorder(root,pre,mid,post,0);
+        pre.insert(pre.end(),mid.begin(),mid.end());
+        pre.insert(pre.end(),post.begin(),post.end());
+        return pre;
+        
+    }
+    
+    void preorder(TreeNode *root,vector<int> &pre,vector<int> &mid,vector<int> &post,int flag){
+        if(root==nullptr)
+            return;
+        if(flag<=1)
+            pre.push_back(root->val);
+        else if(flag==2)
+            post.insert(post.begin(),root->val);//注意这里，也许这里用stack会好一点
+        else if(!root->left&&!root->right){
+            mid.push_back(root->val);
+        }
+        preorder(root->left,pre,mid,post,flag<=1?1:(flag==2&&!root->right)?2:3);
+        preorder(root->right,pre,mid,post,(flag%2)==0?2:(flag==1&&!root->left)?1:3);
+    }
+};
