@@ -1,0 +1,49 @@
+class Solution {
+/****
+ * 一道比较复杂的问题..有点像balloons又不是
+ * 这个3D UP-buttom优点奇怪，其中它的k位在left-right中，重复k次等于boxes[i]得到的points值
+ * 最普通的情况,k为1,即所有的ball color都不想等，那么就会得到每个ball值为1,
+ * 
+ * 那么如果处理球颜色的情况,最基本是dfs(boxes,dp,left+1,right,1)+ k*k递归求下一层的point,这里为什么有个k*k,因为这是从上层传递下来的，相当于回归上层后，与上层相同的颜色消除会 get k*k，point
+ * 也就是与
+ * for(int i=left+1;i<=right;++i){
+                if(boxes[i] == boxes[left]){
+                    tmp = max(tmp,dfs(boxes,dp,left+1,i-1,1)+dfs(boxes,dp,i,right,k+1));
+                }
+            }
+
+
+ * 这一语句有关，相当于当出现相同时，我们将处理的point给下一层左计算，但中间出现的dfs(boxes,dp,left+1,i-1,1),相当于独立的一个自问题（boxes[i],boxes[m]中间夹住的那一部分）
+ * 
+ */
+public:
+    int removeBoxes(vector<int>& boxes) {
+        if(boxes.empty())
+            return 0;
+        size = boxes.size();
+        int dp[100][100][100] = {0};//注意这个三位数组如果用vector会MLE
+        return dfs(boxes,dp,0,size-1,1);
+        
+    }
+    
+    int dfs(vector<int>&boxes,int dp[100][100][100],int left,int right,int k){
+        if(left>right)
+            return 0;
+        if(left==right)
+            return k*k;
+        if(dp[left][right][k])
+            return dp[left][right][k];
+        else{
+            int tmp = dfs(boxes,dp,left+1,right,1)+ k*k;
+            for(int i=left+1;i<=right;++i){
+                if(boxes[i] == boxes[left]){
+                    tmp = max(tmp,dfs(boxes,dp,left+1,i-1,1)+dfs(boxes,dp,i,right,k+1));
+                }
+            }
+            dp[left][right][k] = tmp;
+            return tmp;
+        }
+    }
+private:
+    int size;
+};
