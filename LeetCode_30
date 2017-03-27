@@ -1,0 +1,174 @@
+
+
+class Solution {
+/***
+ * 第一次优化
+ * 基于sliding windows + memorization的减枝策略和DFS的深度优先搜索单词的策略，不过没有考虑到题目的另外一个条件，每个Word中的单词大小是一样的，所以仍可以进一步优化
+ * 
+ */
+unordered_map<string,int> mp;
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        int strsize = 0,count=0;
+        vector<int> word(128);
+        unordered_map<string,bool> record;//基于memorization,记录每一次DFSsearch的结果
+        for(auto str:words){
+            ++mp[str];
+            strsize += str.size();
+            for(auto c:str){
+                count += (++word[c]==1);
+                    
+            }
+        }//统计总的字符串大小
+        
+        vector<int> res;
+        if(s.size()<strsize)
+            return res;
+        /***
+         * 这里可以做个减枝sliding windows
+         */
+        int left =0,right = 0;
+        while(right<s.size()){
+            //cout<<count<<endl;
+            count -= (--word[s[right++]]==0);
+            
+            if(right-left>strsize){
+                count += (++word[s[left++]]==1);
+            }
+            if(count==0){
+                string tmp = s.substr(left,right-left);
+                if(record.find(tmp)!=record.end()){
+                    if(record[tmp])
+                        res.push_back(left);
+                }
+                else{
+                    bool isTrue = FindConcatenation(tmp,mp,0,words.size());
+                    if(record[tmp] = isTrue)
+                        res.push_back(left);
+                }
+            }
+        }
+        return res;
+    }
+    
+    bool FindConcatenation(string &str,unordered_map<string,int> &mp,int begin,int wordCount){//回溯找相应的word
+        if(begin==str.size()){
+            return wordCount == 0;//回溯出口
+        }
+        for(int i=begin;i<str.size();++i){
+            string tmp = str.substr(begin,i-begin+1);
+            if(mp.find(tmp)!=mp.end()&&mp[tmp]>0){
+                --mp[tmp];
+                if(FindConcatenation(str,mp,i+1,wordCount-1)){
+                    ++mp[tmp];
+                    return true;
+                }
+                ++mp[tmp];
+                
+            }
+        }
+        return false;
+    }
+};
+
+//第二次优化
+
+class Solution {
+/***
+ * 基于sliding windows + memorization的减枝策略和DFS的深度优先搜索单词的策略，不过没有考虑到题目的另外一个条件，每个Word中的单词大小是一样的，所以仍可以进一步优化
+ * 
+ * 第二次优化..:利用了每个单词的长度是相同的特殊性，但好像..反而更慢了....
+ */
+unordered_map<string,int> mp;
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        int strSize = 0,count = words.size(),wordLen = words[0].size();//count记录有多少个单词，strSize 记录总大小即count * words[i].size(）（每个单词的大小是一样的）
+        unordered_map<string,bool> record;//基于memorization,记录每一次DFSsearch的结果
+        for(auto str:words){
+            ++mp[str];
+            strSize += str.size();
+        }//统计总的字符串大小
+        
+        vector<int> res;
+        if(s.size()<strSize)
+            return res;
+        /***
+         * 这里可以做个减枝sliding windows
+         */
+        int left =0,right = 0;
+        while(left<s.size()-strSize+1){
+            string str = s.substr(left,strSize);
+            if(record.find(str)!=record.end()){
+                if(record[str])
+                    res.push_back(left);
+            }
+            else{
+                unordered_map<string,int> findWord;
+                int j=0;
+                for(;j<count;++j){
+                    string tmp = s.substr(left+j*wordLen,wordLen);
+                    if(mp.find(tmp)!=mp.end()&&findWord[tmp]<mp[tmp])
+                        ++findWord[tmp];
+                    else
+                        break;
+                }
+                record[str] = (j==count);
+                if(j==count)
+                    res.push_back(left);
+            }
+            ++left;
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+/***
+ * 基于sliding windows + memorization的减枝策略和DFS的深度优先搜索单词的策略，不过没有考虑到题目的另外一个条件，每个Word中的单词大小是一样的，所以仍可以进一步优化
+ * 
+ * 第二次优化..:利用了每个单词的长度是相同的特殊性，但好像..反而更慢了....
+ * 第三次优化..在discuss中收到启发，我们为何不将sliding windows扩展应用在word上，因为 word长度是固定的，那么我们将最外层循环为wordLen,每次left,right+上wordLen,依此作为每一次的sliding windows,所以时间复杂度为O(KN),k为word的长度
+ */
+unordered_map<string,int> mp;
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        int strSize = 0,wordLen = words[0].size();//count记录有多少个单词，strSize 记录总大小即count * words[i].size(）（每个单词的大小是一样的）
+        unordered_map<string,bool> record;//基于memorization,记录每一次DFSsearch的结果
+        int diffCount = 0;///记录不同单词的数量，用于 sliding windows.
+        for(auto str:words){
+            diffCount += (++mp[str] == 1);
+            strSize += str.size();
+        }//统计总的字符串大小
+        
+        vector<int> res;
+        if(s.size()<strSize)
+            return res;
+        /***
+         * 这里可以做个减枝sliding windows
+         */
+        for(int i = 0;i<wordLen;++i){//第一层循环，用wordLen长度做循环,相当于起始点，
+            int left =i,right = i,count = 0;
+            unordered_map<string,int> curMp;
+            while(right<s.size()&&s.size()-right>=wordLen){
+                //if(s.substr(right,wordLen))//注意这里的长度可能是不够的,上面加了一个判断语句
+                
+                string rightStr = s.substr(right,wordLen),leftStr;
+                if(mp.find(rightStr)!=mp.end())
+                    count += (++curMp[rightStr] == mp[rightStr]);
+                right += wordLen;
+                if(right-left>strSize){
+                    leftStr = s.substr(left,wordLen);
+                    if(mp.find(leftStr)!=mp.end())
+                        count -= (--curMp[leftStr]==(mp[leftStr]-1));//注意这里加减操作是否出错
+                    left += wordLen;
+                }
+               // cout<<rightStr<<"  "<<leftStr<<endl;
+                if(count==diffCount)
+                    res.push_back(left);
+            }
+            curMp.clear();
+        }
+        return res;
+    }
+};
