@@ -1,0 +1,59 @@
+class Solution {
+/**
+ * 总结一下需要要求
+ * 1. 尽可能塞入多的单词
+ * 2. 左右顶个
+ * 3. 空格尽量均分，不能均分左多右少
+ */
+public:
+    vector<string> fullJustify(vector<string>& words, int maxWidth) {
+        int idx = 0;
+        vector<string> res;
+        int size = words.size();
+        int count = 0;//记录该行的width
+        vector<string> word;
+        while(idx<size){
+            //计算本次最多能塞入多少个单词
+            if(count+words[idx].size()<=maxWidth){ //注意我处理的时候是多加了一个空格的
+                word.push_back(words[idx]);//因为需要处理空格，我们先将可以放入的单词暂存入word中
+                count += words[idx].size()+1;//不要忘记至少有一个空格的差距
+                ++idx;
+                //cout<<words[idx]<<"   "<<idx<< endl;
+            }
+            else{//容不下了，开始均分字符
+                //cout<<idx<<endl;
+                int remain = maxWidth - (count - word.size()),interval = (word.size()>1?word.size()-1:1);//除掉空格后看该行的text如何均分
+                int even = remain/interval;
+                int notEven = remain%interval;
+                //cout<<even<<"  "<<notEven<<endl;
+                string text;
+                for(int i=0;i<word.size();++i){
+                    text += word[i];
+                    if(word.size()<=1||i<word.size()-1){
+                        string space(even+(notEven-->0?1:0),' ');
+                        //cout<<space<<"abc"<<endl;
+                        text += space;
+                       // cout<<text<<endl;
+                    }
+                }
+                res.push_back(text);
+                word.clear();
+                count = 0;
+            }
+        }//最后一行似乎要特殊处理,最后一行是需要左对齐的，而不是均分单词位置
+        if(!word.empty()){
+            //cout<<" 执行"<<endl;
+            int remain = maxWidth - (count - word.size()),interval = (word.size()>1?word.size()-1:1);//除掉空格后看该行的text如何均分
+            //int notEven = remain%interval;
+            string text;
+            for(int i=0;i<word.size();++i){
+                text += word[i];
+                if(i!=word.size()-1)
+                    text += ' ';
+            }
+            text += string(maxWidth-text.size(),' ');
+            res.push_back(text);
+        }
+        return res;
+    }
+};
