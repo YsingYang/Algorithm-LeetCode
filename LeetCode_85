@@ -34,3 +34,49 @@ public:
         return res;
     }
 };
+
+
+class Solution {
+/**
+ * 还有一种用到了标准的dp算法，相当于每次都记录下left-boundary,right-boundary,但效率跟时间复杂度上感觉没有使用stack的快
+ * 
+ */
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        if(matrix.empty())
+            return 0;
+        int rs = matrix.size(),cs = matrix[0].size();
+        vector<int> left(cs,0),right(cs,cs),height(cs,0);
+        int res = 0;
+        for(int i=0;i<rs;++i){
+            int curLeft = 0,curRight = cs;
+            for(int j=0;j<cs;++j){
+                if(matrix[i][j]=='1'){
+                    ++height[j];
+                    left[j] = max(left[j],curLeft);
+                }
+                else{
+                    height[j] = 0;
+                    left[j] = 0;//这两句还是有必要的，给下一行的做递推
+                    curLeft = j+1;
+                }
+            }
+            
+            for(int j=cs-1;j>=0;--j){
+                if(matrix[i][j]=='1'){
+                    right[j] = min(right[j],curRight);
+                }
+                else{
+                    right[j] = cs;////这两句还是有必要的，给下一行的做递推
+                    curRight = j;
+                }
+            }
+            
+            for(int j=0;j<cs;++j){
+                res = max(res,(right[j]-left[j])*height[j]);
+            }
+        }
+        return res;
+        
+    }
+};
