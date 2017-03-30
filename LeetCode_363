@@ -1,0 +1,63 @@
+class Solution {
+//有点类似于再数组中找和为k的数列，但最接近K需要怎么办呢，就需要有二分的性质,
+public:
+    int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {//k的值一定为正吗,不一定
+        if(matrix.empty())
+            return 0;
+        int rs = matrix.size(),cs = matrix[0].size();
+        int res = INT_MIN;//这里不能是0
+        for(int r=0;r<rs;++r){//以row作为最外部循环
+            vector<int> sum(cs,0);
+            for(int inner = r;inner<rs;++inner){
+                for(int c = 0;c<cs;++c){
+                    sum[c] += matrix[inner][c];//这里有可能有人会问，每一次不是只计算了某一行的情况吗，那下一行呢，答案是下一个r循环会计算下一个单行情况
+                }
+                
+                set<int> mp;//利用lower_bound的性质，这种题目也很常见，只是变种比较多
+                mp.insert(0);
+                int curSum = 0;
+                for(auto i:sum){
+                    curSum += i;
+                    auto it = mp.lower_bound(curSum - k);//其实就是求尽可能接近curSum-k的值，upper_bound会出错，是因为用upper_bound需要-1？
+                    if(it!=mp.end()){
+                        res = max(res,curSum - *it);
+                    }
+                    mp.insert(curSum);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+//上面的解法runtime1400ms++ 是O（min(m,n)^2,max(m,n),*log(max(m,n))）
+//所以根据这点可以看出testcase中基本都是行的数目多，我们仅需换循环的行列顺序，就可以得到rumtime的提升了
+class Solution {
+//有点类似于再数组中找和为k的数列，但最接近K需要怎么办呢，就需要有二分的性质
+public:
+  int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
+    if (matrix.empty()) return 0;
+    int row = matrix.size(), col = matrix[0].size(), res = INT_MIN;
+    for (int l = 0; l < col; ++l) {
+        vector<int> sums(row, 0);
+        for (int r = l; r < col; ++r) {
+            for (int i = 0; i < row; ++i) {
+                sums[i] += matrix[i][r];
+            }
+            
+            // Find the max subarray no more than K 
+            set<int> accuSet;
+            accuSet.insert(0);
+            int curSum = 0, curMax = INT_MIN;
+            for (int sum : sums) {
+                curSum += sum;
+                set<int>::iterator it = accuSet.lower_bound(curSum - k);
+                if (it != accuSet.end()) curMax = std::max(curMax, curSum - *it);
+                accuSet.insert(curSum);
+            }
+            res = std::max(res, curMax);
+        }
+    }
+    return res;
+}
+};
