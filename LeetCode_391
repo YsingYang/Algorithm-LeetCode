@@ -1,0 +1,88 @@
+class Solution {
+/***
+ * 思路，先确定rectangles的界限，同时给界限标记一个tag,然后逐步遍历，
+ * 相当于硬搜的方法，如果出现大数很容易TLE
+ */
+public:
+    bool isRectangleCover(vector<vector<int>>& rectangles) {
+        int minRow=INT_MAX,maxRow = INT_MIN,minCol = INT_MAX,maxCol = INT_MIN;
+        for(auto i:rectangles){
+            for(int j=0;j<i.size();++j){
+                if(j&1){//奇数项为col
+                    minCol = min(minCol,i[j]);
+                    maxCol = max(maxCol,i[j]);
+                }
+                else{
+                    maxRow = max(maxRow,i[j]);
+                    minRow = min(minRow,i[j]);
+                }
+            }
+        }
+        unordered_set<int> mp;
+        int count = 0;
+        for(int i=minRow;i<maxRow;++i){
+            for(int j=minCol;j<maxCol;++j){
+                mp.insert(count++);
+            }
+        }
+        
+        
+        int colCount = maxCol - minCol;
+        for(auto i:rectangles){
+            int bottom = i[0],left = i[1],top = i[2],right = i[3];
+            for(int row = bottom;row<top;++row){
+                for(int col = left;col<right;++col){
+                    int tag = (row - minRow) * colCount + (col - minCol);
+                    if(mp.find(tag)==mp.end())
+                        return false;
+                    mp.erase(tag);
+                }
+            }
+        }
+
+        return mp.empty();
+    }
+};
+
+
+class Solution {
+public:
+    bool isRectangleCover(vector<vector<int>>& rectangles) {
+        int minRow=INT_MAX,maxRow = INT_MIN,minCol = INT_MAX,maxCol = INT_MIN;
+        unordered_set<string> mp;//记录相应的mp
+        int area = 0;
+        for(auto rect:rectangles){
+            minRow = min(minRow,rect[0]);
+            minCol = min(minCol,rect[1]);
+            maxRow = max(maxRow,rect[2]);
+            maxCol = max(maxCol,rect[3]);
+            area  += (rect[2] - rect[0])*(rect[3]-rect[1]);//利用面积的和来比较最后大小是否匹配
+            
+            string s1 = to_string(rect[0]) + " " + to_string(rect[1]);
+			string s2 = to_string(rect[0]) + " " + to_string(rect[3]);
+			string s3 = to_string(rect[2]) + " " + to_string(rect[3]);
+			string s4 = to_string(rect[2]) + " " + to_string(rect[1]);
+            
+            if(mp.find(s1)==mp.end())
+                mp.insert(s1);
+            else
+                mp.erase(s1);
+            if(mp.find(s2)==mp.end())
+                mp.insert(s2);
+            else
+                mp.erase(s2);
+            if(mp.find(s3)==mp.end())
+                mp.insert(s3);
+            else
+                mp.erase(s3);
+            if(mp.find(s4)==mp.end())
+                mp.insert(s4);
+            else
+                mp.erase(s4);
+            
+        }
+        if(mp.find(to_string(minRow) + " " +to_string(minCol))==mp.end()||mp.find(to_string(maxRow) + " "+ to_string(maxCol))==mp.end()||mp.find(to_string(minRow) + " "+ to_string(maxCol))==mp.end()||mp.find(to_string(maxRow) + " "+ to_string(minCol))==mp.end()||mp.size()!=4)//当当仅靠面积判断是不够的，可能会出现面积相等但并不是一个rectangle，好像prefect rectangle中间的点都会出现偶数次，只有4个角的点才会出现奇数次
+            return false;
+        return (maxRow-minRow)*(maxCol - minCol)==area;
+    }
+};
