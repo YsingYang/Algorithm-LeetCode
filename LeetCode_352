@@ -1,0 +1,44 @@
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class SummaryRanges {
+/***
+ * 最简单的思想，我维护一个有序表，当需要get的时候for一遍有序表，得到vector<Interval>
+ * 该有序表用set比较好，可以移除掉重复点的影响
+ */
+set<int> sortedList;
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    void addNum(int val) {
+        sortedList.insert(val);//考虑一下重复的点,直接用set不用考虑重复点的问题
+        //cout<<val<<endl;
+    }
+    
+    vector<Interval> getIntervals() {
+        vector<Interval> res;
+        auto it = sortedList.begin();
+        int front = -1;
+        for(;it!=sortedList.end();++it){
+            if(front == -1||*it!=front+1){
+                if(front!=-1){
+                    res.back().end = front;
+                }
+                Interval itv = Interval(*it,0);//当
+                res.push_back(itv);
+            }
+            front = *it;
+        }
+        res.back().end = front;
+        return res;
+    }
+};
