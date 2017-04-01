@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int maximumGap(vector<int>& nums) {
+        int size = nums.size();
+        if(size<=1)
+            return 0;
+        auto minmax = minmax_element(nums.begin(),nums.end());
+        int left = *minmax.first,right = *minmax.second;//返回的是两个迭代器
+        int gap = max((right-left)/(size-1),1);
+        int buckNum = (right-left)/gap +1;
+        /*****
+         * 将max-min/size-1得到gap,同时由gap计算到所需桶的数量（好像就是size）个，
+         * 那么有两种情况，一种每个桶都只有一个数，下面算法没有问题
+         * 第二种，至少有一个桶没有数，那么差距最大的数就在bucketMin[j] - bucketMax[i]得到
+         * 总结得，下面算法可以得到最大差距值
+         */
+        //建立bucket
+        vector<int> bucketMin(buckNum,INT_MAX);
+        vector<int> bucketMax(buckNum,INT_MIN);
+        
+        for(auto num:nums){
+            int selectBucket = (num-left)/gap;
+            bucketMin[selectBucket] = min(bucketMin[selectBucket],num);
+            bucketMax[selectBucket] = max(bucketMax[selectBucket],num);
+        }
+        
+        int i=0,j;
+        int res = bucketMax[0]- bucketMin[0];
+        while(i<buckNum){
+            j = i+1;
+            while(j<buckNum&&bucketMax[j]==INT_MIN&&bucketMin[j]==INT_MAX)
+                ++j;
+            if(j>=buckNum)
+                break;
+            res = max(bucketMin[j] - bucketMax[i],res);
+            i = j;
+        }
+        return res;
+    }
+};
