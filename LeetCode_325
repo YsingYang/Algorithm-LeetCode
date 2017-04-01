@@ -15,3 +15,125 @@ public:
         return maxLen;
     }
 };
+
+//利用红黑树的二分查找的特点
+
+class SummaryRanges {
+map<int,Interval> mp;//建立一个map,该map的key对应以该key为起点的interval
+
+int findLowerBound(int key){
+    auto it = mp.lower_bound(key);
+    if(it==mp.begin())
+        return -1;
+    return (--it)->first;
+}
+
+int findUpperBound(int key){
+    auto it = mp.upper_bound(key);
+    if(it==mp.end())
+        return -1;
+    return it->first;
+}
+
+
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    void addNum(int val) {
+        if(mp.find(val)!=mp.end())
+            return ;//已经有该点了，避免与lower_bound进行冲突，lower_bound是返回等于节点的第一个节点，
+        int l = findLowerBound(val);
+        int r = findUpperBound(val);
+        //开始判断l,r的位置决定interval如何插入
+        if(l!=-1&&r!=-1&&val==mp[l].end+1&&val+1 == r){
+            mp[l].end = mp[r].end;
+            mp.erase(r);
+        }
+        else if(l!=-1&&val<=mp[l].end+1){//如果符合将val与mp[l]绑定在一起
+            mp[l].end = max(mp[l].end,val);
+        }
+        else if(r!=-1&&val+1==r){//如果刚好为r的前面一个元素，新建一个interval
+            Interval itv = Interval(val,mp[r].end);
+            mp[val] = itv;
+            mp.erase(r);
+        }
+        else{//都没有，为独立的个体，单独为一个Interval
+            Interval itv = Interval(val,val);
+            mp[val] = itv;
+        }
+    }
+    
+    vector<Interval> getIntervals() {
+        vector<Interval> res;
+        for(auto it:mp){
+            res.push_back(it.second);
+        }
+        return res;
+    }
+};
+//Discuss中有人用数组实现二分查找树，那样的优点是get的时候我们就不需要再for一遍了
+
+class SummaryRanges {
+private:
+    vector<Interval> intervals = vector<Interval>();
+    
+    int binarySearch(vector<Interval> intervals, int val) {
+        return binarySearchHelper(intervals, 0, intervals.size(), val);
+    }
+    
+    int binarySearchHelper(vector<Interval> intervals, int start, int end, int val) {
+        if (start == end) return -1;
+        if (start+1 == end && intervals[start].start < val) return start;
+        
+        int mid = (start + end)/2;
+        if (intervals[mid].start == val) {
+            return mid;
+        } else if (intervals[mid].start < val) {
+            return binarySearchHelper(intervals, mid, end, val);
+        } else { //intervals[mid] > val
+            return binarySearchHelper(intervals, start, mid, val);
+        }
+    }
+    
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    /** For a new number n, find the last(biggest) interval
+     *  [s,t], such that s < n. If no such interval exists, 
+     *  return -1.
+     */
+    void addNum(int val) {
+        int index = binarySearch(intervals, val);
+        
+        // intervals[index] contains val
+        if (index != -1 && intervals[index].end >= val) {
+            return;
+        }
+        
+        if (index != intervals.size()-1 && val + 1 == intervals[index+1].start) {
+            intervals[index+1].start = val;
+        } else if (index != -1 && val - 1 == intervals[index].end) {
+            intervals[index].end = val;
+        } else {
+            intervals.insert(intervals.begin() + index + 1, Interval(val, val));
+        }
+        
+        //merge intervals[index] with intervals[index+1]
+        if (index != -1 && intervals[index].end + 1 == intervals[index+1].start) {
+            intervals[index].end = intervals[index+1].end;
+            intervals.erase(intervals.begin()+index+1);
+        }
+        
+        return;
+    }
+    
+    vector<Interval> getIntervals() {
+        return this->intervals;
+    }
+};
