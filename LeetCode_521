@@ -1,0 +1,11 @@
+class Solution {
+/**
+ * 很好的愚人节礼物:)MDZZ，我想了半天觉得应该像解决最长公共子序列一样解决这道题..
+ * 后来觉得嗯不对，有病
+ * 
+ */
+public:
+    int findLUSlength(string a, string b) {
+        return a==b?-1:max(a.size(),b.size());
+    }
+};
