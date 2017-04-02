@@ -1,40 +1,4 @@
 class Solution {
-public:
-    bool splitArray(vector<int>& nums) {
-        int size = nums.size();
-        if(size<7)
-            return false;
-        for(int i=3;i<size-3;++i){
-            //Divide the array into two parts
-            unordered_set<int> left = split(nums,0,i);//If left part have equal sum
-            unordered_set<int> right = split(nums,i+1,size);//If right part have equal sum
-            for(auto sum:left){
-                if(right.find(sum)!=right.end())//Check the left part sum whether in right part
-                    return true;
-            }
-        }
-        return false;
-    }
-    
-    unordered_set<int> split(const vector<int> &nums,int left,int right){
-        vector<int> sum(right,0);
-        unordered_set<int> res;
-        int count = 0;
-        for(int i=left;i<right;++i){// accmulate sum from left to i
-            count += nums[i];
-            sum[i-left] = count;
-        }
-        
-        for(int i=left+1;i<right-1;++i){//check the subarry whether have split point
-            if(sum[i-1-left]==sum[right-1-left]-sum[i-left])
-                res.insert(sum[i-1-left]);
-        }
-        return res;
-        
-    }
-};
-
-class Solution {
 /**
  * 很直接的方法..直接在数组中类似于搜索一样找到中间的插入位置，将数组分成两个部分，然后就分成两个子问题，我们对自问题继续求解，利用O(N)的时间看自问题是
  * 否能够拆分成两个和相同的数组，如果可以，记录再unordered_set中，返回给上一个问题
@@ -74,5 +38,73 @@ public:
         }
         return res;
         
+    }
+};
+
+
+class Solution {
+/***
+ * 其实想到刚刚那里应该就已经基本得到结果了，刚刚的方法之所以慢，是因为对于子串的和我们重复计算了多次，那么我们直接可以用两个for循环就解决问题
+ * 而不需要用一个函数调用，返回一个子集，那么两个subarray的sum会重复计算多次
+ */
+public:
+    bool splitArray(vector<int>& nums) {
+        int size = nums.size();
+        if(size<7)
+            return false;
+        vector<int> sum(size,0);
+        sum[0] = nums[0];
+        for(int i=1;i<size;++i){
+            sum[i]  = sum[i-1] + nums[i];
+        }
+        for(int i =3;i<size-3;++i){
+            //left subarray
+            unordered_set<int> candidata;
+            for(int left = 1;left<i-1;++left){
+                if(sum[left-1] == sum[i-1] - sum[left])
+                    candidata.insert(sum[left-1]);
+            }
+            
+            for(int right = i+2;right<size-1;++right){
+                if(sum[right-1]-sum[i] == sum[size-1] - sum[right]&&candidata.find(sum[right-1]-sum[i])!=candidata.end())
+                    return true;
+            }
+        }
+        return false;
+    }
+};
+
+// 有一种优化策略是跳过连续的0,连续的0会造成数据冗余，使得循环的数量增多，不过需注意[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]?
+class Solution {
+public:
+    bool splitArray(vector<int>& nums) {
+        vector<int> sum;
+        int prev = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] == 0 && i > 0 && nums[i - 1] == 0)  continue; // skip extra 0s to accelerate
+            prev += nums[i];
+            sum.push_back(prev);
+        }
+
+        if(nums.size()>7&&sum[0]==0&&sum.size()==1)//add this 
+            return true;
+
+        int n = sum.size();
+        for (int i = 1; i < n; i++) {
+            int sum1 = sum[i - 1];
+            for (int j = i + 2; j < n - 3; j++) {
+                int sum2 = sum[j - 1] - sum[i];
+                if (sum2 != sum1) continue;
+                for (int k = j + 2; k < n - 1; k++) {
+                    int sum3 = sum[k - 1] - sum[j];
+                    int sum4 = sum[n - 1] - sum[k];
+                    if (sum2 == sum3 && sum3 == sum4) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 };
