@@ -1,0 +1,78 @@
+class Solution {
+public:
+    bool splitArray(vector<int>& nums) {
+        int size = nums.size();
+        if(size<7)
+            return false;
+        for(int i=3;i<size-3;++i){
+            //Divide the array into two parts
+            unordered_set<int> left = split(nums,0,i);//If left part have equal sum
+            unordered_set<int> right = split(nums,i+1,size);//If right part have equal sum
+            for(auto sum:left){
+                if(right.find(sum)!=right.end())//Check the left part sum whether in right part
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+    unordered_set<int> split(const vector<int> &nums,int left,int right){
+        vector<int> sum(right,0);
+        unordered_set<int> res;
+        int count = 0;
+        for(int i=left;i<right;++i){// accmulate sum from left to i
+            count += nums[i];
+            sum[i-left] = count;
+        }
+        
+        for(int i=left+1;i<right-1;++i){//check the subarry whether have split point
+            if(sum[i-1-left]==sum[right-1-left]-sum[i-left])
+                res.insert(sum[i-1-left]);
+        }
+        return res;
+        
+    }
+};
+
+class Solution {
+/**
+ * 很直接的方法..直接在数组中类似于搜索一样找到中间的插入位置，将数组分成两个部分，然后就分成两个子问题，我们对自问题继续求解，利用O(N)的时间看自问题是
+ * 否能够拆分成两个和相同的数组，如果可以，记录再unordered_set中，返回给上一个问题
+ * 上一个问题在得到左右两个子问题的解之后进行比较，如果比较后看两边问题的解是否有相同，有相同的返回true
+ * 否则，for循环结束后依然没有解返回false
+ * 
+ */
+public:
+    bool splitArray(vector<int>& nums) {
+        int size = nums.size();
+        if(size<7)
+            return false;
+        for(int i=3;i<size-3;++i){
+            //Divide the array into two parts
+            unordered_set<int> left = split(nums,0,i);//If left part have equal sum
+            unordered_set<int> right = split(nums,i+1,size);//If right part have equal sum
+            for(auto sum:left){
+                if(right.find(sum)!=right.end())//Check the left part sum whether in right part
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+    unordered_set<int> split(const vector<int> &nums,int left,int right){
+        vector<int> sum(right,0);
+        unordered_set<int> res;
+        int count = 0;
+        for(int i=left;i<right;++i){// accmulate sum from left to i
+            count += nums[i];
+            sum[i-left] = count;
+        }
+        
+        for(int i=left+1;i<right-1;++i){//check the subarry whether have split point
+            if(sum[i-1-left]==sum[right-1-left]-sum[i-left])
+                res.insert(sum[i-1-left]);
+        }
+        return res;
+        
+    }
+};
