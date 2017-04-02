@@ -1,0 +1,72 @@
+class Solution {
+/***
+ * 并查集找对象，并查集对于寻找子集个数非常方便
+ * 我们只需要对数据for一遍就能得到相应的答案，当然需要注意的是
+ * 
+ * 我们最后修改的时候需要注意这一句
+ * if(left!=right){//注意这里会不会造成重复搜索
+      --count;
+      uf[right] = left;
+    }
+ * if 判断是非常有必要的，避免重复减少
+ * 另外，修改uf数组的是 用unionFind得到的idx进行修改(left,right)，而不是当前搜索的i,j(因为这个错了好多)
+ */
+public:
+    int findCircleNum(vector<vector<int>>& M) {
+        if(M.empty())
+            return 0;
+        int rs = M.size(),cs = M[0].size();
+        int count = cs;
+        vector<int> uf(cs,-1);
+        for(int i=0;i<rs;++i){
+            int left = unionFind(uf,i);
+            for(int j=i+1;j<cs;++j){
+                if(M[i][j] == 1){
+                    int right = unionFind(uf,j);
+                    if(left!=right){//注意这里会不会造成重复搜索
+                        --count;
+                        
+                        uf[right] = left;
+                    }
+                }
+            }
+           /* for(auto u:uf){
+                cout<<u<<"   ";
+            }
+            cout<<endl;*/
+        }
+        return count;
+    }
+    
+    int unionFind(vector<int> &uf,int idx){
+        if(uf[idx]!=-1){
+           // cout<<uf[idx]<<endl;
+            return unionFind(uf,uf[idx]);
+        }
+        return idx;
+    }
+};
+
+当然DFS 与BFS 也是很好的解决方法
+//Post by @compton_scatter
+
+public int findCircleNum(int[][] M) {
+    int count = 0;
+    for (int i=0; i<M.length; i++)
+        if (M[i][i] == 1) { count++; BFS(i, M); }
+    return count;
+}
+
+public void BFS(int student, int[][] M) {
+    Queue<Integer> queue = new LinkedList<>();
+    queue.add(student);
+    while (queue.size() > 0) {
+        int queueSize = queue.size();
+        for (int i=0;i<queueSize;i++) {
+            int j = queue.poll();
+            M[j][j] = 2; // marks as visited
+            for (int k=0;k<M[0].length;k++) 
+                if (M[j][k] == 1 && M[k][k] == 1) queue.add(k);
+        }
+    }
+}
