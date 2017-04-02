@@ -1,0 +1,56 @@
+class Solution {
+/****
+ * 思路：首先先对字符串进行排序，按照字符串长度从小到大的顺序进行排列。
+ * 然后根据LUCS I 的思路，如果两个字符串不相同那么最长的字符串长度就是它的答案，
+ * 
+ * 这时候由于输入是一个vector，我们需要考虑更多因素，首先，如果存在相同的字符串，那么肯定为common string
+ * 按照从长到短搜索字符串，如果出现相同push到common中，否则，就可以成为答案（还要考虑该字符串是否为common string的自序列，如果是，也不能为答案）
+ * 
+ * 
+ */
+public:
+    int findLUSlength(vector<string>& strs) {
+        unordered_set<string> common;
+        int size = strs.size();
+        sort(strs.begin(),strs.end(),[](const string &s1,const string &s2){
+           return s1.size()<s2.size(); 
+        });
+        int res= 0;
+        for(int i=size-1;i>=0;--i){
+            int uclen = strs[i].size();//当前计算的长度
+            if(res>=uclen)//当当前得到的res大于后面计算的字符串长度时 直接返回。
+                return res;
+            if(common.find(strs[i])!=common.end())
+                continue;//之前查找过相同的字符串
+            //查找是否为出现重复的子集的子序列
+            for(auto str:common){
+                int iidx = 0,sidx = 0;
+                while(iidx<strs[i].size()&&sidx<str.size()){
+                    if(strs[i][iidx] == str[sidx])
+                        ++iidx;
+                    ++sidx;
+                }
+                if(iidx==strs[i].size()){
+                   //为子集不符合要求
+                   uclen = 0;
+                   break;
+                }
+            }
+            for(int j=i-1;j>=0;--j){
+                if(strs[j].size()<uclen||uclen==0)
+                    break;
+                int iidx = 0,jidx = 0;
+                for(;iidx<strs[i].size(),jidx<strs[j].size();++iidx,++jidx){
+                    if(strs[i][iidx] != strs[j][jidx])
+                        break;
+                }
+                if(iidx == strs[i].size()){
+                    common.insert(strs[i]);
+                    uclen = 0;
+                }//存在完全相同的两个长字符串
+            }
+            res = max(uclen,res);   
+        }
+        return res==0?-1:res;
+    }
+};
