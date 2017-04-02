@@ -70,3 +70,35 @@ public void BFS(int student, int[][] M) {
         }
     }
 }
+
+//DFS post by @alexander 
+class Solution {
+public:
+    int findCircleNum(vector<vector<int>>& M) {
+        if (M.empty()) return 0;
+        int n = M.size();
+        vector<bool> visited(n, false);
+        int groups = 0;
+        for (int i = 0; i < visited.size(); i++) {
+            groups += dfs(i, M, visited) > 0;
+        }
+        return groups;
+    }
+
+private:
+    int dfs(int i, vector<vector<int>>& M, vector<bool>& visited) {
+        if (visited[i]) {
+            return 0;
+        }
+
+        int ppl = 1;
+        visited[i] = true;
+        for (int j = 0; j < visited.size(); j++) {
+            if (i != j && M[i][j]) {
+                ppl += dfs(j, M, visited);
+            }
+        }
+
+        return ppl;
+    }
+};
