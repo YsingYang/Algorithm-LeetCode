@@ -1,0 +1,85 @@
+struct compare{
+    bool operator()(const pair<int,int> &p1,const pair<int,int> &p2){
+        return p1.first>p2.first;
+    }
+};
+
+class Solution {
+/***
+ * 从小到大进行贪心..这里不能从大到小的，因为从大到小贪心会遇到这种情况1,2,3,4,5,6,7，这里7本来是最大的，但如果从大到小贪，那么7会先+1,之后到6还要回过头来对7操作，显然是很复杂的，但如果从小到大贪心就不会出现这种情况了，
+ * 
+ * 同时因为我们需要与左右两边的ratings进行比较，所以仅仅记录下rating是不够的，还需要记录下标对左右的rating进行判断
+ * 
+ * 会有3种情况（注意处理越界情况）
+ * 1. 比左右都小
+ * 2. 比左or右其中一边大，
+ * 3. 比两边都大，取最大值+1
+ * 
+ */
+public:
+    int candy(vector<int>& ratings) {
+        priority_queue<pair<int,int>,vector<pair<int,int>>,compare> pq;
+        int size  = ratings.size(),count = size;
+        vector<int> candy(size,0);
+        for(int i=0;i<size;++i){
+            pq.push(make_pair(ratings[i],i));
+        }
+        while(!pq.empty()){//从小到大 pop,因为从大到小好像有问题
+            pair<int,int> tmp = pq.top();
+            //3种情况，1,比两端都小跳过，比一端大，比两端都大
+            int left = tmp.second-1,right = tmp.second +1;
+            if((left<0||ratings[left]>=tmp.first)&&(right>=size||ratings[right]>=tmp.first)){
+                pq.pop();
+                continue;
+            }
+            else if((left>=0&&ratings[left]<tmp.first)&&(right>=size||ratings[right]>=tmp.first)){
+                candy[tmp.second] = candy[left] + 1;
+                count += candy[tmp.second];
+            }
+            else if((left<0||ratings[left]>=tmp.first)&&(right<size&&ratings[right]<tmp.first)){
+                candy[tmp.second] = candy[right] + 1;
+                count += candy[tmp.second];
+            }
+            else{
+                int neibor = left<0?candy[right]:right>=size?candy[left]:max(candy[left],candy[right]);
+                candy[tmp.second] = neibor +1;
+                count += candy[tmp.second];
+            }
+            pq.pop();
+        }
+        return count;
+    }
+};
+
+///简化代码后结果
+struct compare{
+    bool operator()(const pair<int,int> &p1,const pair<int,int> &p2){
+        return p1.first>p2.first;
+    }
+};
+
+class Solution {
+public:
+    int candy(vector<int>& ratings) {
+        priority_queue<pair<int,int>,vector<pair<int,int>>,compare> pq;
+        int size  = ratings.size(),count = size;
+        vector<int> candy(size,0);
+        for(int i=0;i<size;++i){
+            pq.push(make_pair(ratings[i],i));
+        }
+        while(!pq.empty()){//从小到大 pop,因为从大到小好像有问题
+            pair<int,int> tmp = pq.top();
+            //3种情况，1,比两端都小跳过，比一端大，比两端都大
+            int left = tmp.second-1,right = tmp.second +1;
+            if((left<0||ratings[left]>=tmp.first)&&(right>=size||ratings[right]>=tmp.first)){
+                pq.pop();
+                continue;
+            }
+            int neibor = 0;
+            neibor = ((left<0||ratings[left]>=tmp.first)?candy[right]:(right>=size||ratings[right]>=tmp.first)?candy[left]:max(candy[left],candy[right]))+1;
+            count += candy[tmp.second] = neibor;
+            pq.pop();
+        }
+        return count;
+    }
+};
