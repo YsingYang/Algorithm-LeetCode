@@ -83,3 +83,73 @@ public:
         return count;
     }
 };
+
+
+class Solution {
+/**
+ * 两遍循环，一遍forward,如果大于则candy[i-1]+1,否则为1
+ * 为了处理逆序的candy,我们还需要backward进行多一次循环，注意判断条件为ratings[i]>ratings[i+1]&&candy[i]<=candy[i+1]下面给出了响应的解释
+ * 
+ */
+public:
+    int candy(vector<int>& ratings) {
+        int size = ratings.size();
+        vector<int> candy(size,0);
+        candy[0] = 1;
+        for(int i=1;i<size;++i){
+            candy[i] = (ratings[i]>ratings[i-1]?candy[i-1]+1:1);
+        }
+        int count = candy[size-1];
+        /**
+         * 这里注意多加一个条件candy[i]<=candy[i+1]，因为再forward过程中，可能已经使得candy[i]>candy[i+1]了，这时候我们就需要对candy[i]作出改变
+         */
+        for(int i=size-2;i>=0;--i){
+            count += (candy[i] = ratings[i]>ratings[i+1]&&candy[i]<=candy[i+1]?candy[i+1]+1:candy[i]);
+        }
+        
+        return count;
+    }
+};
+
+
+class Solution {
+/***
+ * 该方法相当于在递增的过程中寻找连续递减的序列，找到最低序列之后，同时计算降序的数目
+ * 利用((dropCount+1)*dropCount)>>1，高斯公式计算在降序中需要多少个candy
+ * 另外注意有一种情况如 2,7,6,5,4,3,2,1，这时候7candy是2,明显是不足够的，所以我们需要根据
+ * if(dropCount>=preCandy)
+        count += dropCount - preCandy +1;
+ * 将7缺失的candy补上
+ * 最后降序可能持续到end，我们遍历完还需要判断dropCount是否大于0处理
+ */
+public:
+    int candy(vector<int>& ratings) {
+        int size = ratings.size();
+        int preCandy = 1,dropCount=0,count = 1;
+        for(int i=1;i<size;++i){
+            if(ratings[i]>=ratings[i-1]){//注意判断是大于等于
+                if(dropCount>0){
+                    count += ((dropCount+1)*dropCount)>>1;
+                    if(dropCount>=preCandy)
+                        count += dropCount - preCandy +1;
+                    dropCount = 0;
+                    preCandy = 1;
+                }
+                /**
+                 * 这段是用于计算当前递增的candy
+                 */
+                preCandy = (ratings[i]==ratings[i-1]?1:preCandy+1);
+                count += preCandy;
+            }
+            else
+                ++dropCount;
+        }
+        ///当到最后仍然还是降序的序列时
+        if(dropCount>0){
+            count += ((dropCount+1)*dropCount)>>1;
+            if(dropCount>=preCandy)
+               count += dropCount - preCandy +1;
+        }
+        return count;
+    }
+};
