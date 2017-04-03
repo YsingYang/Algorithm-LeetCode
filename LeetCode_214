@@ -1,0 +1,42 @@
+class Solution {
+/***
+ * 好无聊的一道题....简单说可以用longest Palindrome substring 的做法
+ * 尽量找到最长的，然后在前面补上额外的组成最短的string 即可
+ * 
+ */
+public:
+    string shortestPalindrome(string s) {
+        int len = INT_MAX;
+        string res;
+        int size = s.size();
+        for(int i=0;i<=size/2;){
+            int left = i-1,right =i+1;
+            /***
+             * 跳过相同的字符
+             */
+            while(right<size&&s[right]==s[right-1])
+                ++right;
+            i = right;
+            /**
+             * 判断是否能组成palindrome
+             */
+            while(left>=0&&right<size&&s[left]==s[right]){
+                --left;
+                ++right;
+            }
+            if(left<0){
+                if(right<size){
+                    string tmp = s.substr(right);
+                    if(tmp.size()+s.size()<len){
+                        len = tmp.size()+s.size();
+                        reverse(tmp.begin(),tmp.end());
+                        res = tmp + s;
+                    }
+                }
+                else 
+                    return s;
+            }
+        }
+        return res;
+    }
+};
