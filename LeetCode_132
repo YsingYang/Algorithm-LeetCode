@@ -1,0 +1,54 @@
+/*My first solution got TLE in case aaaaaaaaaaaaaaaaaa...aaaaaa
+* This solution average time complexity is O(n^2) (I think..)
+* But in the bad case,The time complexity would be Degenerate to O(n^3)
+*/
+class Solution {
+public:
+    int minCut(string s) {
+        int size = s.size();
+        vector<int> dp(size+1,INT_MAX);
+        dp[0] = 0;
+        for(int i=0;i<size;++i){
+            for(int j=0;j<=i;++j){
+                if(dp[j]!=INT_MAX&&dp[i+1]>dp[j]){//之前cut过
+                    string tmp = s.substr(j,i-j+1);
+                    if(ispalindrome(tmp))
+                        dp[i+1] = min(dp[i+1],dp[j]+1);
+                }
+            }
+        }
+        return max(0,dp[size]-1);
+    }
+    
+    
+    bool ispalindrome(const string &str){
+        int left = 0,right = str.size()-1;
+        while(left<right){
+            if(str[left++]!=str[right--])
+                return false;
+        }
+        return true;
+    }
+};
+
+class Solution {
+/***
+ * 这一方法比我的方法优化在它在边判断Palindrome的时候也在进行dp操作，同时他考虑了odd length palindrome 和even length
+ * ，尽管如此，该方法最坏情况下的时间复杂度仍是O(n^2)
+ * 
+ */
+public:
+    int minCut(string s) {
+        int n = s.size();
+        vector<int> cut(n+1, 0);  // number of cuts for the first k characters
+        for (int i = 0; i <= n; i++) cut[i] = i-1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; i-j >= 0 && i+j < n && s[i-j]==s[i+j] ; j++) // odd length palindrome
+                cut[i+j+1] = min(cut[i+j+1],1+cut[i-j]);
+
+            for (int j = 1; i-j+1 >= 0 && i+j < n && s[i-j+1] == s[i+j]; j++) // even length palindrome
+                cut[i+j+1] = min(cut[i+j+1],1+cut[i-j+1]);
+        }
+        return cut[n];
+    }
+};
