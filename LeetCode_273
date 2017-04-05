@@ -37,3 +37,39 @@ public:
 vector<string> Solution::lower ={"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
 vector<string> Solution::ten = {"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
 vector<string> Solution::thousand = {"", "Thousand", "Million", "Billion"};
+
+
+//缩减后的代码
+
+class Solution {
+static vector<string> lower;
+static vector<string> ten;
+static vector<string> thousand;
+public:
+    string numberToWords(int num) {
+        if(num==0)
+            return "Zero";
+        int idx = 0;
+        string res;
+        while(num){
+            int cur = num%1000;
+            string tmp;
+            if(cur/100){
+                tmp += lower[cur/100] + "Hundred ";
+                cur = cur% 100;
+            } 
+           // cout<<num%1000<<endl;
+            tmp += (cur<20?lower[cur]:ten[cur/10%10] +lower[cur%10]) + thousand[idx++&(num%1000>0?3:0)];
+            
+            num /=1000;
+            res = tmp + res;
+        }
+        
+        if(*(--res.end()) == ' ')
+            res.erase(--res.end());
+        return res;
+    }
+};
+vector<string> Solution::lower ={"", "One ", "Two ", "Three ", "Four ", "Five ", "Six ", "Seven ", "Eight ", "Nine ", "Ten ", "Eleven ", "Twelve ", "Thirteen ", "Fourteen ", "Fifteen ", "Sixteen ", "Seventeen ", "Eighteen ", "Nineteen "};
+vector<string> Solution::ten = {"", "Ten ", "Twenty ", "Thirty ", "Forty ", "Fifty ", "Sixty ", "Seventy ", "Eighty ", "Ninety "};
+vector<string> Solution::thousand = {"", "Thousand ", "Million ", "Billion "};
