@@ -38,3 +38,40 @@ public:
         return true;
     }
 };
+
+
+class Solution {
+/***
+ * 更好的贪心准则，利用递归的方法，首先我们利用count计算s中各个字符出现的个数作为预处理
+ * 
+ * 然后假设第一个数为最小的，标记，如果遇到比这个字符更小，更新标记，通过--count
+ * 当count==0时，证明后面已经没有该字符了，我们必须选择当前的最优字符。
+ * 同时定义一个新的str作为下一层的搜索str（记得把当前最优的字符从该字符串中移除掉）
+ * 递归出口为s.empty，总的时间复杂度为线性时间复杂度
+ * 
+ * 
+ */
+public:
+    string removeDuplicateLetters(string s) {
+        //cout<<s<<endl;
+        vector<int> count(26,0);
+        for(int i=0;i<s.size();++i){
+            ++count[s[i]-'a'];
+        }
+        
+        int idx = 0;
+        for(int i=idx;i<s.size();++i){
+            if(s[i]<s[idx])
+                idx = i;
+            if(--count[s[i]-'a']==0)
+                break;
+        }
+        string nextStr;
+        for(int i=idx+1;i<s.size();++i){
+            if(s[i]!=s[idx])
+                nextStr+= s[i];
+        }
+        return s.empty()?"":s[idx]+removeDuplicateLetters(nextStr);
+    }
+
+};
