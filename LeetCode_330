@@ -1,0 +1,23 @@
+class Solution {
+/***
+ * 能神奇的一个贪心准则，根据出现的和判断该到目前位置最远能reach到哪一个部分。
+ * 
+ * 
+ */
+public:
+    int minPatches(vector<int>& nums, int n) {
+        long reach = 1,res = 0,idx = 0;///注意reach要取long,不然+一个INT_MAX就GG了
+        
+        while(reach<=n){//注意这里不能少了等于，是前闭后开的
+        
+            if(idx<nums.size()&&nums[idx]<=reach){//在reach之内/自身就为reach
+                reach += nums[idx++];
+            }
+            else {///数组中没有数/数组中的数大于reach,我们需要自行添加一个该missing num
+                ++res;
+                reach += reach;
+            }
+        }
+        return res;
+    }
+};
