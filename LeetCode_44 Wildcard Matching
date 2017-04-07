@@ -1,0 +1,93 @@
+class Solution {
+/***
+ * 跟regular expression差不多，只不过这次*能代表任意连续字符，所以这时候dp思路就会有一丢丢的变化
+ * 当我们要求dp[i][j]时，我们需要判断dp[0-i][j-1]中有无1,只要有1个1,dp[i][j]都可以为true
+ * 
+ * 另外当p[i]!='*'时，做一个简单的判断i>0&&dp[i-1][j-1]&&(s[i-1]==p[j-1]||p[j-1]=='?')即可
+ */
+public:
+    bool isMatch(string s, string p) {
+        int ss = s.size(),ps = p.size();
+        vector<vector<bool>> dp(ss+1,vector<bool> (ps+1,false));
+        dp[0][0] = true;
+        for(int i=0;i<=ss;++i){
+            for(int j=1;j<=ps;++j){
+                if(p[j-1] == '*'){
+                    for(int k=i;k>=0;--k){
+                        if(dp[k][j-1]){
+                            dp[i][j] = true;
+                            break;
+                        }
+                    }
+                }
+                else{
+                    if(i>0&&dp[i-1][j-1]&&(s[i-1]==p[j-1]||p[j-1]=='?'))
+                        dp[i][j] = true;
+                }
+            }
+        }
+        return dp[ss][ps];
+    }
+};
+
+
+///优化1,利用cache 可以减少p[j-1] == '*'中的一个for循环
+class Solution {
+/***
+ * 跟regular expression差不多，只不过这次*能代表任意连续字符，所以这时候dp思路就会有一丢丢的变化
+ * 当我们要求dp[i][j]时，我们需要判断dp[0-i][j-1]中有无1,只要有1个1,dp[i][j]都可以为true
+ * 
+ * 另外当p[i]!='*'时，做一个简单的判断i>0&&dp[i-1][j-1]&&(s[i-1]==p[j-1]||p[j-1]=='?')即可
+ */
+public:
+    bool isMatch(string s, string p) {
+        int ss = s.size(),ps = p.size();
+        vector<vector<bool>> dp(ss+1,vector<bool> (ps+1,false));
+        dp[0][0] = true;
+        vector<bool> cache(ps+1,false);
+        cache[0] = true;;
+        for(int i=0;i<=ss;++i){
+            for(int j=1;j<=ps;++j){
+                if(p[j-1] == '*'){
+                    if(cache[j-1]){
+                        dp[i][j] = true;
+                        cache[j] = true;
+                    }
+                }
+                else{
+                    if(i>0&&dp[i-1][j-1]&&(s[i-1]==p[j-1]||p[j-1]=='?')){
+                        dp[i][j] = true;
+                        cache[j] = true;
+                    }
+                }
+            }
+        }
+        return dp[ss][ps];
+    }
+};
+
+//贪心算法...感觉贪心在于，我尽可能的让*覆盖多个不相同的元素，直到遇到p[i] == p[j]
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.length(), n = p.length();
+        int i = 0, j = 0, asterisk = -1, match;
+        while (i < m) {
+            if (j < n && p[j] == '*') {
+                match = i; 
+                asterisk = j++;
+            }
+            else if (j < n && (s[i] == p[j] || p[j] == '?')) {
+                i++; 
+                j++;
+            }
+            else if (asterisk >= 0) {
+                i = ++match;
+                j = asterisk + 1;
+            }
+            else return false;
+        }
+        while (j < n && p[j] == '*') j++;
+        return j == n;
+    }
+};
