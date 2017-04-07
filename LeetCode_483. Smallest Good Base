@@ -1,0 +1,49 @@
+class Solution {
+/***
+ * 这里不是利用基本求base的方法，不然肯定会TLE的，而且这种方法无法利用二分策略
+ * 那么如何二分，这就要扯到求base的原理，其实我们算base的时候也1 + a1 *k + a2 * k^2 + a3 * k^3 ..... = n
+ * 那么对于该题，我们需要找最小的k使得1 + k + k^2 + k^3 + ....k^n = n;
+ * 
+ */
+public:
+    string smallestGoodBase(string n) {
+        unsigned long long num= (unsigned long long)stoll(n);
+        unsigned long long base = 1;
+        for(int i=62;i>=1;--i){
+            if((base<<i)<num){
+                unsigned long long  res = binarySearch(num,i);
+                if(res!=0){
+                    cout<<"res"<<endl;
+                    return to_string(res);
+                }
+            }
+        }
+        ///出现该情况例子1 "727004545306745403" 到最后一个i的时候right 只能到727004545306745344
+        return to_string(num-1);///每个数都肯定会有一个goodbase,就比它小1的那个
+    }
+    
+    unsigned long long binarySearch(unsigned long long num,int base){
+        /***
+         * 确定base,即k^n，的最大值n，
+         * 那么我们就可以通过left ,right 来确定k的大小right = (unsigned long long)(pow(num,1.0/base)+1)，注意这里有可能会损失精度
+         * 通过计算每个mid+起来的和是否==num,确定这个base满不满足
+         */
+        unsigned long long left = 1,right = (unsigned long long)(pow(num,1.0/base)+1);///精度损失原因
+        while(left<=right){
+            unsigned long long mid = left + (right - left)/2;///这里不能用移位。。不然会TLE的（死循环）
+            unsigned long long sum = 1,cur = 1;
+            for(int i=1;i<=base;++i){
+                cur *= mid;
+                sum += cur;
+            }
+            if(sum==num)
+                return mid;///返回该base;
+            else if(sum>num)
+                right = mid -1;
+            else 
+                left = mid + 1;
+        }
+        return 0;
+        
+    }
+};
