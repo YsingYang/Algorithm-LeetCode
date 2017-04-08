@@ -1,0 +1,85 @@
+class Solution {
+/**
+ * 其实就是最长递增自序列的变种题，应该可以拓展到k个数
+ * 这里暂时只想到O（n^2）的算法
+ * 
+ */
+public:
+    int maxEnvelopes(vector<pair<int, int>>& envelopes) {
+        if(envelopes.empty())
+            return 0;
+        int size = envelopes.size();
+        sort(envelopes.begin(),envelopes.end(),[](const pair<int,int> &p1,const pair<int,int> &p2){
+            return p1.first<p2.first;
+        });
+        vector<int> dp(size,1);
+        int res = 1;
+        for(int i=1;i<envelopes.size();++i){
+            for(int j=i;j>=0;--j){
+                if(envelopes[i].first>envelopes[j].first&&envelopes[i].second>envelopes[j].second){
+                    dp[i] = max(dp[i],dp[j]+1);
+                    res = max(res,dp[i]);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+/**
+ * 其实就是最长递增自序列的变种题，应该可以拓展到k个数
+ * 这里暂时只想到O（n^2）的算法
+ * 
+ * 
+ * 在排序的基础上加上对height的降序，（假设对width的升序）,然后就可以跟LIS一样，使用二分来查找插入位置
+ * 
+ * 这种方法能不能扩展到k个数的时候？
+ */
+public:
+    int maxEnvelopes(vector<pair<int, int>>& envelopes) {
+        if(envelopes.empty())
+            return 0;
+        int size = envelopes.size();
+        sort(envelopes.begin(),envelopes.end(),[](const pair<int,int> &p1,const pair<int,int> &p2){
+            if(p1.first == p2.first)
+                return p1.second>p2.second;
+            return p1.first<p2.first;
+        });
+        /*for(auto i:envelopes){
+            cout<<i.first<<" "<<i.second<<"     ";
+        }*/
+        vector<pair<int,int>> dp;
+        for(auto i:envelopes){
+            if(dp.empty()||(i.first>dp.back().first&&i.second>dp.back().second)){
+                dp.push_back(i);
+            }
+            else{
+                int idx = binarySearch(dp,i);
+                dp[idx] = i;
+            }
+            /*for(int j=i;j>=0;--j){
+                if(envelopes[i].first>envelopes[j].first&&envelopes[i].second>envelopes[j].second){
+                    dp[i] = max(dp[i],dp[j]+1);
+                    res = max(res,dp[i]);
+                }
+            }*/
+        }
+        return dp.size();
+    }
+    
+    int binarySearch(vector<pair<int,int>> &dp,const pair<int,int> &p){
+        int begin = 0,end = dp.size()-1;
+        while(begin<end){
+            int mid = begin + ((end - begin)>>1);///注意移位运算符的优先级是很低的
+            if(dp[mid].second>p.second)
+                end = mid;
+            else if(dp[mid].second<p.second)
+                begin = mid+1;
+            else
+                return mid;
+        }
+        return end;
+    }
+};
