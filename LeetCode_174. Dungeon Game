@@ -1,0 +1,28 @@
+class Solution {
+/***
+ * 开始想着用pair<int,int> 存储每一个节点的状态，first代表到达当前节点所需的最低血量，second代表当前血量，后来发现不可行，有可能目前当前血量很高，以供它到达最终节点时可以保持一个最优的血量
+ * 
+ * 所以这时候我们需要逆向思考，从终点开始，到达每一个点所需要的最低血量，如果出现负数，我们可以认为血量溢出，重新赋值为1
+ */
+public:
+    int calculateMinimumHP(vector<vector<int>>& dungeon) {
+        int rs = dungeon.size(),cs = dungeon[0].size();
+        vector<vector<int>> dp(rs,vector<int>(cs,0));
+        dp[rs-1][cs-1] = dungeon[rs-1][cs-1]<0?abs(dungeon[rs-1][cs-1])+1:1;
+        for(int i=rs-2;i>=0;--i){
+            int tmp = dp[i+1][cs-1] - dungeon[i][cs-1];
+            dp[i][cs-1] = tmp<=0?1:tmp;
+        }
+        for(int j=cs-2;j>=0;--j){
+            int tmp = dp[rs-1][j+1] - dungeon[rs-1][j];
+            dp[rs-1][j] = tmp<=0?1:tmp;
+        }
+        for(int i=rs-2;i>=0;--i){
+            for(int j=cs-2;j>=0;--j){
+                int tmp = min(dp[i+1][j],dp[i][j+1]) - dungeon[i][j];
+                dp[i][j] = tmp<=0?1:tmp;
+            }
+        }
+        return dp[0][0];
+    }
+};
