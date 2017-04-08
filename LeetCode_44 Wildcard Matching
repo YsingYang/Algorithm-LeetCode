@@ -66,7 +66,15 @@ public:
     }
 };
 
-//贪心算法...感觉贪心在于，我尽可能的让*覆盖多个不相同的元素，直到遇到p[i] == p[j]
+/***贪心算法...感觉贪心在于，我尽可能的让*覆盖多个不相同的元素，直到遇到p[i] == p[j]
+ * 
+ * 看了discuss后发现该算法最坏的时间复杂度是O(n * m),比如s = "aaaaaab" ,p = "*aab";
+ * 该算法有点类似于backtracking 的思想，如果遇到*记录match的位置，同时记录下asterisk = " * "的位置，随后i,j都往后匹配，如果不成功，返回到match  asterisk的位置，（asterisk>=0）判断，使得*多匹配一个match ,直到最后
+ * 
+ */
+
+
+
 class Solution {
 public:
     bool isMatch(string s, string p) {
@@ -86,6 +94,7 @@ public:
                 j = asterisk + 1;
             }
             else return false;
+            cout<<match<<"  "<<i<<"  "<<j<<"  "<<asterisk<<endl;
         }
         while (j < n && p[j] == '*') j++;
         return j == n;
