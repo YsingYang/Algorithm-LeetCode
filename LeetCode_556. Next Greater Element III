@@ -1,0 +1,28 @@
+class Solution {
+/***
+ * 其实跟next permutation一样
+ */
+public:
+    int nextGreaterElement(int n) {
+        string num = to_string(n);
+        ///find position
+        int idx = num.size()-1;
+        while(idx>=0&&num[idx]>=num[idx+1]){
+            --idx;
+        }
+        if(idx<0)
+            return -1;
+        int i = idx;
+        while(i<num.size()-1){
+            if(num[i+1]<=num[idx])
+                break;
+            ++i;
+        }
+        swap(num[i],num[idx]);
+        reverse(num.begin()+idx+1,num.end());
+        long res = stol(num);
+        if(res>INT_MAX)
+            return -1;
+        return res;
+    }
+};
