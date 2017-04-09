@@ -1,0 +1,94 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+/**
+ * 最弱智的方法..直接展开，用hash记录，然后深度优先搜索
+ * 
+ */
+int res = 0;
+public:
+    int longestConsecutive(TreeNode* root) {
+        if(!root)
+            return 0;
+        queue<TreeNode*> que;
+        unordered_map<TreeNode*,vector<TreeNode*>> mp;
+        que.push(root);
+        while(!que.empty()){
+            TreeNode *tmp = que.front();
+            if(tmp->left){
+                que.push(tmp->left);
+                mp[tmp].push_back(tmp->left);
+                mp[tmp->left].push_back(tmp);
+            }
+            if(tmp->right){
+                que.push(tmp->right);
+                mp[tmp].push_back(tmp->right);
+                mp[tmp->right].push_back(tmp);
+            }
+            que.pop();
+        }
+        int res=0;
+        for(auto &it:mp){
+           // cout<<it.first->val<<endl;
+            res = max(res,getlongest(mp,it.first));
+        }
+        return res+1;
+    }
+    
+    int getlongest(unordered_map<TreeNode*,vector<TreeNode*>> &mp,TreeNode *node){
+        int res = 0;
+        for(auto it:mp[node]){
+            if(it->val==node->val+1){
+                res = max(res,1+getlongest(mp,it));
+            }
+        }
+        return res;
+    }
+};
+
+
+
+class Solution {
+/**
+ * 每一个节点有两个状态记录,一个inc, des，如果是根节点连接左右，必定是一个inc 一个des
+ * 然后我们可以利用posttravrse来遍历树，得到最大的inc,与des,同时返回给上层最大的inc与des得到最终的结果
+ * 
+ */
+int res = 0;
+public:
+    int longestConsecutive(TreeNode* root) {
+        search(root);
+        return res;
+    }
+    
+    pair<int,int> search(TreeNode *root){
+        if(!root)
+            return {1,1};
+        int inc = 1,des = 1;
+        pair<int,int> left = search(root->left);
+        pair<int,int> right = search(root->right);
+        if(root->left){
+            if(root->val == root->left->val +1)
+                inc = max(inc,left.first+1);
+            else if(root->val == root->left->val -1){
+                des = max(des,left.second+1);
+            }
+        }
+        if(root->right){
+            if(root->val == root->right->val +1)
+                inc = max(inc,right.first+1);
+            else if(root->val == root->right->val-1)
+                des = max(des,right.second+1);
+        }
+        
+        res = max(res,inc+des-1);
+        return {inc,des};
+    }
+};
