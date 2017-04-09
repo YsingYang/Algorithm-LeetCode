@@ -1,0 +1,16 @@
+class Solution {
+/**
+ * 简单的抽取出每一个单词，对每一个单词进行reverse
+ */
+public:
+    string reverseWords(string s) {
+        stringstream ss(s);
+        string tmp,res;
+        while(getline(ss,tmp,' ')){
+            reverse(tmp.begin(),tmp.end());
+            res += tmp + " ";
+        }
+        res.erase(--res.end());
+        return res;
+    }
+};
