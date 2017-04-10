@@ -1,0 +1,41 @@
+class Solution {
+/****
+ * ..跟那道atoi一样类型的题目...感觉是作为atoi的预处理而做的
+ * 需要注意的是正负号的出现，和.,e的出现，e后面的数字可以继续出现正负号，但不能出现.
+ * 
+ */
+public:
+    bool isNumber(string s) {
+        auto it = --s.end();
+        while(*it==' ')
+            s.erase(it--);
+        if(s.empty())
+            return false;
+        int idx = s.find_first_not_of(' '),point = 0,e = 0;
+        if(s[idx]=='+'||s[idx]=='-')
+            ++idx;
+        while(idx<s.size()){
+            if(s[idx]=='.'||s[idx]=='e'){
+                if((s[idx]=='.'&&++point>1)||(s[idx]=='e'&&++e>1))
+                    return false;
+                if(e>0&&point==0)
+                    point = 1;
+                if((s[idx]=='.'&&!(idx>0&&isdigit(s[idx-1])||idx<s.size()-1&&isdigit(s[idx+1])))||(s[idx]=='e'&&!(idx>0&&(isdigit(s[idx-1])||s[idx-1]=='.')&&idx<s.size()-1&&(isdigit(s[idx+1])||s[idx+1]=='+'||s[idx+1]=='-')))){
+                    return false;
+                }
+                if(s[idx]=='e'&&(s[idx+1]=='+'||s[idx+1]=='-')){
+                    ++idx;
+                    if(idx+1==s.size()||!isdigit(s[idx+1]))
+                        return false;
+                }
+                ++idx;
+                continue;
+            }
+            if(!isdigit(s[idx]))
+                return false;
+            ++idx;
+        }
+        return true;
+        
+    }
+};
