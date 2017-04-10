@@ -39,3 +39,48 @@ public:
         
     }
 };
+
+
+class Solution {
+/***
+ * DFA 有限状态转换
+ */
+public:
+    bool isNumber(string s) {
+        int state = 0,flag = 0;
+        int idx = s.find_first_not_of(' ');
+        s.erase(s.find_last_not_of(' ')+1,s.size());
+        for(;idx<s.size();++idx){
+            if(isdigit(s[idx])){///数字的状态转换
+                flag = 1;
+                if(state<=2)
+                    state = 2;
+                else
+                    state = (state<=5)?5:7;
+            }
+            else if('+'==s[idx]||'-'==s[idx]){///3是碰到e的时候切换过来的状态
+                if(state==0||state==3)
+                    ++state;
+                else
+                    return false;
+            }
+            else if(s[idx]=='.'){
+                if(state<=2)
+                    state = 6;
+                else
+                    return false;
+            }
+            else if(s[idx]=='e'){///前面一定需要有数字
+                if(flag&&(state==2||state==6||state==7)){
+                    state = 3;
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+            //cout<<state<<endl;
+        }
+        return state==2||state==5||(flag&&state==6)||state==7;
+    }
+};
