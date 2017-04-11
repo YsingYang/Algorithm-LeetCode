@@ -19,7 +19,7 @@ public:
             vector<int> n1Max = getMaxVector(nums1,i);
             vector<int> n2Max = getMaxVector(nums2,k-i);
             //cout<<n1Max.size()<<"  "<<n2Max.size()<<endl;
-            vector<int> candidata = merge(n1Max,n2Max);
+            vector<int> candidata = merge(n1Max,n2Max);///其实merge这里可以用dp解，效率会再提高一点.
             ///函数返回值是个右值，所以如果candidata要用引用的化，必须暂存
             if(greater(candidata,0,res,0)){
                 res = candidata;
