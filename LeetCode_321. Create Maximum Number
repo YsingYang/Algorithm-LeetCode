@@ -1,0 +1,64 @@
+class Solution {
+/**
+ * 基本思路1. 从两个数组中分别取出最大的i个数与最大的k个数
+ * 2.merge成一个新的数组
+ * 3.如果大于上个数组，则成为新的res
+ * [6,7]
+   [6,0,4]
+   
+ *
+ * 还需注意的是这里不能单纯的compare来merge,每次需要调用GREATER来选择这次应该选择NUM1的数还是NUM2的数
+ * 比如上面的例子，greater后，得到7>0的，所以选择num1的6而不是num2的6
+ */
+
+public:
+    vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+        int n1 = nums1.size(),n2 = nums2.size();
+        vector<int> res(k,0);
+        for(int i=max(0,k-n2);i<=k&&i<=n1;++i){
+            vector<int> n1Max = getMaxVector(nums1,i);
+            vector<int> n2Max = getMaxVector(nums2,k-i);
+            //cout<<n1Max.size()<<"  "<<n2Max.size()<<endl;
+            vector<int> candidata = merge(n1Max,n2Max);
+            ///函数返回值是个右值，所以如果candidata要用引用的化，必须暂存
+            if(greater(candidata,0,res,0)){
+                res = candidata;
+            }
+        }
+        return res;
+    }
+    
+    vector<int> getMaxVector(vector<int> &nums,int k){///最最大的k个数
+        vector<int> res;
+        int remanin = nums.size()-k;
+        for(int i=0;i<nums.size();++i){
+            while(!res.empty()&&remanin>0&&nums[i]>res.back()){
+                --remanin;
+                res.pop_back();
+            }
+            res.push_back(nums[i]);
+        }
+        res.resize(k);
+        return res;
+    }
+    
+    vector<int> merge(vector<int> &num1,vector<int> &num2){
+        vector<int> res;
+        for(int i=0,j=0;i<num1.size()||j<num2.size();){
+            //cout<<i<<"  "<<j<<endl;
+            if(greater(num1,i,num2,j))
+                res.push_back(num1[i++]);
+            else
+                res.push_back(num2[j++]);
+        }
+        return res;
+    }
+    
+    bool greater(vector<int> &candidata,int i,vector<int> &res,int j){
+        while(i<candidata.size()&&j<res.size()&&candidata[i]==res[j]){
+            ++i;
+            ++j;
+        }
+        return j==res.size()||(i<candidata.size()&&candidata[i]>res[j]);
+    }
+};
