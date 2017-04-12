@@ -1,0 +1,55 @@
+class Solution {
+/****
+ * 前面的步骤就不用说了，判断能否平分很简单，accumulate一下，看是否能整除size即可
+ * 
+ * for循环中是判断最小步骤的，首先需要定义left与right,left or right = balanceNeed - sum[i]，即该machines左右是否已经满足balance,
+ * 如果不满足则left >0&&right>0,即是说，需要把当前machines的dress平均分配到left right,这时候需要的步骤就是max(res,abs(left)+abs(right))
+ * 另外还是就是left<0&&right<0,就是说，左右都满足，那么我们只要把左右的dress调到当前machine即可，
+ * left>0&&Right<0  left<0&&right>0，那么res = max(res,max(abs(left),abs(right))
+ * 
+ */
+public:
+    int findMinMoves(vector<int>& machines) {
+        int count = 0,size = machines.size();
+        vector<int> sum(size+1,0);
+        for(int i=0;i<size;++i){
+            sum[i+1] = sum[i] + machines[i];
+        }
+        if(sum[size]%size)
+            return -1;
+        count = sum[size]/size;///每个machines会放入多少件dress
+        int res = 0;
+        for(int i=0;i<size;++i){
+            int left = i * count - sum[i];//看左右两边是否比平均数大，>0表示缺少dress
+            int right = (size-i-1)*count - (sum[size]-sum[i]-machines[i]);
+            if(left>0&&right>0)
+                res = max(res,abs(left) + abs(right));
+            else
+                res = max(res,max(abs(left),abs(right)));
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+/****
+ * ,比上一种方法更省空间，但是思考起来有点抽象，里面定义了一个balance来取决到当前位置缺失（剩余）的情况，同时还要用machines[i]-count取一个最大值，避免当前balance很小，但是machines[i]非常大，
+ * 
+ */
+public:
+    int findMinMoves(vector<int>& machines) {
+        int count = 0,size = machines.size(),sum=0;
+        
+        sum = accumulate(machines.begin(),machines.end(),0);
+        if(sum%size)
+            return -1;
+        count = sum/size;///每个machines会放入多少件dress
+        int res = 0,balance=0;
+        for(int i=0;i<size;++i){
+            balance += machines[i] - count;
+            res = max(res,max(abs(balance),machines[i]-count));
+        }
+        return res;
+    }
+};
