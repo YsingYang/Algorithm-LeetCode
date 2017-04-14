@@ -1,0 +1,107 @@
+//first Solution
+
+class Solution {
+/***
+ * 效率并不高的O(n^3)solution,同时需要使用两个O(n^2)空间,dp[][]需要用long存,减少溢出的现象
+ * 首先遍历一遍数组,同时记录dp[i][j],dp[i][j]为Ai-Aj的差值
+ * 
+ * 然后得到dp[][]后,我们就可以进行遍历
+ * for i=2:size
+ *  for j=0:i,寻找dp[i][j]中存在的差值
+ *    for pre=0:j在dp[pre][j]中寻找是否有对应=dp[i][j]的差值,如果有,表示寻找到了Arithmetic Slices
+ * 那么我们就可以count[i][j] += count[j][pre]+1,这里有点类似与Arithmetic Slices I 中的dp连续操作
+ * 每次for完pre,我们需要res += count[i][j],最后的res就是最终结果
+ */
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int size = A.size();
+        if(size<3)
+            return 0;
+        vector<vector<long>> dp(size,vector<long>(size,0));
+        for(int i=1;i<size;++i){//dp[i][j]表示 A[i] - A[j]的差值
+            for(int j=0;j<i;++j){
+                dp[i][j] = (long)A[i] - (long)A[j];
+            }
+        }
+        int res = 0;
+        vector<vector<int>> count(size,vector<int>(size,0));
+        for(int i=2;i<size;++i){
+            for(int j=0;j<i;++j){//遍历数组dp
+                for(int pre=0;pre<j;++pre){
+                    if(pre>=0&&dp[i][j] == dp[j][pre]){
+                        count[i][j] += count[j][pre]+1;
+                    }
+                }
+                res += count[i][j];
+            }
+        }
+        return res;
+    }
+};
+
+//Optimal_1,可以减少dp记录循环,将其放入第二个循环中
+
+class Solution {
+/***
+ * 效率并不高的O(n^3)solution,同时需要使用两个O(n^2)空间,dp[][]需要用long存,减少溢出的现象
+ * for i=2:size
+ *  for j=0:i,寻找dp[i][j]中存在的差值
+ *    for pre=0:j在dp[pre][j]中寻找是否有对应=dp[i][j]的差值,如果有,表示寻找到了Arithmetic Slices
+ * 那么我们就可以count[i][j] += count[j][pre]+1,这里有点类似与Arithmetic Slices I 中的dp连续操作
+ * 每次for完pre,我们需要res += count[i][j],最后的res就是最终结果
+ */
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int size = A.size();
+        if(size<3)
+            return 0;
+        vector<vector<long>> dp(size,vector<long>(size,0));
+        int res = 0;
+        vector<vector<int>> count(size,vector<int>(size,0));
+        for(int i=0;i<size;++i){
+            for(int j=0;j<i;++j){//遍历数组dp
+                dp[i][j] = (long)A[i] - (long)A[j];
+                for(int pre=0;pre<j;++pre){
+                    if(pre>=0&&dp[i][j] == dp[j][pre]){
+                        count[i][j] += count[j][pre]+1;
+                    }
+                }
+                res += count[i][j];
+            }
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+/***
+ * 其实刚刚那两种方法可以用hash优化,不过似乎要注意重复的问题,所以需要用到mutimap
+ * 如果重复,需要for重复的的tmp
+ * 
+ * discuss中@vesion posted了一个相对比较抽象的方法,在上述方法中,我们res + 的是seq中最后一个数字的count
+ * 而这种方法加上的是是中间的数的count,同时,如果seq中最后一个数+distance的数在A中,那么更新dp[i][dis]一遍下一个数使用.
+ */
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int size = A.size();
+        if(size<3)
+            return 0;
+        //vector<vector<long>> dp(size,vector<long>(size,0));
+        int res = 0;
+        vector<unordered_map<long,int>> dp(size);
+        unordered_set<int> num(A.begin(),A.end());
+        for(int i=1;i<size;++i){
+            for(int j=0;j<i;++j){//遍历数组dp
+                long dis = (long)A[i] - (long)A[j];
+                if(dp[j].find(dis)!=dp[j].end()){
+                    res+=dp[j][dis];
+                }
+                if(num.find(A[i]+dis)!=num.end()){
+                    dp[i][dis] += dp[j][dis] + 1;
+                }
+            }
+        }
+        return res;
+    }
+};
