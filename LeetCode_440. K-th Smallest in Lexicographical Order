@@ -1,0 +1,39 @@
+//莫名其妙就Accept了,(认真脸..
+class Solution {
+public:
+    int findKthNumber(int n, int k) {
+        long start = 1,digit = 1;//位数如何处理?
+        while(k){
+            long count = getStartNumCount(start,1,n);
+            ///等于k有没有特别好处理的办法
+            if(k==1)
+                return start;
+            if(count>=k){
+                start *=10;
+                digit *=10;
+                --k;
+            }
+            else{//不在其中
+                k -= count;
+                ++start;//这里会不会有错
+            }
+        }
+        return start;
+    }
+
+private:
+    int getStartNumCount(long num,long digit,long end){
+        int count = 0;
+        while(num<=end){
+            if(num + digit-1<end){
+                count += digit;
+            }
+            else{
+                count += end-num+1;
+            }
+            digit *=10;
+            num *=10;
+        }
+        return count;
+    }
+};
