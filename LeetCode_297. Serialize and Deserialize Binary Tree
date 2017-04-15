@@ -1,0 +1,55 @@
+class Codec {
+/**
+ * 利用两个int记录,一个int表示是否为nullptr,另一个表示数据域,(如果该字符为nullptr),则该节点没有数据域
+ */
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        queue<TreeNode*> que;
+        string encode;
+        int flag;
+        que.push(root);
+        while(!que.empty()){
+            TreeNode *tmp = que.front();
+            que.pop();
+            flag = tmp == nullptr ? 0 : 1;
+            encode += string(reinterpret_cast<char*>(&flag),4);
+            if(flag){
+                int num = tmp->val;
+                encode += string(reinterpret_cast<char*>(&num),4);
+                que.push(tmp->left);
+                que.push(tmp->right);
+            }
+        }
+        return encode;
+        
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        //char *str = const_cast<char*>(data.c_str());
+        int* pointer = reinterpret_cast<int*> (const_cast<char*>(data.c_str()));
+  
+        if(*pointer++==0){//root == nullptr
+            return nullptr;
+        }
+        TreeNode *root = new TreeNode(*pointer++);
+        queue<TreeNode*> que;
+        que.push(root);
+        while(!que.empty()){
+            TreeNode *tmp = que.front();
+            que.pop();
+            if(tmp == nullptr)
+                continue;
+                
+            if(tmp->left = *pointer++ == 0 ? nullptr : new TreeNode(*pointer++))//left subtree
+                que.push(tmp->left);
+            
+            if(tmp->right = *pointer++ == 0 ? nullptr : new TreeNode(*pointer++))//right subtree
+                que.push(tmp->right);
+        }
+        return root;
+    }
+
+};
