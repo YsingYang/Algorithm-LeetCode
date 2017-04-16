@@ -1,0 +1,22 @@
+class Solution {
+/***
+ * MDZZ题目....我竟然被坑了
+ * 除法最大值就是只有一个括号,就是将后面相除即可..
+ */
+public:
+    string optimalDivision(vector<int>& nums) {
+        ostringstream os;
+        os<<nums[0];
+        for(int i=1;i<nums.size();++i){
+            if(i==1&&nums.size()>2){
+                os<<"/"<<"("<<nums[i];
+            }
+            else{
+                os<<"/"<<nums[i];
+            }
+        }
+        if(nums.size()>2)
+            os<<')';
+        return os.str();
+    }
+};
