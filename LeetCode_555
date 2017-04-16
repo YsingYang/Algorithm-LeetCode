@@ -1,0 +1,19 @@
+class Solution {
+public:
+    bool checkRecord(string s) {
+        int acount=0,lcount=0;
+        for(int i = 0;i<s.size();++i){
+            if(s[i]=='A'){
+                ++acount;
+                lcount=0;
+            }
+            else if(s[i]=='L'){
+                if(++lcount>2)
+                    return false;
+            }
+            else 
+                lcount = 0;
+        }
+        return acount<=1&&lcount<=2;
+    }
+};
