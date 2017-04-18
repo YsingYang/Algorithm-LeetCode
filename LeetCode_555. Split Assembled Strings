@@ -1,0 +1,68 @@
+#include<stdio.h>
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+
+
+/***
+    最直接的brute-force 算法,我们开始对字符串进行预处理,先比较每个字符串的reverse与原本字符串哪一个比较大,先把较大的字符串reverse掉
+    
+    然后我们可以对每一个字符串开始寻找最优的起始点,由于是最直接的 我们先不考虑最优的情况(最优的自然是取最大的字符串作为起点,至于是reverse还是正序,需继续判断)
+    
+    我们先将当前strs[i] 前后的的字符串组合成string front  rear,
+    
+    对strs[i]每一个index进行循环,寻找哪一个点作为断电得到的str = strs[i].substr(k) + rear + front + strs[i].substr(0,k);最大
+    
+    最大的字符串即为我们需要的结果
+
+*/
+using namespace std;
+
+class solution{
+string res;
+public:
+    void solve(vector<string>& strs, int i, bool flag){
+        string temp = strs[i];
+        if(flag)
+                reverse(temp.begin(),temp.end());
+        string rear , front;
+        for(int k = i + 1 ; k < strs.size() ; ++k){
+            rear += strs[k];
+        } ///rear string
+        for(int k = 0 ; k < i ;  ++k){
+            front += strs[k];
+        } ///front string
+
+        string str;
+        for(int k = 0 ; k < strs[i].size() ; ++k){
+            str = strs[i].substr(k) + rear + front + strs[i].substr(0,k);
+            if(str>res)
+                    res = str;
+        }
+    }
+
+    string splitLoopedString(vector<string>& strs){
+        int size = strs.size();
+        for(int i = 0 ; i < size ; ++i){
+            string temp = strs[i];
+            reverse(temp.begin(),temp.end());
+            if(temp>strs[i]){
+                strs[i] = temp;
+            }
+        }
+
+        for(int i = 0 ; i < strs.size() ; ++i){
+            solve(strs,i,true);///reverse
+            solve(strs,i,false);///dont reverse
+        }
+        return res;
+    }
+};
+
+
+int main(){
+    solution sol = solution();
+    vector<string> strs = {"abc","zyx"};
+    cout<<sol.splitLoopedString(strs)<<endl;;
+}
