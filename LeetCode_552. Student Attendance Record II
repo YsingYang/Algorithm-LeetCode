@@ -1,0 +1,68 @@
+class Solution {
+/***
+ * 基本的递推方法,我们把L,A的次数分别定位各自的状态,那么我们就可以很容易的找到状态转换公式,
+ * temp[0][0] = (dp[0][0] + dp[0][1] + dp[0][2])%m;//我觉得为了精确度应该每个+都mod一下会比较好?  下一个dp[0][0] = 这一次dp[0][0-2]+P(L不累计)
+            temp[0][1] = dp[0][0] % m;
+            temp[0][2] = dp[0][1] % m;
+            temp[1][0] = ((dp[0][0] + dp[0][1] + dp[0][2] ) % m + (dp[1][0] + dp[1][1] + dp[1][2]) % m) % m;
+            //dp[n-1][1][0]为dp[n-1][0][0-2] + A / dp[n-1][1][0-2] + P
+            temp[1][1] = dp[1][0] % m;
+            temp[1][2] = dp[1][1] % m;
+ * 
+ * 
+ * 最后再把结果加起来mod一下就好了,但是这里用long存,mod运算肯定比 int的mod的运算量要大很多,所以,提升runtime还是需要用int好,这道题int本身就能解决
+ */
+const int m = pow(10,9) + 7;
+public:
+    int checkRecord(int n) {
+        vector<vector<long>> dp(2,vector<long>(3));
+        dp = {{1,1,0},{1,0,0}};
+        for(int i=2;i<=n;++i){
+            vector<vector<long>> temp(2,vector<long>(3));
+            temp[0][0] = (dp[0][0] + dp[0][1] + dp[0][2])%m;//我觉得为了精确度应该每个+都mod一下会比较好?  下一个dp[0][0] = 这一次dp[0][0-2]+P(L不累计)
+            temp[0][1] = dp[0][0] % m;
+            temp[0][2] = dp[0][1] % m;
+            temp[1][0] = ((dp[0][0] + dp[0][1] + dp[0][2] ) % m + (dp[1][0] + dp[1][1] + dp[1][2]) % m) % m;
+            //dp[n-1][1][0]为dp[n-1][0][0-2] + A / dp[n-1][1][0-2] + P
+            temp[1][1] = dp[1][0] % m;
+            temp[1][2] = dp[1][1] % m;
+            dp = temp;
+        }
+        //将所有结果加起来即为本题的答案
+        long res = 0;
+        for(int i=0;i<2;++i){
+            for(int j=0;j<3;++j){
+                res += dp[i][j] % m ;
+            }
+        }
+        return res % m;
+    }
+};
+
+
+//利用int每次调用 mod运算  posted by @luming89 
+class Solution {
+public:
+    int& add(int& a, int b) {
+        return a = (a+b)%1000000007;
+    }
+    
+    int checkRecord(int n) {
+        int A0L0 = 1, A0L1 = 1, A0L2 = 0, A1L0 = 1, A1L1 = 0, A1L2 = 0;
+        while(--n) {
+            int newA0L0 = 0, newA0L1 = 0, newA0L2 = 0, newA1L0 = 0, newA1L1 = 0, newA1L2 = 0;
+            // appending a P
+            add(add(add(newA0L0, A0L0), A0L1), A0L2); //newA0L0 = A0L0 + A0L1 + A0L2;
+            add(add(add(newA1L0, A1L0), A1L1), A1L2); //newA1L0 = A1L0 + A1L1 + A1L2;
+            // appending an A
+            add(add(add(newA1L0, A0L0), A0L1), A0L2); //newA1L0 = newA1L0 + A0L0 + A0L1 + A0L2;
+            // appending an L
+            add(newA0L1, A0L0); //newA0L1 = A0L0;
+            add(newA0L2, A0L1); //newA0L2 = A0L1;
+            add(newA1L1, A1L0); //newA1L1 = A1L0;
+            add(newA1L2, A1L1); //newA1L2 = A1L1;
+            A0L0 = newA0L0; A0L1 = newA0L1; A0L2 = newA0L2; A1L0 = newA1L0; A1L1 = newA1L1; A1L2 = newA1L2;
+        }
+        return add(add(add(add(add(A0L0, A0L1),A0L2),A1L0),A1L1),A1L2);
+    }
+};
