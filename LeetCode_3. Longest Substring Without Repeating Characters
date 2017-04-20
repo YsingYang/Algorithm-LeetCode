@@ -1,0 +1,62 @@
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        mp = dict()
+        res = fast = slow = 0
+        while(fast < len(s)):
+            if s[fast] not in mp:
+                mp[s[fast]] = 1
+            else:
+                mp[s[fast]] += 1
+            if mp[s[fast]] > 1:
+                while mp[s[fast]] > 1:
+                    mp[s[slow]] -= 1
+                    slow += 1
+            res = max(res,fast - slow + 1)
+            fast += 1
+        return res
+
+// Optimaized
+class Solution(object):
+# Two pointer method 
+# 不过这里不用++操作,每次选取上一次重复点+1的点,(因为最多允许两次)
+# 注意要+上idx = max(idx,mp[s[i]] + 1),避免出现abba这种case 导致回跳现象
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        mp,res,idx = dict(),0,0
+        for i in range(len(s)):
+            if s[i] not in mp:
+                mp[s[i]] = i
+            else:
+                idx = max(idx,mp[s[i]] + 1)
+            res = max(res,i - idx + 1)
+            mp[s[i]] = i
+        return res
+        
+//C++ Solution
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        vector<int> mp(256,0);
+        int slow = 0,fast = 0;
+        int res = 0;
+        while(fast<s.size()){
+            ++mp[s[fast]];
+            if(mp[s[fast]]>1){
+                while(slow<fast&&mp[s[fast]]>1){
+                    --mp[s[slow++]];
+                }
+                //cout<<fast<<"  "<<slow<<endl;
+            }
+            res = max(fast - slow + 1, res);
+            ++fast;
+        }
+        return res;
+     }
+};
