@@ -1,0 +1,17 @@
+//Python Solution
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        mp = {}
+        for i in range(len(nums)):
+            if target - nums[i] in mp:
+                return [mp[target-nums[i]],i]
+            mp[nums[i]] = i
+ #       for i,num in enumerate(nums):
+ #           if target - num in mp:
+ #              return [mp[target - num] , i]
+ #          mp[num] = i
