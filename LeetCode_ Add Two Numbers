@@ -1,0 +1,56 @@
+//Python Solution_1 ,Dont new ListNode'
+class Solution(object):
+    def addTwoNumbers(self, l1, l2):
+        """
+        :type l1: ListNode
+        :type l2: ListNode
+        :rtype: ListNode
+        """
+        t1 , t2 = l1 , l2 
+        rear = ListNode
+        carry = 0
+        while t1 != None and t2 != None:
+             sum = t1.val + t2.val + carry;
+             t1.val = sum % 10
+             carry = sum / 10
+             rear , t1 , t2 = t1 , t1.next , t2.next
+        if t2 == None :
+            while t1 != None and carry :
+                sum = t1.val + carry
+                t1.val = sum % 10
+                carry = sum / 10
+                rear , t1 = t1, t1.next
+        else:
+            while t2!=None :
+                rear.next = t2
+                sum = t2.val + carry
+                t2.val = sum % 10
+                carry = sum / 10
+                rear = t2
+                t2 = t2.next
+        if carry :
+            rear.next = ListNode(1)
+        return l1
+            
+   ///Python Solution_2 new ListNode 
+   
+   
+class Solution:
+# @return a ListNode
+    def addTwoNumbers(self, l1, l2):
+        carry = 0
+        root = n = ListNode(0)
+        while l1 or l2 or carry:
+            sum = 0
+            if l1 :
+                sum += l1.val
+                l1 = l1.next
+            if l2 :
+                sum += l2.val
+                l2 = l2.next
+            sum += carry
+            carry , sum = divmod(sum,10)
+            n.next = ListNode(sum)
+            n = n.next
+        return root.next
+     
