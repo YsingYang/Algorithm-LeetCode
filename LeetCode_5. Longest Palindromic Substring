@@ -1,0 +1,50 @@
+/**
+  Simple Python solution,O(n)的贪心算法,每次选取一个中点,同时跳过中点的连续点,那么就可以通过begin ,与end比较是否为palindrome
+**/
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        if len(s) <= 1:
+            return s
+        res = tmp = str()
+        for i in range (len(s)) :
+            begin , end = i - 1, i + 1
+            while end < len(s) and s[end] == s[end - 1] :
+                end += 1
+            while begin >= 0 and end < len(s) and s[begin] == s[end]:
+                begin -= 1
+                end += 1
+            tmp = s[begin + 1: end]
+            if len(tmp) > len(res) : 
+                res = tmp
+        return res
+        
+        
+ /**
+ 优化后的方法,上述方法有写地方是可以优化的,比如nextPos,我们跳过相同点后可以记录nextPos 那样可以进行一定量的剪枝,同时,如果maxLen > 剩下的点的时候
+ 就可以结束循环了.
+ **/
+ 
+ class Solution(object):
+    def longestPalindrome(self, s):
+        lenS = len(s)
+        if lenS <= 1: return s
+        minStart, maxLen, i = 0, 1, 0
+        while i < lenS:
+            if lenS - i <= maxLen / 2:
+                break
+            j, k = i, i
+            while k < lenS - 1 and s[k] == s[k + 1]:
+                k += 1
+                
+            i = k + 1
+            while k < lenS - 1 and j and s[k + 1] == s[j - 1]:
+                k, j = k + 1, j - 1
+                
+            if k - j + 1 > maxLen:
+                minStart, maxLen = j, k - j + 1
+        return s[minStart: minStart + maxLen]
+        
