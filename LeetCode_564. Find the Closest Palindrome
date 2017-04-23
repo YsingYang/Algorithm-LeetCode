@@ -1,0 +1,56 @@
+class Solution {
+/***
+ * 一道比较贴近数学的题目,
+ * brute-force 显然是不符合的,应该如何找到最近的那个数呢
+ * 其实找到前缀就可以了,但是我们不能单单仅找前半个前缀,我们还需要考虑prefix + 1 prefix - 1的情况
+ * 
+ * 但是这种方法不能很好的处理999999的情况,所以我们需要单独列出来,注意9 不在这个处理的范围内,他还有最近的8
+ * 处理完999.9999之后,我们可以通过substr get到prefix , 同时根据是size &1 得到是否为奇偶,奇偶的prefix 要去掉最后一个数
+ * 
+ * 这里还有另外一个问题,就是如果n = "100 ... 000"的,情况我们明显需要得到的答案是999..999,所以这里在for循环中也要单独处理
+ * 同时题目要求答案不能是自身的数, 我们还需要去除掉diff=0的答案,最后得到的就是我们需要的答案了
+ * 
+ * 
+ */
+public:
+    string nearestPalindromic(string n) {
+        int size = n.size();
+        vector<int> candidata = {-1,0,1};
+        /***
+         * process all9 num separately
+         */
+        bool odd = (size & 1);
+        if(size>=2&&allNine(n)){
+            string res = "1";
+            res += string(size-1 , '0') + '1';
+            return res;
+        }
+        string prefixCache = n.substr(0,size + 1 >> 1);
+        string res;
+        long long maxDiff = LLONG_MAX;
+        for(int i = 0 ; i < candidata.size() ; ++i){
+            string prefix = to_string(stoll(prefixCache) + candidata[i]);
+            string postfix = prefix == "-1" ? "1":prefix;//如果0不是case  那么可以不考虑这一行
+            reverse(postfix.begin(),postfix.end());
+            string str = odd ? prefix.substr(0,prefix.size()-1) + postfix : prefix + postfix; 
+            if(n.size()>=2&& (str.size() != n.size()||stoll(str) == 0)){ // stoll(str) == 0 process case   str = 10;
+                str = string(n.size()-1,'9');
+            }
+            long long diff = abs(stoll(n) - stoll(str)) == 0? LLONG_MAX: abs(stoll(n) - stoll(str));
+            if(diff < maxDiff){
+                maxDiff = diff;
+                res = str;
+            }
+        }
+        return res; 
+        
+    }
+private:
+    bool allNine(const string &n){
+        for(auto c : n){
+            if(c != '9')
+                return false;
+        }
+        return true;
+    }
+};
