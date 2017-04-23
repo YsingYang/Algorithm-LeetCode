@@ -1,0 +1,20 @@
+class Solution {
+/***
+  递归计算左右值即可
+**/
+int sum = 0;
+public:
+    int findTilt(TreeNode* root) {
+        getSum(root);
+        return sum;
+        
+    }
+    
+    int getSum(TreeNode *root){
+        if(!root)
+            return 0;
+        int left = getSum(root->left),right = getSum(root->right);
+        sum += abs(left - right);
+        return left + right + root->val;
+    }
+};
