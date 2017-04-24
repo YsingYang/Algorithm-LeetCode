@@ -18,3 +18,19 @@ class Solution(object):
             return int(res)
         else:
             return 0
+
+
+class Solution(object):
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        #com与c的strcmp返回值一样,可以用这个得到相应的flag
+        s = cmp(x, 0)
+        
+        #仔细看`x*s`即是取abs(x)然后将其转为字符串  后[::-1]取reverse
+        r = int(`x * s`[::-1])
+        
+        #如果! r<2**31,表达式为0,否则返回原值!
+        return s * r * (r < 2**31)
