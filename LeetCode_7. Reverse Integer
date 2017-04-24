@@ -1,0 +1,20 @@
+# 有几个地方 1 :Python３现在好像数字是没有limit了
+　　　　　　 ２ :取reverse.str的方法　s[::-1]
+
+class Solution(object):
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        flag = bool(x<0)
+        s = str(abs(x));
+        res = str()
+        if(flag):
+            res = "-" + s[::-1]
+        else:
+            res = s[::-1]
+        if abs(int(res)) < 0x7FFFFFFF: 
+            return int(res)
+        else:
+            return 0
