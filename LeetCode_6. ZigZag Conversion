@@ -1,0 +1,41 @@
+/**
+  根据pattern,我们可以得到如下结论string变化成如下
+  0          2k-2
+  1      2k-3 .
+  2     .     .
+  .    .
+  .   .
+  .  .
+  . .
+  k-1        3k-3
+  
+  可以看出distance 每行的distance 为2k-1,但是中间的行需要插入各自的部分我们用 mid 记录 
+  
+  注意的几个问题
+  1. 最后 j + distance 可能超出了len的范围,但是 j - mid没有超出,不要遗漏掉这个字符
+  2. 注意需要插入的mid  index,
+  3. 注意判断 j - 2 * mid越界 （＜０　or >len)
+  
+**/
+
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        res = str()
+        dist ,mid = max(2 * numRows - 2,1) , 0
+        for i in range(numRows):
+            j = i
+            while j < len(s):
+                if j - 2 * mid >= 0 and mid != 0 and mid != numRows-1:
+                    res += s[j - 2 * mid]
+                res += s[j]
+                j += dist
+            if j - 2 * mid < len(s) and j - 2 * mid >= 0 and mid != 0 and mid != numRows-1:
+                res += s[j - 2 * mid]
+            mid += 1
+        return res
+            
