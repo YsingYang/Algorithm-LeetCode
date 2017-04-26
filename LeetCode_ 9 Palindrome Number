@@ -1,0 +1,40 @@
+//Python Solution 
+class Solution(object):
+    def isPalindrome(self, x):
+        """
+        :type x: int
+        :rtype: bool
+        """
+        num = str(x)
+        front , end = 0,len(num)-1;
+        while front <= end :
+            if num[front] != num[end] :
+                return False
+            front +=1
+            end -= 1
+        return True
+        
+//one line solution
+class Solution(object):
+    def isPalindrome(self, x):
+        """
+        :type x: int
+        :rtype: bool
+        """
+        return str(x) == str(x)[::-1]
+ 
+ 
+//faster solution
+class Solution(object):
+    def isPalindrome(self, x):
+        """
+        :type x: int
+        :rtype: bool
+        """
+        if x < 0 or ( x != 0 and x % 10 == 0 ):
+            return False
+        sum = 0
+        while x > sum :
+            sum = sum * 10 +  x % 10
+            x /= 10
+        return sum == x or x == sum / 10
