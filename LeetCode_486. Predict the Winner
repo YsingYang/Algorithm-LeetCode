@@ -1,0 +1,57 @@
+/***
+  最小最大化算法, 由于两个player都是同样聪明的人,所以,贪心准则是不管用的,在当前这一步选取最优解的同时,下一步对手也会选取一个最优解
+  那么我们的DP就需要考虑如下情况
+  首先定义DP状态,那么DP[i][j] 表示的就是对于下标i,j下,可以得到的最大值,DP[i][i] = nums[i]
+  若i + 1 == j,DP[i][j] = max(nums[i], nums[j]) ,但是当i + 1 < j 时,我们就需要考虑对手的走法
+  1 : 假设我们选择的是nums[i] , 那么它的子问题应该是DP[i-1][j], 对手为了最大化自己的利益, 他会走如下选择max(DP[i-2][j],DP[i-1][j-1]),他会从这两
+  个子问题中选取一个最有利的最大值,
+  2 : 假设我们选择的是nums[j] , 那么它的子问题应该是DP[i][j-1],对手为了最大化自己的利益 , 他会走如下选择 max(DP[i-1][j-1] , dp[i][j-2] ,他会从这两
+  个子问题中选取一个最有利的最大值
+  
+  所以对于Dp[i][j] 的 推导公式如下 , DP[i][j] = max(min(DP[i-1][j-1] , DP[i-2][j-1])+nums[i],min(DP[i-1][j-1],Dp[i][j-2]) + nums[j])
+  最后比较2 * Dp[0][j]> accumulate() 即可
+  
+**/
+
+C++ DP Solution
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        if(nums.size() % 2 == 0 )
+            return true;
+        int size = nums.size();
+        vector<vector<int>> dp(size,vector<int>(size,0));
+        for(int j = 0 ; j < size ; ++j){
+            dp[j][j] = nums[j];
+            for(int i = j - 1 ; i >= 0 ; --i){
+                int a = i + 1 < size && j - 1 >= 0 ? dp[i+1][j-1] : 0;
+                int b = i + 2 < size ? dp[i+2][j] : 0;
+                int c = j - 2 >= 0 ? dp[i][j-2] : 0;
+                dp[i][j] = max(nums[i] + min(a,b) , nums[j] + min(a,c));
+            }
+        }
+        return 2 * dp[0][size-1] >= accumulate(nums.begin(),nums.end(),0);
+    }
+};
+
+Python Solution
+class Solution(object):
+    def PredictTheWinner(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        def Predict(nums,dp,i,j):
+            if i > j:
+                return 0
+            if dp[i][j] != -1 :
+                return dp[i][j]
+            else:
+                left = min(Predict(nums , dp , i + 1 , j - 1),Predict(nums , dp , i + 2, j)) + nums[i];
+                right = min(Predict(nums , dp , i + 1 , j - 1),Predict(nums , dp , i , j -2 )) + nums[j];
+                dp[i][j] = max(left,right);
+                return dp[i][j];
+        n = len(nums)
+        dp = [[-1] * n for _ in xrange(n)]
+        return 2 * Predict(nums , dp , 0 , n - 1) >= sum(nums) ;
+    
