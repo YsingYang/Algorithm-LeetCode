@@ -1,0 +1,19 @@
+class Solution {
+/**
+  其实比较两个数组是否能容纳相同元素即可
+  r * c != rs *cs 
+  另外将二维数组展开至1维数组即可进行两个数组间的赋值
+**/
+public:
+    vector<vector<int>> matrixReshape(vector<vector<int>>& nums, int r, int c) {
+        int rs = nums.size() , cs = nums[0].size();
+        if( r * c != rs * cs){
+            return nums;
+        }
+        vector<vector<int>> res(r,vector<int>(c));
+        for(int i = 0 ; i < r * c ; ++i){
+            res[i/c][i%c] = nums[i/cs][i%cs];
+        }
+        return res;
+    }
+};
