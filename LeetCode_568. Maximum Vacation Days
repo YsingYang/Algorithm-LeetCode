@@ -1,0 +1,35 @@
+class Solution {
+/***
+简单的DP问题，跟上次那个什么freedom rail很像，
+这道题不能用贪心，因为下一次子问题是不是最优是不能估计到的，所以需要用DP搜索下一个下一个可到达的城市。
+下一步的起点就为当前到达的点
+**/
+public:
+    int maxVacationDays(vector<vector<int>>& flights, vector<vector<int>>& days) {
+        int citySize = flights.size();//有多少个城市
+        int week = days[0].size(); // 有多少个周末
+        int res = 0,begin = 0;//不能用贪心，用DP
+        vector<vector<int> > dp(week + 1 ,vector<int>(citySize , 0));
+        unordered_set<int> candidata = {0};
+        for(int i = 1 ; i <= week ; ++i){
+            //先算待在原地的
+            unordered_set<int> next;
+            for(auto begin : candidata){
+                next.insert(begin);
+                dp[i][begin] = max(dp[i][begin],dp[i-1][begin] + days[begin][i-1]); //记得周数要i-1;
+                for(int j = 0 ; j < citySize ; ++j){
+                    if(flights[begin][j] == 1){
+                        dp[i][j] = max(dp[i-1][begin]+days[j][i-1],dp[i][j]);
+                        next.insert(j);
+                    }
+                }
+            }
+            swap(next,candidata);
+        }
+        for(int i = 0 ; i < citySize ;++i){
+            
+            res = max(res,dp[week][i]);
+        }
+        return res;
+    }
+};
