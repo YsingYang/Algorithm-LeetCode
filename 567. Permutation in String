@@ -1,0 +1,32 @@
+class Solution {
+/**
+  题目是说Permutation,其实根据Permutation的性质，意思就是s1打乱顺序在s2出现即可
+  那么实际上就是简单的字符串匹配 + sliding Windows,所以只要使用Sliding Windows在O(N)的时间复杂度就可以解决了
+  
+
+**/
+public:
+    bool checkInclusion(string s1, string s2) {
+        int size = s1.size();
+        vector<int> sliding(26,0);
+        int count = 0;
+        for(auto ch : s1){
+            if(++sliding[ch - 'a']==1)
+                count ++;
+        }
+        int slow = 0,fast = 0;
+        while(fast < s2.size()){
+            if(fast > slow + size - 1){
+                if(++sliding[s2[slow++] - 'a']==1)
+                    ++count;
+            }
+            else{
+                if(--sliding[s2[fast++] - 'a']==0)
+                    --count;
+            }
+            if(count == 0)
+                return true;
+        }
+        return false;
+    }
+};
