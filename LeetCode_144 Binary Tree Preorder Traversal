@@ -1,0 +1,50 @@
+#Solution1 
+class Solution(object):
+    def preorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        res = []
+        self.Travel(root,res)
+        return res
+    
+    def Travel(self,root,res):
+        if root == None :
+            return
+        res.append(root.val)
+        self.Travel(root.left,res)
+        self.Travel(root.right,res)
+
+#Solution2 iterative Version
+class Solution(object):
+    def preorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        res , stack = [],[root]
+        while stack :
+            node = stack.pop()
+            if node :
+                res.append(node.val)
+                stack.append(node.right)
+                stack.append(node.left)
+        return res
+        
+ #Solution3 ,less space complexity 
+ class Solution(object):
+    def preorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        res , stack , cur  = [] , [] , root
+        while stack or cur:
+            if cur == None:
+                cur = stack.pop()
+            res.append(cur.val)
+            if cur.right :
+                stack.append(cur.right)
+            cur = cur.left
+        return res
