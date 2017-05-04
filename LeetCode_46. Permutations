@@ -1,0 +1,35 @@
+class Solution(object):
+    def permute(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        res = []
+        self.permutation(nums,0,res)
+        return res
+        
+    def permutation(self,nums,index,res):
+        # 这样append进去的是nums的浅拷贝,我们需要的是深拷贝
+        if index == len(nums):
+            res.append(nums[0:])
+            #而不能是res.append(nums)
+            return
+        
+        for i in range(index,len(nums)):
+            nums[i], nums[index] = nums[index], nums[i]
+            self.permutation(nums, index + 1, res)
+            nums[i], nums[index] = nums[index], nums[i]
+
+@StefanPochmann posted了数个one-line solution,,大致意思差不多,也是利用了递归的性质,
+
+def permute(self, nums):
+    return [[n] + p
+            for i, n in enumerate(nums)
+            for p in self.permute(nums[:i] + nums[i+1:])] or [[]]
+
+class Solution(object):
+    def permute(self, nums):
+        return nums and [p[:i] + [nums[0]] + p[i:]
+            for p in self.permute(nums[1:])
+            for i in range(len(nums))] or [[]]
+    
