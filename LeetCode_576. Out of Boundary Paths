@@ -1,0 +1,35 @@
+class Solution {
+/**
+ * 推导式DP,DP[i][j]表示当前第N次, i,j下有多少次能到达此处
+ * 下一步的DP_n+1 [i][j]  = Dp[i-1][j] + Dp[i+1][j] + Dp[i][j-1] + Dp[i][j+1]
+ * 
+ */
+public:
+    int findPaths(int m, int n, int N, int i, int j) {
+        const int mod = pow(10,9) + 7;
+        vector<vector<int>> dp(m,vector<int>(n,0));
+        dp[i][j] = 1;
+        long res = 0;
+        vector<vector<int>> direction = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        for(int count = 0 ; count < N ; ++count){
+            vector<vector<int>> next(m, vector<int> (n,0));
+            for(int  i = 0 ; i < m ; ++i){
+                for(int j = 0 ; j < n ; ++j){
+                    int cross = ((i == 0) + (i == m - 1) + (j == 0) + (j == n - 1));
+                    while(cross > 0){
+                        res = (res + dp[i][j]) % mod;
+                        --cross;
+                    }
+                    for(auto it : direction){
+                        if(i + it[0] < 0 || i + it[0] >= m || j + it[1] < 0 || j + it[1] >= n){
+                            continue;
+                        }
+                        next[i][j] = (next[i][j] +  dp[i + it[0]][j + it[1]]) % mod;
+                    }
+                }
+            }
+            swap(dp, next);
+        }
+        return res;
+    }
+};
