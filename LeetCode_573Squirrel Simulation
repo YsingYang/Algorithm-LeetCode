@@ -1,0 +1,29 @@
+class Solution {
+/***
+ * 跟之前网易那道笔试题一样,终于知道自己为什么MLE了,这种类型的题根本不需要用BFS,因为到目的地的距离已经是很明确了的
+ * 该问题需要处理的是如何用最短距离处理nut到tree,nut 和tree的距离已经给出
+ * 那么必须的距离只能是nut <-> tree的距离 * 2
+ * 
+ * 那么我们如何选取最短,问题就在于,squirrel到哪个nuts是最节省距离的,就是说我们将
+ * 其中一段  tree -> nut 转换为 squirrel -> nut的距离,这段距离转换节省的距离越大越好
+ * 
+ * 在程序中用delta 表示 delta = max( delta , temp - distance(squirrel, i));
+ * 
+ * 
+ */
+public:
+    int minDistance(int height, int width, vector<int>& tree, vector<int>& squirrel, vector<vector<int>>& nuts) {
+        int delta = INT_MIN , dist = 0;
+        
+        for(auto i : nuts){
+            int temp = distance(i,tree);
+            dist += temp * 2;
+            delta = max(delta , temp - distance(squirrel , i));
+        }
+        return dist - delta;
+    }
+    
+    int distance(vector<int> pos1, vector<int> pos2){
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1]);
+    }
+};
