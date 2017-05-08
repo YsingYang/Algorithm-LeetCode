@@ -1,0 +1,9 @@
+class Solution:
+    def reverseList(self, head):
+        last, cur = None, head
+        while cur:
+            next = cur.next
+            cur.next = last
+            last = cur
+            cur = next
+        return last
