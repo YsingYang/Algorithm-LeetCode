@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int distributeCandies(vector<int>& candies) {
+        unordered_set<int> mp(candies.begin(), candies.end());
+        return min(mp.size(), candies.size()>>1);
+    }
+};
+
+Python Solution
+class Solution(object):
+    def distributeCandies(self, candies):
+        """
+        :type candies: List[int]
+        :rtype: int
+        """
+        return min(len(candies) / 2, len(set(candies)))
