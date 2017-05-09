@@ -70,3 +70,38 @@ public:
         return left;
     }
 };
+
+#Python 
+class Solution(object):
+    def insert(self, intervals, newInterval):
+        """
+        :type intervals: List[Interval]
+        :type newInterval: Interval
+        :rtype: List[Interval]
+        """
+        s, e = newInterval.start, newInterval.end
+        left = [i for i in intervals if i.end < s]
+        right = [i for i in intervals if i.start > e]
+        if left + right != intervals:
+            s = min(s, intervals[len(left)].start)
+            e = max(e, intervals[~len(right)].end)
+#这里的~len(right)是个很好的性质,取当前list下标的逆序
+        print(len(right), ~len(right))
+        return left + [Interval(s, e)] + right
+        
+class Solution(object):
+    def insert(self, intervals, newInterval):
+        """
+        :type intervals: List[Interval]
+        :type newInterval: Interval
+        :rtype: List[Interval]
+        """
+        s, e = newInterval.start, newInterval.end
+        parts = mid, left, right = [], [], []
+        for i in intervals:
+            parts[(i.end < s) - (i.start > e)].append(i)
+            #非常好的一个idea!!!!
+        if mid:
+            s = min(s, mid[0].start)
+            e = max(e, mid[-1].end)
+        return left + [Interval(s, e)] + right
