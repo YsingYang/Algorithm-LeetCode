@@ -46,3 +46,38 @@ public:
         return res;
     }
 };
+
+
+Python Solution
+class Solution(object):
+    def readBinaryWatch(self, num):
+        """
+        :type num: int
+        :rtype: List[str]
+        """
+        number = 0
+        res = []
+        self.backtracking(number, num, 0, res)
+        return res
+        
+    def backtracking(self, num, n, start, res):
+        if n == 0:
+            h, m =  num >> 6, num & 0b111111
+            if h > 11 or m > 59:
+                return
+            res.append('%d:%02d'%(h, m))
+            #可以通过 格式化输出 输出想要的格式值
+            return
+        
+        for i in range(start,10):
+            num |= (1 << i)
+            self.backtracking(num, n - 1, i + 1, res)
+            #还原
+            num &= ~(1 << i)
+     
+     
+ #Very Concise Solution
+ def readBinaryWatch(self, num):
+    return ['%d:%02d' % (h, m)
+            for h in range(12) for m in range(60)
+            if (bin(h) + bin(m)).count('1') == num]
