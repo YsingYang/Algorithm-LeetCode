@@ -62,3 +62,32 @@ public:
         return end - start + 1;
     }
 };
+
+
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        int size = nums.size();
+        vector<int> rhs(size), lhs(size);
+        //查看从右到左的递减序列, 如果非递减取两者最小值
+        for(int i = size - 1, minVal = INT_MAX; i >=0; --i){
+            rhs[i] = minVal = min(minVal, nums[i]);
+        }
+        //查看从左到右递增序列, 如果非递增取两者最大值
+        for(int i = 0, maxVal = INT_MIN; i < size; ++i){
+            lhs[i] = maxVal = max(maxVal, nums[i]);
+        }
+        
+        int start = 0, end = size - 1;
+        //注意start与rhs比, 因为是取的小值
+        while(start < size && nums[start] <= rhs[start]){
+            ++start;
+        }
+        //注意end与lhs比, 取的是大值
+        while(end >= start && nums[end] >= lhs[end]){
+            --end;
+        }
+        return end - start + 1;
+        
+    }
+};
