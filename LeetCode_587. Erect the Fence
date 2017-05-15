@@ -1,0 +1,76 @@
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+struct myCompare{
+    size_t operator()(const Point &p) const{
+        return hash<int>()(p.x) ^ hash<int>()(p.y);
+    }
+};
+struct myEqual{
+    bool operator ()(const Point &p1, const Point &p2) const{
+        return p1.x == p2.x && p1.y == p2.y;
+    }
+};
+class Solution {
+/**
+ * 边界边有一个性质就是,若两个都是边界点,那么他们之间的连线必定能将二维平面分成两部分, 
+ * 其中一部分没有任何点, 用几何意义上说就是 任意点与这两点之间的连线必定cross product统一<0 or >0取决于连线的方向
+ * 
+ */
+public:
+    vector<Point> outerTrees(vector<Point>& points) {
+        unordered_set<Point, myCompare, myEqual> mp;
+        Point firstPoint= points[0];
+        int firstIndex = 0;
+        //找到一个边界点, 这里选x最小的作为边界点
+        for(int i = 1; i < points.size(); ++i){
+            if(points[i].x < firstPoint.x){
+                firstPoint = points[i];
+                firstIndex = i;
+            }
+        }
+        Point curPoint = firstPoint;
+        int curIndex = firstIndex;
+        mp.insert(curPoint);
+        do{
+            Point next = points[0];
+            int nextIndex = 0;
+            for(int i = 1; i < points.size(); ++i){
+                if(i == curIndex)
+                    continue;
+                int cross = crossProduct(curPoint, next, points[i]);
+                if(curIndex == nextIndex || cross > 0 || (cross == 0 && distance(points[i], curPoint) > distance(next, curPoint))){
+                    next = points[i];
+                    nextIndex = i;
+                }
+            }
+            //处理一条直线上的点
+            for(int i = 0 ; i< points.size() ; ++i){
+                if(crossProduct(curPoint, next, points[i]) == 0){
+                    mp.insert(points[i]);
+                }
+            }
+            curPoint = next;
+            curIndex = nextIndex;
+            
+        }while(curIndex != firstIndex);
+        return vector<Point>(mp.begin(), mp.end());
+    }
+    
+    int crossProduct(const Point& cur, const Point& next, const Point &p){
+        int v1x = cur.x - p.x, v1y = cur.y - p.y;
+        int v2x = next.x - p.x, v2y = next.y - p.y;
+        
+        return v1x * v2y - v1y * v2x;
+    }
+    
+    int distance(const Point& p1, const Point& p2){
+        return pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2);
+    }
+};
