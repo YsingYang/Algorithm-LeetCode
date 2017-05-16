@@ -74,3 +74,78 @@ public:
         return pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2);
     }
 };
+
+
+
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+class Solution {
+/**
+ * nlog(n) Graham Scan Solution
+ */
+public:
+    vector<Point> outerTrees(vector<Point>& points) {
+        //选取y值最小的点
+        
+        int size = points.size(), firstIndex = 0;
+        if(size < 3)
+            return points;
+        Point firstPoint =  points[0];
+        for(int i = 1; i < size; ++i){
+            if((points[i].y < firstPoint.y) || (points[i].y == firstPoint.y && points[i].x < firstPoint.x)){
+                firstPoint = points[i];
+                firstIndex = i;
+            }
+        }//从效率上来说,应该是记录y值来比较会相对于好的
+        
+        swap(points[firstIndex], points[0]);
+        firstIndex = 0;
+        firstPoint = points[0];
+        sort(points.begin(), points.end(), [&firstPoint, this](const Point &p1, const Point &p2){
+            int cross = crossProduct(firstPoint, p1, p2);
+            if(cross == 0){ //三点共线
+                return distance(firstPoint, p1) < distance(firstPoint, p2);
+            }
+            if(cross < 0){
+                cout<<p1.x<<" "<<p1.y<<"     "<<p2.x<<" "<<p2.y<<endl;
+            }
+            return cross < 0; //cross < 0 为顺时针, 我们需要逆时针排
+            //当结果为false 时, 为 p2 < p1, 否则 p1 < p2
+        });
+        //相对于最小值p0做一个关于极坐标的最小值排序
+        Point pn = points.back(); //看成是一个栈
+        if(crossProduct(firstPoint, points[1], pn) != 0){ //并非所有都共线
+            int idx = size - 1;
+            while(crossProduct(firstPoint, points[idx], pn) == 0){
+                --idx;
+            }
+            reverse(points.begin() + idx + 1, points.end());
+        }//将尾部共线点逆转.
+        vector<Point> vec;
+        copy(points.begin(), points.begin() + 3, back_inserter(vec));
+        for(int i = 3; i < size; ++i){
+            while(crossProduct(vec[vec.size() -2], vec.back(), points[i]) > 0){ //去掉内点
+                vec.pop_back();
+            }
+            vec.push_back(points[i]);
+        }
+        return vec;
+        
+    }
+    
+    int distance(const Point &p1, const Point &p2){
+        return pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2);
+    }
+    
+    inline int crossProduct(const Point &p1, const Point &p2, const Point &p3){
+        //p1 -> p2, p2 -> p3
+        return (p2.y - p1.y) * (p3.x - p2.x) - (p3.y - p2.y) * (p2.x - p1.x);
+    }
+};
