@@ -1,0 +1,82 @@
+class Solution {
+public:
+    /**
+     * @param grid a boolean 2D matrix
+     * @return an integer
+     */
+    int numIslands(vector<vector<bool>>& grid) {
+        // Write your code here
+        if (grid.empty())
+            return 0;
+        int res = 0;
+        queue<pair<int, int>> que;
+        int rs = grid.size(), cs = grid[0].size();
+        vector<vector<int>> direction = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        for(int i = 0; i < grid.size(); ++i){
+            for(int j = 0; j < grid[0].size(); ++j){
+                if(grid[i][j]){
+                    ++res;
+                    que.emplace(i,j);
+                    while(!que.empty()){
+                        int x = que.front().first;
+                        int y = que.front().second;
+                        que.pop();
+                        grid[x][y] = false;
+                        for(int d = 0; d < 4; ++d){
+                            int nx = x + direction[d][0];
+                            int ny = y + direction[d][1];
+                            if(nx < 0 || nx >= rs || ny < 0 || ny >= cs || grid[nx][ny] == false)
+                                continue;
+                            que.emplace(nx, ny);
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        if(grid.empty())    return 0;
+        int rsize=grid.size(),csize=grid[0].size(),res=0;
+        vector<vector<int>> ispassed(rsize,vector<int>(csize));
+        for(int i=0;i<rsize;++i){
+            for(int j=0;j<csize;++j){
+                if(grid[i][j]=='1'&&!ispassed[i][j]){
+                    DFStravel(grid,ispassed,i,j,rsize,csize);
+                    ++res;
+                }
+                
+            }
+        }
+        return res;
+        
+    }
+private:
+    void DFStravel(const vector<vector<char>>&grid,vector<vector<int>> &ispassed,int i,int j,int rsize,int csize){
+        ispassed[i][j]=1;
+        if(i>0&&grid[i-1][j]=='1'&&!ispassed[i-1][j])   DFStravel(grid,ispassed,i-1,j,rsize,csize);
+        if(i<rsize-1&&grid[i+1][j]=='1'&&!ispassed[i+1][j])  DFStravel(grid,ispassed,i+1,j,rsize,csize);
+        if(j>0&&grid[i][j-1]=='1'&&!ispassed[i][j-1])   DFStravel(grid,ispassed,i,j-1,rsize,csize);
+        if(j<csize-1&&grid[i][j+1]=='1'&&!ispassed[i][j+1]) DFStravel(grid,ispassed,i,j+1,rsize,csize);
+    }
+};
+
+
+class Solution(object):
+    def numIslands(self, grid):
+        """
+        :type grid: List[List[str]]
+        :rtype: int
+        """
+        def sink(i, j):
+            if 0 <= i < len(grid) and 0 <= j < len(grid[i]) and grid[i][j] == '1':
+                grid[i][j] = '0'
+                map(sink, (i + 1, i - 1, i, i), (j, j, j + 1, j - 1))
+                return 1
+            return 0
+        return sum(sink(i,j) for i in range(len(grid)) for j in range(len(grid[i])))
