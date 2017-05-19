@@ -16,3 +16,19 @@ public:
         return profit;
     }
 };
+
+
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        res = 0
+        for i in range(1,len(prices)):
+            res += max(0, prices[i] - prices[i-1])
+        return res
+
+Python 1-line
+        #sum(是对于list作用的,所以需要用列表生成器生成相应的list)
+        return sum([y - x for x, y in zip(prices[:-1], prices[1:]) if y > x]) 
