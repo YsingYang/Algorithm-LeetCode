@@ -1,0 +1,41 @@
+Python Solution
+
+class Solution(object):
+    def grayCode(self, n):
+        """
+        :type n: int
+        :rtype: List[int]
+        """
+        res = [0]
+        for i in range(n):
+            res += [1 << i ^ j for j in res[::-1]]
+        return res
+        
+        
+        
+ class Solution(object):
+    def grayCode(self, n):
+        """
+        :type n: int
+        :rtype: List[int]
+        """
+        if n == 0:
+            return [0]
+        maxVal = 2 ** n
+        return [x >> 1 ^ x for x in range(maxVal)]
+        
+class Solution {
+public:
+    vector<int> grayCode(int n) {
+        vector<int> result(1,0);
+        
+        for(int i=0;i<n;++i){
+            int ini=1<<i;
+            for(int j=result.size()-1;j>=0;--j){
+                result.push_back(result[j]+ini);
+            }
+        }
+        return result;
+    }
+
+};
