@@ -1,0 +1,22 @@
+class Solution {
+/**
+  利用哈希先统计好个数, 然后根据差值是否为1决定longest
+**/
+public:
+    int findLHS(vector<int>& nums) {
+        map<int, int> mp;
+        for(auto i : nums){
+            ++mp[i];
+        }
+        int res = 0;
+        if(mp.empty())
+            return 0;
+        for(auto it = ++mp.begin(); it != mp.end(); ++it){
+            auto temp = it;
+            if((--temp) -> first == it -> first - 1){
+                res = max(res, temp->second + it->second);
+            }
+        }
+        return res;
+    }
+};
