@@ -1,0 +1,111 @@
+//待优化
+
+struct directory{
+    directory(bool isFile_ = false): isFile(isFile_){}
+    
+    bool isFile;
+    map<string, directory> mp;
+    string content;
+
+};
+
+class FileSystem {
+public:
+    FileSystem() {
+        root = directory(false);
+    }
+    
+    vector<string> ls(string path) {
+        directory *dir = &root;
+        if(path.empty())
+            return showDir(*dir);
+        int cur = 1, next;
+        while(cur < path.size()){
+            string temp = getName(path, cur, next);
+            if(dir->mp.find(temp) == dir->mp.end()){
+                return vector<string>();//文件目录不存在    
+            }
+            else if(next == string::npos && dir->mp[temp].isFile){
+                return {temp};//为文件；不为目录
+            }
+            dir = &dir->mp[temp];
+            cur = next == string::npos ? path.size():next + 1;
+        }
+        return showDir(*dir);
+
+    }
+    
+    
+    void mkdir(string path) {
+        directory *dir = &root;
+        if(path.empty()){
+            return;
+        }
+        int cur = 1, next;
+        while(cur < path.size()){
+            string temp = getName(path, cur, next);
+            if(dir->mp.find(temp) == dir->mp.end()){
+                dir->mp[temp] = directory(false);//文件不存在, 新建一个目录
+                //cout<<dir.mp.size()<<endl;
+            }
+            dir = &dir->mp[temp];
+            cur = next == string::npos ? path.size():next + 1;
+        }
+    }
+    
+    void addContentToFile(string filePath, string content) {
+        directory *dir = &root;
+        if(filePath.empty())
+            return;
+        //这里不会为空吧?
+        int cur = 1, next;
+        while(cur < filePath.size()){
+            string temp = getName(filePath, cur, next);
+            if(dir->mp.find(temp) == dir->mp.end()){ //如果不存在
+                if(next != string::npos){ //为目录
+                    dir->mp[temp] = directory(false);
+                }
+                else{
+                    dir->mp[temp] = directory(true);
+                }
+            }
+            dir = &dir->mp[temp];
+            
+            cur = next == string::npos ? filePath.size():next + 1;
+        }
+        dir->content.append(content);
+    }
+    
+    string readContentFromFile(string filePath) {
+        directory *dir = &root;
+        if(filePath.empty())
+            return string();
+        int cur = 1, next;
+        while(cur < filePath.size()){
+            string temp = getName(filePath, cur, next);
+            if(dir->mp.find(temp) == dir->mp.end()){
+                return string();//找不到文件
+            }
+            dir = &dir->mp[temp];
+            cur = next == string::npos ? filePath.size():next + 1;
+        }
+        return dir->content;
+    }
+private:
+    inline string getName(const string &path, int cur, int &next){
+        next = path.find('/', cur);
+        return path.substr(cur, next - cur);
+    }
+    
+    vector<string> showDir(directory &dir){
+        vector<string> res;
+        //cout<<dir.mp.size()<<endl;
+        for(auto it : dir.mp){
+            res.push_back(it.first);
+        }
+        return res;
+    }
+    
+private:
+    directory root;
+};
