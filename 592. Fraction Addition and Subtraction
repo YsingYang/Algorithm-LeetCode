@@ -1,0 +1,44 @@
+class Solution {
+public:
+    string fractionAddition(string expression) {
+        if(expression.empty()){
+            return "0/1";
+        }
+        int next = expression[0] == '-' ? 1 : 0 , front = next;
+        int flag = expression[0] =='-' ? -1 : 1;
+        unordered_map<int,int> ep;
+        while(front < expression.size()){
+            while(next < expression.size() && (expression[next] != '-' && expression[next] != '+')){
+                ++next;
+            }
+            string temp = expression.substr(front, next - front);
+            //cout<<temp<<endl;
+            int numerator = stoi(temp.substr(0, temp.find('/'))) * flag;
+            int denominator = stoi(temp.substr(temp.find('/') + 1));
+            ep[denominator] += numerator;
+            //cout<<numerator << "  "<<denominator<<endl;
+            flag = next<expression.size() && expression[next] == '-' ? -1 : 1;
+            front = next + 1;
+            next = front + 1;
+        }
+        int numerator = 0, denominator = 1;
+        for(auto i : ep){
+            int temp = denominator;
+            numerator *= i.first;
+            denominator *= i.first;
+            i.second *= temp;
+            numerator += i.second;
+            int cd = max(1, abs(gcd(denominator, numerator)));
+            //cout<<cd<<endl;
+            denominator /= cd;
+            numerator /= cd;
+        }
+        return to_string(numerator) + '/' + to_string(denominator);
+    }
+    
+    int gcd(int a, int b){
+        if(b == 0)
+            return a;
+        return gcd(b, a % b);
+    }
+};
