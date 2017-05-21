@@ -1,0 +1,26 @@
+//待优化
+
+class Solution {
+public:
+    bool validSquare(vector<int>& p1, vector<int>& p2, vector<int>& p3, vector<int>& p4) {
+        if(p1 == p2 && p2 == p3 && p3 == p4)
+            return false;
+        if(distance(p1[0], p1[1], p2[0], p2[1]) == distance(p3[0], p3[1], p4[0], p4[1]) && product(p2[0] - p1[0], p2[1] - p1[1], p4[0] - p3[0], p4[1] - p3[1]) == 0){
+            return true;
+        }
+        else if(distance(p1[0], p1[1], p3[0], p3[1] ) == distance(p2[0], p2[1], p4[0], p4[1]) && product(p3[0] - p1[0], p3[1] - p1[1], p4[0] - p2[0], p4[1] - p2[1]) == 0)
+            return true;
+        else if(distance(p1[0], p1[1], p4[0], p4[1]) == distance(p2[0], p2[1], p3[0], p3[1]) && product(p4[0] - p1[0], p4[1] - p1[1], p3[0] - p2[0], p3[1] - p2[1]) ==0)
+            return true;
+        /*cout<<distance(p1[0], p1[1], p4[0], p4[1])<<" "<<distance(p2[0], p2[1], p3[0], p3[1])<<" "<<product(p4[0] - p1[0], p4[1] - p1[1], p3[0] - p2[0], p3[1] - p2[1])<<endl;*/
+        return false;    
+    }
+    
+    int distance(int x1, int y1, int x2, int y2){
+        return pow(x2 - x1, 2) + pow(y2 - y1, 2);
+    }
+    
+    int product(int x1, int y1, int x2, int y2){
+        return x1 * x2 + y1 * y2;
+    }
+};
