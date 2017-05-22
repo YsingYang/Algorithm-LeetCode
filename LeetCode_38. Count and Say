@@ -1,0 +1,39 @@
+class Solution {
+public:
+    /**
+     * @param n the nth
+     * @return the nth sequence
+     */
+    string countAndSay(int n) {
+        // Write your code here
+        string res = "1";
+        for(int i = 1; i < n; ++i){
+            string next;
+            int j = 0, count;
+            while(j < res.size()){
+                count = 0;
+                char c = res[j];
+                while(j < res.size() && c == res[j]){
+                    ++j;
+                    ++count;
+                }
+                next += to_string(count) + c;
+            }
+            swap(next, res);
+        }
+        return res;
+    }
+};
+
+//Python Solution
+class Solution(object):
+    def countAndSay(self, n):
+        """
+        :type n: int
+        :rtype: str
+        """
+        s = '1'
+        for _ in range(n - 1):
+            s = re.sub(r'(.)\1*', lambda m : str(len(m.group(0))) + m.group(1), s) #正则表达式捕获
+            # (.)匹配任意字符, \1*重复的多个数字, 得到后传入lambda中, 
+        return s
