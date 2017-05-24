@@ -21,3 +21,37 @@ public:
         return ran;
     }
 };
+
+
+class Solution(object):
+    orginal, vec = [], []
+    
+    def __init__(self, nums):
+        """
+        :type nums: List[int]
+        """
+        self.original = nums # 永远注意这是浅拷贝
+        self.vec = self.original[:]
+        
+        
+
+    def reset(self):
+        """
+        Resets the array to its original configuration and return it.
+        :rtype: List[int]
+        """
+        self.vec = self.original[:]
+        return self.original
+
+    def shuffle(self):
+        """
+        Returns a random shuffling of the array.
+        :rtype: List[int]
+        """
+        for i in range (1, len(self.original)):
+            index = random.randint(0, i)
+            #print(i, index)
+            self.vec[i], self.vec[index] = self.vec[index], self.vec[i]
+        return self.vec
+            
+        
