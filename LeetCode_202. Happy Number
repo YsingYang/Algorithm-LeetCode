@@ -1,0 +1,32 @@
+
+//Python Solution
+class Solution(object):
+    def isHappy(self, n):
+
+        if n < 0:
+            return False
+        mp = set()
+        while n != 1:
+            if n in mp:
+                return False
+            mp.add(n)
+            sum = 0
+            for num in str(n):
+                sum += int(num) ** 2
+            n = sum
+        return True
+
+//more concise solution, 
+class Solution(object):
+    def isHappy(self, n):
+
+        if n <= 0:
+            return False
+        while n != 42 :
+            n = sum(i * i for i in map(int, str(n)))
+            if n == 1:
+                return True
+        return False
+            
+        
+        
