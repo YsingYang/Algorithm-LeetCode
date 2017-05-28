@@ -1,0 +1,30 @@
+(Link)[http://www.geeksforgeeks.org/count-number-binary-strings-without-consecutive-1s/]
+
+class Solution {
+/*****
+  莫名其妙的正确答案, ... 为什么它们之中会形成 Fibonacci Numbers..
+*****/
+public:
+    int findIntegers(int num) {
+        string bit;
+        while(num){
+            bit += to_string(num & 1);
+            num >>= 1;
+        }
+        int size = bit.size();
+        vector<int> a(size, 1), b(size, 1);
+        for(int i = 1; i < size; ++i){
+            a[i] = a[i-1] + b[i-1];
+            b[i] = a[i-1];
+        }
+        int res = a.back() + b.back();
+        for(int i = size - 2; i >= 0; --i){
+            if(bit[i] == '1' && bit[i+1] == '1')
+                break;
+            if(bit[i] == '0' && bit[i+1] == '0')
+                res -= b[i];
+        }
+        return res;
+        
+    }
+};
