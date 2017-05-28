@@ -1,0 +1,23 @@
+class Solution {
+    //简单的DFS问题，　也可以用unionfind，　不过这里DFS看起来比较简单
+    //下面有个变量是没有的, 不过开始看错题意了
+public:
+    int arrayNesting(vector<int>& nums) {
+        int size = nums.size();
+        vector<bool> visited(size, 0);
+        int maxStart = 0, maxLen = 0;
+        for(int i = 0; i < nums.size(); ++i){
+            int start = i, count = 0;
+            while(visited[start] == false){
+                visited[start] = true;
+                ++count;
+                start = nums[start];
+            }
+            if(count > maxLen){
+                maxStart = start;
+                maxLen = count;
+            }
+        }
+        return maxLen;
+    }
+};
