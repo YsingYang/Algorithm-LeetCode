@@ -1,0 +1,38 @@
+/********************
+  用了个最蠢的方法...
+********************/
+
+class Solution {
+public:
+    int maxCount(int m, int n, vector<vector<int>>& ops) {
+        if(ops.empty())
+            return m * n;
+        vector<int> rs(m, 0);
+        vector<int> cs(n, 0);
+        int maxVal = 0;
+        for(int i = 0; i < ops.size(); ++i){
+            for(int r = 0; r < ops[i][0]; ++r){
+                ++rs[r];
+                maxVal = max(maxVal, rs[r]);
+            }
+            for(int c = 0; c < ops[i][1]; ++c){
+                ++cs[c];
+                maxVal = max(maxVal, cs[c]);
+            }
+        }
+        
+        int count = 0;
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(min(rs[i], cs[j]) == maxVal){
+                    ++count;
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        return count;
+        
+    }
+};
