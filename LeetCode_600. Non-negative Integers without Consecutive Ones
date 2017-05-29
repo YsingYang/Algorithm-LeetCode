@@ -28,3 +28,33 @@ public:
         
     }
 };
+
+#Python solution
+1. 当遇到1时, 相当于可以计算上1 00000 中的0 00000 ~0 11111的所有满足的数, 即(f(5)), msb的位数
+2. 下一步需要计算MSB为1时的 1 xxxxx ~ 1 xxxxx~, 继续搜索, 如果是0跳过, 当遇到下一个1时, 重复第一步的步骤
+3. 当遇到连续两个1时, 计算上第二个1 break
+
+class Solution:
+    def findIntegers(self, num):
+        """
+        :type num: int
+        :rtype: int
+        """
+        fab = [1, 2, ]
+        for i in range(2, 32):
+            fab.append(fab[-1] + fab[-2])
+        
+        i , prevBit, res  = 30, 0, 0
+        while i >= 0:
+            if((num & (1 << i)) != 0):
+                res += fab[i]
+                if prevBit == 1:
+                    res -= 1 #主要用于统一一些循环持续到LSB的数
+                    break
+                prevBit = 1
+            else:
+                prevBit = 0
+            i -= 1
+        return res + 1
+        
+        
