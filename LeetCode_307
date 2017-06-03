@@ -86,3 +86,43 @@ private:
 
 //Implementation_2 using buffer to cache update,It's a brilliant idea,It just use 80ms time , maybe result in the case,So I 
 //think it is not suitable for partical problem.
+
+//Implementation_3 BinaryIndex tree , 重新用binaryIndexed tree 写了一遍
+class NumArray {
+public:
+    NumArray(vector<int> nums) : rs(nums.size()), BITree(rs + 1) {
+        for(int i = 0; i < rs; ++i){
+            BITUpdate(i, nums[i]);    
+        }
+    }
+    
+    void update(int i, int val) { //注意update这里需要读取原始值, 与新值做差得到需要更新的差值
+        val -= BITRead(i + 1) - BITRead(i);
+        BITUpdate(i, val);
+    }
+    
+    int sumRange(int i, int j) {
+        return BITRead(j + 1) - BITRead(i);
+    }
+private:
+    void BITUpdate(int x, int val){ //index从0开始, 但update是从1开始
+        ++x;
+        while(x <= rs){ //更新对应的binaryIndex值, 直到数组上限
+            BITree[x] += val; 
+            x += (x & -x);
+        }
+    }
+    
+    int BITRead(int x){
+        int sum = 0;
+        while(x > 0){ //这里的x不用像update一样+1, 但是在循环终止条件是x > 0
+            sum += BITree[x];
+            x -= (x & -x);
+        }
+        return sum;
+    }
+    
+private:
+    int rs;
+    vector<int> BITree;
+};
