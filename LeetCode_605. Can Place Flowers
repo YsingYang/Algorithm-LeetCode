@@ -1,0 +1,23 @@
+class Solution {
+/*****
+
+  一种最笨的方法, 有位置就插..直到结束or n <= 0
+
+******/
+public:
+    bool canPlaceFlowers(vector<int>& flowerbed, int n) {
+        int i = 0;
+        while( i < flowerbed.size()){
+            if(flowerbed[i] == 0){
+                if( (i == 0 || flowerbed[i-1] == 0) && (i == flowerbed.size() - 1 ||flowerbed[i + 1] == 0)){
+                   if(--n <= 0){
+                       return true;
+                   }
+                   ++i;
+                }
+            }
+            ++i;
+        }
+        return n == 0;
+    }
+};
