@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<vector<string>> findDuplicate(vector<string>& paths) {
+        unordered_map<string, vector<string>> mp;
+        for(auto &s : paths){
+            int index = s.find(" ");
+            string path = s.substr(0, index);
+            int tindex = index + 1;
+            while(s.find("(", tindex) != string::npos){
+                int fidx = s.find("(", tindex);
+                int lidx = s.find(")", fidx);
+                string context = s.substr(fidx + 1, lidx - fidx - 1);
+                string fname = s.substr(tindex, fidx - tindex);
+                tindex = lidx + 2;
+                mp[context].push_back(path + "/" + fname);
+            }
+        }
+        vector<vector<string>> res;
+        for(auto &i : mp){
+            if(i.second.size() >= 2)
+                res.push_back(vector<string>(i.second.begin(), i.second.end()));
+        }
+        return res;
+    }
+};
