@@ -54,31 +54,38 @@ public:
 class Solution {
 public:
     vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
-        vector<pair<int,int>> mp;
-        for(int i=0;i<buildings.size();++i){
-            mp.emplace_back(buildings[i][0],-buildings[i][2]);
-            mp.emplace_back(buildings[i][1],buildings[i][2]);
-        }
+        vector<pair<int, int>> vec;
+        for(auto &v : buildings){
+            vec.emplace_back(v[0], -v[2]);
+            vec.emplace_back(v[1], v[2]);
+        }//按照起始点为pair<idx, -hight> , 终点为pair<idx, hight>插入到vector中
         
-        sort(mp.begin(),mp.end());
-        vector<pair<int,int>> res;
-        multiset<int> heigh = {0};
-        int pre = -1,heighest;
-        pair<int,int> temp;
-        for(int i=0;i<mp.size();++i){
-            temp = mp[i];
-            if(temp.second<0)
-                heigh.insert(-temp.second);
-            else
-                heigh.erase(heigh.find(temp.second));//不存在0?
-            
-            heighest = *heigh.rbegin();
-            if(heighest != pre){
-                res.emplace_back(temp.first,heighest);
-                pre = heighest;
+        
+        sort(vec.begin(), vec.end(), [](const pair<int, int> &p1, const pair<int, int>& p2){
+            if(p1.first == p2.first)
+                return p1.second < p2.second; //若相等, 先插入新的, 再erase旧的
+            return p1.first < p2.first;
+        });//对vec按照idx从小到大进行排序
+        
+        
+        vector<pair<int, int>> res;
+        int preHest = -1;
+        pair<int, int> temp;
+        multiset<int> heap = {0};
+        for(auto &v : vec){
+            //cout<<v.first<<"    "<<v.second<<endl;
+            if(v.second < 0){
+                heap.insert(-v.second);
+            }
+            else{
+                heap.erase(heap.find(v.second));
+            }
+            int height = *heap.rbegin();
+            if(height != preHest){ //每一次pop出一个堆内最大的做为候选, 如果该最大的与上一次的相同,则跳过
+                res.emplace_back(v.first, height);
+                preHest = res.back().second;
             }
         }
         return res;
-        
     }
-
+};
