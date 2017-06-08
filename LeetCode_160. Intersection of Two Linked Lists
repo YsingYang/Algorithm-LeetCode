@@ -1,0 +1,27 @@
+class Solution {
+/****
+ * 
+ * 下面的Solution考虑上了无环的case 
+ */
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode* p1 = headA, *p2 = headB;
+        bool round1 = true, round2 = true;
+        while(p1 && p2 ){
+            if(p1 == p2){
+                return p1;
+            }
+            p1 = p1 -> next;
+            if(!p1 && round1){
+                p1 = headB;
+                round1 = false;
+            }
+            p2 = p2 -> next;
+            if(!p2 && round2){
+                p2 = headA;
+                round2 = false;
+            }
+        }
+        return nullptr;
+    }
+};
