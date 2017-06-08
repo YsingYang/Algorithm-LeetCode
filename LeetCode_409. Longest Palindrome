@@ -1,0 +1,43 @@
+class Solution {
+public:
+    int longestPalindrome(string s) {
+        int size = s.size();
+        vector<int> count(52);
+        int odd=0;
+        for(char c:s){
+            int *temp = islower(c)?(&count[c-'a']):(&count[c-'A'+26]);
+            ++*temp;
+            (*temp)&1?++odd:--odd;
+        }
+        return odd==0?size:size-odd+1;
+    }
+    
+};
+
+#My Python solution
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        mp = collections.defaultdict(int)
+        odd = 0
+        for c in s:
+            mp[c] += 1
+            if mp[c] & 1 :
+                odd += 1
+            else:
+                odd -= 1
+        return (len(s) - odd + 1 if odd != 0 else len(s))
+        
+        
+#Concise Python Solution
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        odd = sum(val & 1 for val in collections.Counter(s).values())
+        return len(s) - odd + bool(odd)
