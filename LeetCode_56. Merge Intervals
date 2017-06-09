@@ -1,0 +1,35 @@
+class Solution {
+/********************************
+
+  先对序列按start进行排序, 然后遍历序列合并即可
+
+*********************************/
+public:
+    vector<Interval> merge(vector<Interval> &intervals) {
+        // write your code here
+        if(intervals.empty())
+            return vector<Interval>();
+        sort(intervals.begin(), intervals.end(), [](const Interval& p1, const Interval& p2){
+           if(p1.start == p2.start){
+               return p1.end < p2.end;
+           } 
+           return p1.start < p2.start;
+        });
+        vector<Interval> res;
+        Interval pre = intervals[0];
+        
+        for(int i = 1; ; ++i){
+            if(i == intervals.size()){
+                res.emplace_back(pre);
+                return res;
+            }
+            if(intervals[i].start > pre.end){
+                res.emplace_back(pre);
+                pre = intervals[i];
+            }
+            else{
+                pre.end = max(pre.end, intervals[i].end);
+            }
+        }
+    }
+};
