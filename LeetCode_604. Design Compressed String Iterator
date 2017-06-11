@@ -1,0 +1,43 @@
+class StringIterator {
+public:
+    StringIterator(string compressedString) : str(compressedString), count(0), index(0), nextIndex(0){
+        index = findFirstNum();
+    }
+    
+    char next() {
+        //cout<<count<<"  "<<index<<endl;
+        if(hasNext()){
+            --count;
+            return str[index-1];
+            
+        }
+        return ' ';
+    }
+    
+    bool hasNext() {
+        if(count > 0){
+            return true;
+        }
+        return (index = findFirstNum()) != string::npos;
+    }
+private:
+
+    int findFirstNum(){
+        for(int i = nextIndex; i < str.size(); ++i){
+            if(isdigit(str[i])){
+                int res = i;
+                count = 0;
+                while(i < str.size() && isdigit(str[i])){
+                    count = count * 10 + str[i++] - '0';
+                }
+                nextIndex = i;
+                return res;
+            }
+        }
+        return string::npos;
+    }
+    string str;
+    int count;
+    int index;
+    int nextIndex;
+};
