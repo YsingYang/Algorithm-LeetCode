@@ -5,40 +5,44 @@ class Solution {
 
 
 ************************/
+class Solution {
 public:
     string addBoldTag(string s, vector<string>& dict) {
         multimap<int, int> mp;
         for(int i = 0; i < dict.size(); ++i){
-            int start = 0;
+            int index = 0;
             while(true){
-                int index = s.find(dict[i], start);
-                if(index != string::npos)
+                index = s.find(dict[i], index);
+                if(index != string::npos){
                     mp.insert(pair<int, int>(index, dict[i].size()));
-                if(index == string::npos)
+                    ++index;
+                }
+                else
                     break;
-                start = index + 1;
             }
         } //组成有序的map
         string res;
         res += s.substr(0, mp.begin()->first);
-        int end = 0;
-        auto start = mp.begin();
+        int end = 0;//记录当前加<b>的终结index
+        auto start = mp.begin(); //记录需要combine的start  节点
         for(multimap<int,int>::iterator i = mp.begin(); ; ++i){
             if(i != mp.end() && (end == 0 || i->first<= end)){
                 end = max(i->first + i->second, end);
                 continue;
             }
+            //连接需要加<b>的str
             if(start != mp.end()){
                 res += "<b>";
-                auto remain = next(i, -1);
                 res += s.substr(start->first, end - start->first);
                 res += "</b>";
             }
+            //将剩余的str/  </b>..<b>中间的str
             if(i != mp.end()){
                 res += s.substr(end, i->first - end);
             }
             else
                 res += s.substr(end);
+                
             start = i;
             end = i->first + i->second;
             if(i == mp.end())
