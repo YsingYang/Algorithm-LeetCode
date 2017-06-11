@@ -52,3 +52,40 @@ public:
         
     }
 };
+
+
+/****************************************************
+
+more concise solution,  using isBold to mention which char should be surrounded by <b> 
+
+*****************************************************/
+class Solution {
+public:
+    string addBoldTag(string s, vector<string>& dict) {
+        vector<bool> isBold(s.size(), false);
+        for(int i = 0; i < dict.size(); ++i){
+            int idx = -1;
+            while((idx = s.find(dict[i], idx + 1)) != string::npos){
+                for(int j = idx; j < idx + dict[i].size(); ++j){
+                    isBold[j] = true;
+                }
+            }
+        }
+        string res;
+        bool flag = false; //判断是否是终结
+        for(int i = 0; ; ++i){
+            if((i == isBold.size() && flag) || (!isBold[i] && (i > 0 && isBold[i] ^ isBold[i-1]))){
+                res += "</b>";
+                flag = false;
+            }
+            if( i < isBold.size() && isBold[i] && (i == 0 || (i > 0 && isBold[i] ^ isBold[i-1]))){
+                res += "<b>";
+                flag = true;
+            }
+            if( i == isBold.size()){
+                return res;
+            }
+            res += s[i];
+        }
+    }
+};
