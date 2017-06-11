@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int triangleNumber(vector<int>& nums) {
+        if(nums.size() < 3)
+            return 0;
+        sort(nums.begin(), nums.end());
+        int res = 0;
+        for(int i = 0; i < nums.size() - 2; ++i){
+            for(int j = i + 1; j < nums.size() - 1; ++j){
+                int index = find(nums, j + 1, nums.size(), nums[i] + nums[j]);
+                res += (index - j - 1);
+            }
+        }
+        return res;
+    }
+    
+    int find(vector<int>& nums, int begin, int end, int num){
+        if(end <= begin)
+            return begin;
+        int mid = begin + (end - begin >> 1);
+        if(nums[mid] < num){
+            return find(nums, mid + 1, end, num);
+        }
+        else{
+            return find(nums, begin, mid, num);
+        }
+        
+    }
+};
