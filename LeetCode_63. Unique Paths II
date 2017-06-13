@@ -1,0 +1,35 @@
+//Dp O(m * n) Solution
+class Solution {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        if(obstacleGrid.empty())
+            return 0;
+        int rs = obstacleGrid.size(), cs = obstacleGrid[0].size();
+        vector<vector<int>> dp(rs+1, vector<int>(cs+1, 0));
+        dp[0][1] = 1;
+        for(int i = 1; i <= rs; ++i){
+            for(int j = 1; j <= cs; ++j){
+                dp[i][j] = obstacleGrid[i-1][j-1] == 0 ? dp[i-1][j] + dp[i][j-1] : 0;
+            }
+        }
+        return dp[rs][cs];
+    }
+};
+
+//其实可以做到O(min(m, n))Solution 的, 只不过我比较懒...就做到这里了.
+class Solution {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        if(obstacleGrid.empty())
+            return 0;
+        int rs = obstacleGrid.size(), cs = obstacleGrid[0].size();
+        vector<int> dp(cs+1, 0);
+        dp[1] = 1;
+        for(int i = 1; i <= rs; ++i){
+            for(int j = 1; j <= cs; ++j){
+                dp[j] = obstacleGrid[i-1][j-1] == 0 ? dp[j] + dp[j-1] : 0;
+            }
+        }
+        return dp[cs];
+    }
+};
