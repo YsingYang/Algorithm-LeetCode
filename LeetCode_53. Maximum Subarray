@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int sum = 0, res = INT_MIN;
+        for(auto &i : nums){
+            sum += i;
+            res = max(res, sum);
+            if (sum < 0)
+                sum = 0;
+        }
+        return res;
+    }
+};
+
+#Python Solution
+class Solution(object):
+    def maxSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        cur = res = nums[0]
+        for i in nums[1:]:
+            cur = max(cur+i, i)
+            res = max(res, cur)
+        return res
