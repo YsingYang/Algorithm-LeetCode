@@ -1,0 +1,61 @@
+class Solution {
+/*********************
+对于每个序列, 我们可以根据阶乘来求得, 序列第一个字母是否需要换置
+下面算法中, 为了保持下标一致, 所以下面传入了k-1, 表示从0开始, 
+
+***********************
+public:
+    /**
+      * @param n: n
+      * @param k: the kth permutation
+      * @return: return the k-th permutation
+      */
+    string getPermutation(int n, int k) {
+        set<string> mp;
+        for(int i = 1; i <= n; ++i)
+            mp.insert(to_string(i));
+        return get(mp, n, k-1); //从0开始
+    }
+    
+    string get(set<string>& mp, int n, int k){
+        if(n == 1) //当序列只剩下一个数时, 直接返回
+            return *mp.begin();
+        int count = factorial(n-1);
+        auto it = next(mp.begin(), k / count);
+        string c = *it;
+        mp.erase(c);
+        return c + get(mp, n-1, k % count); //序列剩下n-1个数, 取剩余序列的 k % count
+        
+    }
+    
+    int factorial(int k){
+        if(k <= 0)
+            return 0;
+        if(k == 1)
+            return 1;
+        return k * factorial(k-1);
+    }
+};
+
+//某些地方还可以再小小的优化下, 比如阶乘方面, 值需要乘以一次即可, 每次循环再/相应最大数就可以了
+
+class Solution {
+public:
+    string getPermutation(int n, int k) {
+        vector<char> seq={'1','2','3','4','5','6','7','8','9'};
+        string s="";
+        int count=1,index=1,nums;
+        while(index<n)  
+            count *=index++; //取剩下的最大阶数
+        --k;//起始为0, 而不为1    
+        while(index>1){
+            nums = k / count;//正确
+            k %= count;
+            s.push_back(seq[nums]);
+            seq.erase(seq.begin()+nums); //删除掉刚被选取的数
+            count /= --index; //阶乘总和减少, 同时index数量减少
+        }
+        s.push_back(seq[0]);
+        return s;
+    }
+};
