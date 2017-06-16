@@ -1,0 +1,46 @@
+class Solution {
+public:
+    /**
+      这一种DP策略是, 对于数组A的每个数的有两种状态, 第一种为取当前数, 那么它会等于max(dp[1] + A[i], dp[0]), 即上一个没取 + 取这一次, 与取上次的比较
+      
+      第二种是不取当前数, 那么他会等于, 上一次取, 与上一次不取的最大值
+     */
+    long long houseRobber(vector<int> A) {
+        // write your code here
+        if(A.empty())
+            return 0;
+        vector<long long> dp(2, 0); //0取当前, 1不取当前
+        dp[0] = A[0];
+        for(int i = 1; i < A.size(); ++i){
+            long long temp = dp[0];
+            dp[0] = max(dp[1] + A[i], dp[0]);
+            dp[1] = max(temp, dp[1]);
+        }
+        return max(dp[0], dp[1]);
+    }
+};
+
+/**************************
+第二种DP策略分为两种情况, 
+1. DP[1] 取奇数房时的最大值
+2. DP[2] 取偶数房时的最大值
+
+***************************/
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        if(nums.empty())
+            return 0;
+        vector<int> dp(2, 0);
+        for(int i = 0; i < nums.size(); ++i){
+            if(i & 1){ //奇数时
+                dp[0] = max(dp[0] + nums[i], dp[1]);
+            }
+            else{
+                dp[1] = max(dp[1] + nums[i], dp[0]);
+            }
+        }
+        return max(dp[0], dp[1]);
+    }
+};
