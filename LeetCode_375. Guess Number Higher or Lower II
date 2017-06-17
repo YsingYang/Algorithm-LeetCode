@@ -1,0 +1,53 @@
+class Solution {
+/***********************************
+本质上来说属于最小最大化的DP 不过其中有很多与Dp的共性是一样的
+比如若对于Dp[i, j]区间的花费, 我们需要找到一个mincost
+那么我们就需要在for i -> j
+使得存在min(max(dp[i][k-1], dp[k+1][j]) + k), 这个花费就是当前的区间的最小化费
+从子问题不断解决在len == n的问题, 最后得到的就是相应的解
+************************************/
+public:
+    int getMoneyAmount(int n) {
+        vector<vector<int>> dp(n+2, vector<int>(n+1));
+        for(int len = 2; len <= n; ++len){
+            for(int i = 1; i + len - 1 <= n; ++i){//start
+                int j = i + len - 1;
+                int minCost = INT_MAX;
+                for(int k = i; k <= j; ++k){
+                    int cost = max(dp[i][k-1], dp[k+1][j]) + k;//当前选k, 那边在[i, j]区间内, 最少必须花费为max(dp[i][k-1], dp[k+1][i]) + k;
+                    minCost = min(cost, minCost);
+                }
+                dp[i][j] = minCost;
+            }
+        }
+        return dp[1][n];
+    }
+};
+
+
+//Top->bottom DP
+class Solution {
+public:
+    int getMoneyAmount(int n) {
+        vector<vector<int>> dp(n+1, vector<int>(n+1, 0));//注意下标
+        int res = get(dp, 1, n);
+        return res;
+    }
+    
+    int get(vector<vector<int>>& dp, int start, int end){
+        if(end <= start) //注意这里有个很神奇的设定, 当start == end时, 其实是没有花费的.因为当只有一个数时, 猜的也只会是那个数
+            return 0;
+        if(dp[start][end] != 0)
+            return dp[start][end];
+        if(start == end){
+            dp[start][end] = start;
+            return start;
+        }   
+        int minCost = INT_MAX;
+        for(int i = start; i <= end; ++i){
+            minCost = min(minCost, max(get(dp, start, i-1), get(dp, i + 1, end)) + i);
+        }
+        dp[start][end] = minCost;
+        return dp[start][end];
+    }
+};
