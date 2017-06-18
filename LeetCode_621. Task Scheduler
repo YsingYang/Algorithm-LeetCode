@@ -1,0 +1,45 @@
+class task{
+public:
+    task(char id_, int waitTime_, int count_):id(id_), waitTime(waitTime_), count(count_){}
+
+    char id;
+    int waitTime;
+    int count;
+};
+
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) {
+        map<char, task*> taskQueue;
+        for(int i = 0; i < tasks.size(); ++i){
+            if(taskQueue.find(tasks[i]) == taskQueue.end()){
+                taskQueue[tasks[i]] = new task(tasks[i], 0, 1);
+            }
+            else{
+                ++taskQueue[tasks[i]]->count;
+            }
+        }
+        int finish = 0;
+        while(!taskQueue.empty()){
+            ++finish;
+            decltype(taskQueue.begin()) index = taskQueue.end();
+            for(auto it = taskQueue.begin(); it != taskQueue.end(); ++it){
+                if(it->second->waitTime == 0 && (index == taskQueue.end() || index->second->count < it->second->count)){
+                    index  = it;
+                }
+                if(it->second->waitTime != 0){
+                    --it->second->waitTime;
+                }
+            }
+            if(index != taskQueue.end()){
+                if(--index->second->count == 0){
+                    taskQueue.erase(index);
+                    continue;
+                }
+                index->second->waitTime = n;
+            }
+        }
+        return finish;
+        
+    }
+};
