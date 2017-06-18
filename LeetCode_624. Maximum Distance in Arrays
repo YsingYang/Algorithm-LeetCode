@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int maxDistance(vector<vector<int>>& arrays) {
+        multimap<int, int> maxMp;
+        for(int i = 0; i < arrays.size(); ++i){
+            maxMp.emplace(arrays[i].back(), i);
+            if(maxMp.size() > 2)
+                maxMp.erase(maxMp.begin());
+        }
+        multimap<int, int> minMp;
+        for(int i = 0; i < arrays.size(); ++i){
+            minMp.emplace(arrays[i].front(), i);
+            if(minMp.size() > 2)
+                minMp.erase(--minMp.end());
+        }
+        
+        if(maxMp.rbegin()->second == minMp.begin()->second){
+            return max(abs(maxMp.rbegin()->first - minMp.rbegin()->first), abs(maxMp.begin()->first - minMp.begin()->first));
+        }
+        return abs(maxMp.rbegin()->first - minMp.begin()->first);
+    }
+};
