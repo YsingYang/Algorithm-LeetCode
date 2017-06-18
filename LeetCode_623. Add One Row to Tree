@@ -1,0 +1,26 @@
+class Solution {
+public:
+    TreeNode* addOneRow(TreeNode* root, int v, int d) {
+        if(d == 1){
+            TreeNode* node = new TreeNode(v);
+            node->left = root;
+            return node;
+        }    
+        add(root, v, d, 1);
+        return root;
+    }
+    void add(TreeNode* root, int v, int d, int depth){
+            if(!root)
+                return;
+            if(d - 1== depth){
+                TreeNode* tmpLeft = root->left, *tmpRight = root -> right;
+                root->left = new TreeNode(v);
+                root->left->left = tmpLeft;
+                root->right = new TreeNode(v);
+                root->right->right = tmpRight;
+                return ;
+            }
+            add(root->left, v, d, depth + 1);
+            add(root->right, v, d, depth + 1);
+    }
+};
