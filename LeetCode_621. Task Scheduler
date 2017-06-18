@@ -43,3 +43,34 @@ public:
         
     }
 };
+
+
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) {
+        vector<int> mp(26, 0); //一共26个字母
+        for(auto &s : tasks){
+            ++mp[s-'A'];//记录各自Task的个数
+        }
+        sort(mp.begin(), mp.end());
+        int finishTime = 0;
+        while(mp[25] > 0){
+            for(int i = 0; i < 26; ++i){
+                cout<<mp[i]<<"  "; 
+            }
+            cout<<endl;
+            int i = 0;
+            while(i <= n){
+                if(mp[25] == 0 && mp[25 - i] == 0) //确保当i <= n 的时候才break, (除非是最后一个task, 否则不break)
+                    break;
+                if(i < 26 && mp[25 - i] > 0){ //如果i 扔在运行, 且25-i没有任务, 则直接跳过这一步
+                    --mp[25 - i];
+                }
+                ++finishTime;
+                ++i;
+            }
+            sort(mp.begin(), mp.end());
+        }
+        return finishTime;
+    }
+};
