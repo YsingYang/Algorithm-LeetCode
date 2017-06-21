@@ -20,3 +20,20 @@ public:
         return abs(maxMp.rbegin()->first - minMp.begin()->first);
     }
 };
+
+//优化空间后的算法，
+class Solution {
+public:
+    int maxDistance(vector<vector<int>>& arrays) {
+        int res = INT_MIN;
+        int maxVal = arrays[0].back();
+        int minVal = arrays[0].front(); //首先记录下最大最小值
+        for(int i = 1; i < arrays.size(); ++i){
+            res = max(res, abs(maxVal - arrays[i].front())); //算出当前最大最小值， 与之前最大最小值得最大差
+            res = max(res, abs(minVal - arrays[i].back()));
+            maxVal = max(maxVal, arrays[i].back()); //更新最大最小值
+            minVal = min(minVal, arrays[i].front());
+        }
+        return res;
+    }
+};
