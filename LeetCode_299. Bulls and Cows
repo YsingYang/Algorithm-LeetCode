@@ -1,0 +1,103 @@
+//first solution use O(n) time and O(1) space(two vector<int>)
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bull=0;
+        vector<int> visited(10,0);
+        vector<int> match(10,0);
+        for(int i=0;i<secret.size();++i){
+            if(secret[i]==guess[i]){
+                ++bull;
+            }
+            else{
+                ++visited[secret[i]-'0'];
+                ++match[guess[i]-'0'];
+            }
+        }
+        int cow=0;
+        for(int i=0;i<=9;++i){
+            cow+=min(match[i],visited[i]);
+            //cout<<i<<" and "<<cow<<endl;
+        }
+        return to_string(bull)+'A'+to_string(cow)+'B';
+        
+    }
+    
+};
+
+//second solution just use one vector<int> (10),It's a smart idea (I think).
+
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bull=0,cow=0;
+        vector<int> visited(10,0);
+        for(int i=0;i<secret.size();++i){
+            if(secret[i]==guess[i]){
+                ++bull;
+            }
+            else{ 
+                if(visited[secret[i]-'0']==INT_MIN)
+                    visited[secret[i]-'0']=0;
+                if(visited[secret[i]-'0']<0)
+                    ++cow;
+                if(visited[guess[i]-'0']>0)
+                    ++cow;
+                ++visited[secret[i]-'0'];
+                --visited[guess[i]-'0'];
+            }
+        }
+        return to_string(bull)+'A'+to_string(cow)+'B';
+        
+    }
+};
+
+//两遍遍历.. 过了几个月再看这题..已经完全不记得上面那个Solution了..现在一看又觉得好屌..
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        //先检测bolt, 剩下的记录
+        int size = guess.size();
+        vector<int> mp(10);
+        int bolt = 0;
+        for(int i = 0; i < size; ++i){
+            if(secret[i] == guess[i]){
+                ++bolt;
+                continue;
+            }
+            ++mp[secret[i]-'0'];
+        }
+        //第二遍遍历, 算cow
+        int cow = 0;
+        for(int i = 0; i < size; ++i){
+            if(secret[i] != guess[i] && mp[guess[i] - '0'] > 0){
+                --mp[guess[i] - '0'];
+                ++cow;
+            }
+        }
+        return to_string(bolt) + "A" + to_string(cow) + "B";
+    }
+};
+
+//重写Solution 2
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bulls = 0, cows = 0;
+        vector<int> visited(10, 0);
+        for(int i = 0; i < guess.size(); ++i){
+            if(guess[i] == secret[i])
+                ++bulls;
+            else{
+                if(visited[secret[i] - '0'] < 0)
+                   ++cows; //如果之前guess出现过, 
+                if(visited[guess[i] - '0'] > 0){
+                    ++cows; //如果之前secret出现过
+                } 
+                ++visited[secret[i] - '0'];
+                --visited[guess[i] - '0'];
+            }
+        }
+        return to_string(bulls) + "A" + to_string(cows) + "B";
+    }
+};
