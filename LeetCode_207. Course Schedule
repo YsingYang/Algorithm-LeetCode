@@ -1,0 +1,28 @@
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+        unordered_map<int, unordered_set<int>> mp;
+        vector<int> indegree(numCourses);
+        for(int i = 0; i < prerequisites.size(); ++i){
+            mp[prerequisites[i].first].insert(prerequisites[i].second);
+            ++indegree[prerequisites[i].second];
+        }
+        queue<int> que;
+        for(int i = 0; i < numCourses; ++i){
+            if(indegree[i] == 0){
+                que.push(i);
+                indegree[i] = -1;
+            }
+        }
+        while(!que.empty()){
+            int node = que.front();
+            que.pop();
+            for(auto &it : mp[node]){
+                if(--indegree[it] == 0)
+                    que.push(it);
+            }
+            --numCourses;
+        }
+        return numCourses == 0;
+    }
+};
