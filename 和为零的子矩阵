@@ -1,0 +1,40 @@
+class Solution {
+public:
+    /**
+     * @param matrix an integer matrix
+     * @return the coordinate of the left-up and right-down number
+     * 
+     * 其实就是对于一维数组求和为0的子矩阵的拓展
+     * 在了解和为0的一维数组的子数组后, 我们可以拓展到二维数组
+     * 在1维数组中, 我们可以利用O(N)的时间复杂度解决题目
+     * 在二维数组中, 用O(N^3)就显而易见了.
+     * 我们可以先定一个lowerBound的row(col也行), 然后不断求矩阵和(将多行压缩到一行用一维数组的思想求解)
+     * 那么就可以在O(N^3)时间内解决
+     * 
+     * 
+     */
+    vector<vector<int>> submatrixSum(vector<vector<int>>& matrix) {
+        // Write your code here
+        if(matrix.empty())
+            return vector<vector<int>>();
+        int rs = matrix.size(), cs = matrix[0].size();
+        for(int i = rs - 1; i >= 0; --i){
+            vector<int> preSum(cs, 0);
+            for(int r = i; r < rs; ++r){
+                unordered_map<int, int> mp; //val -> col;
+                mp[0] = -1;
+                int sum = 0;
+                for(int  c = 0; c < cs; ++c){
+                    sum += matrix[r][c];
+                    preSum[c] += sum;//统计preSum
+                    if(mp.find(preSum[c]) != mp.end()){//已存在
+                        return vector<vector<int>>({{i, mp[preSum[c]] + 1}, {r, c}});    
+                    }
+                    mp[preSum[c]] = c;
+                }
+            }
+        }
+        return vector<vector<int>>();//没有和为0的子矩阵
+    }
+};
+
