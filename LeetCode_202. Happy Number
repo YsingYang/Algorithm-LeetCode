@@ -28,5 +28,30 @@ class Solution(object):
                 return True
         return False
             
-        
+
+//C++ Version
+class Solution {
+public:
+    /**
+     * @param n an integer
+     * @return true if this is a happy number or false
+     */
+    bool isHappy(int n) {
+        // Write your code here
+        unordered_set<int> mp;
+        while(n){
+            if(n == 1)
+                return true;
+            if(mp.find(n) != mp.end())
+                return false;
+            int next = 0;
+            mp.insert(n);
+            while(n){
+                next += pow(n % 10, 2);
+                n /= 10;
+            }
+            swap(n, next);
+        }
+    }
+};
         
