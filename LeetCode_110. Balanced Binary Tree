@@ -1,0 +1,24 @@
+class Solution {
+    /**
+     * 这道题虽然比较简单, 不过为了效率来说, 不能每一层都进行深度优先计算深度, 每一层在算isbalanced的同时还需要返回当前深度, 避免重复子问题
+     * 有点类似于 house Robber 3
+     * 
+     */
+public:
+    bool isBalanced(TreeNode* root) {
+        int d(0);
+        return check(root, d);
+    }
+    
+    bool check(TreeNode* root, int &depth){
+        if(!root){
+            return true;
+        }
+        int ld(0), rd(0);
+        if(check(root->left, ld) && check(root->right, rd) && abs(ld - rd) <= 1){
+            depth = max(ld, rd) + 1;
+            return true;
+        }
+        return false;
+    }
+};
