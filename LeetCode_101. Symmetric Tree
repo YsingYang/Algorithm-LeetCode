@@ -24,3 +24,24 @@ public:
         return false;
     }
 };
+
+
+#Python version
+class Solution(object):
+    def isSymmetric(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+        def ismirror(r1, r2):
+            if not r1 and not r2:
+                return True
+            if not r1 or not r2:
+                return False
+            
+            if r1.val == r2.val:
+                return ismirror(r1.left, r2.right) and ismirror(r1.right, r2.left)
+            return False
+        if not root:
+            return True
+        return ismirror(root.left, root.right)
