@@ -1,0 +1,26 @@
+ class Solution {
+     
+/**
+ * 用一个倍数作为当前数字到达的2,3,5的倍数，同时取出当中的乘积(即ugly  number)，顺便注意下取的数是ugly数组的数, 不要单纯只是num * dp[x]
+ * 注意对于10来说，i2(2),u5(5)都是会加的。
+ * 所以不会出现有重复的情况
+ * 
+ */
+public:
+    int nthUglyNumber(int n) {
+        // write your code here
+        vector<int> dp(3,0);
+        vector<int> ugly(1, 1);
+        for(int i = 1; i < n; ++i){
+            int temp = min(2 * ugly[dp[0]], min(3 * ugly[dp[1]], 5 * ugly[dp[2]]));
+            if(temp % 2 == 0)
+                ++dp[0];
+            if(temp % 3 == 0)
+                ++dp[1];
+            if(temp % 5 == 0)
+                ++dp[2];
+            ugly.push_back(temp);
+        }
+        return ugly.back();
+    }
+};
