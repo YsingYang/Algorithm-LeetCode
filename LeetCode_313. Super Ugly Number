@@ -1,0 +1,26 @@
+class Solution {
+public:
+    /**
+     * @param n a positive integer
+     * @param primes the given prime list
+     * @return the nth super ugly number
+     */
+    int nthSuperUglyNumber(int n, vector<int>& primes) {
+        // Write your code here
+        int size = primes.size();
+        vector<int> ugly(1, 1);
+        vector<int> dp(size, 0);
+        for(int i = 1; i < n; ++i){
+            int temp = INT_MAX;
+            for(int j = 0; j < size; ++j){
+                temp = min(temp, primes[j] * ugly[dp[j]]);
+            }
+            for(int j = 0; j < size; ++j){
+                if(temp % primes[j] == 0)
+                    ++dp[j];
+            }
+            ugly.push_back(temp);
+        }
+        return ugly.back();
+    }
+};
