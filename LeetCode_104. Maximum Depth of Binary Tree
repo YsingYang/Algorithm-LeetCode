@@ -1,0 +1,11 @@
+class Solution {
+    /**
+     * 直接递归返回左右子树中最大深度 + 1即可
+     */
+public:
+    int maxDepth(TreeNode* root) {
+        if(!root)
+            return 0;
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
+    }
+};
