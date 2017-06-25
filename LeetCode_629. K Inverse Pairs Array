@@ -1,0 +1,33 @@
+class Solution {
+/***
+ * O(KN^2),DP算法, Dp[i][j]表示i个数排列下有j个逆序对的个数
+ * 假设我们知道n == 4的逆序对, 那么我们要算n = 5的时候, 5插入的位置有如下情况
+ * 
+ * 5 * * * * 产生4个逆序对
+ * * 5 * * * 产生3个逆序对
+ * * * 5 * * 产生2个逆序对
+ * * * * 5 * 产生1个逆序对
+ * * * * * 5 产生0个逆序对
+ * 
+ * 通过上面的例子, 我们可以得到相应的递推公式
+ * DP[i][j] = dp[i-1][j-0] + dp[i-1][j-1] + dp[i-1][j-2] + ...dp[i-1][j-(i-1)] (最多只能产生n-1个逆序对) 
+ * 
+ */
+public:
+    int kInversePairs(int n, int k) {
+        vector<vector<int>> dp(n + 1, vector<int>(k+1, 0));
+        dp[0][0] = 1;
+        for(int i = 1; i <= n; ++i){
+            for(int j = 0; j < i; ++j){ // i个数下能添加的个数
+                for(int m = 0; m <= k; ++m){
+                    if(m - j >= 0 && m - j <= k){
+                        dp[i][m] = (dp[i][m] + dp[i-1][m-j]) % mod; 
+                    }
+                }
+            }
+        }
+        return dp[n][k];
+    }
+private:
+    const int mod = pow(10, 9) + 7;
+};
