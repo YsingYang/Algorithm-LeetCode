@@ -1,0 +1,72 @@
+class Solution {
+/**
+ * 我觉得这是LeetCode史上通过率最低的一道题...
+ * 一开始我觉得用贪心, 发现不对, 又用了背包问题取求解...发现TLE了..没办法, 只能看discuss
+ * 发现其实就是贪心..
+ * 首先按照结束时间从小到大进行排序.
+ * 然后依次安排课程, 如果课程能在规定时间前上完, 插入其持续时间到时间集合
+ * 
+ * 否则, 比较该课程的持续时间是否比时间集合中最大值要小, 如果 要下, 交换时间, 把最大的扔出去
+ * 循环到最后timeSet集合就是课程最大值
+ */
+
+public:
+    int scheduleCourse(vector<vector<int>>& courses) {
+        sort(courses.begin(), courses.end(), [](const vector<int>& v1, const vector<int>& v2){
+            return v1.back() < v2.back(); //按结束时间从小到大排序
+        });
+        int endTime = 0;
+        multiset<int> timeSet;
+        for(int i = 0; i < courses.size(); ++i){
+            if(endTime + courses[i][0] <= courses[i][1]){//能在结束前完成
+                endTime += courses[i][0];
+                timeSet.insert(courses[i][0]);
+            }
+            else if(courses[i][0] < *timeSet.rbegin()){ //如果不行, 扔掉需要最长时间的课程
+                endTime += (courses[i][0] - *timeSet.rbegin());
+                timeSet.erase(--timeSet.end());
+                timeSet.insert(courses[i][0]);
+            }
+        }
+        return timeSet.size();
+    }
+};
+
+
+//顺便贴一下DP求解的代码 , 虽然也不知道对不对..
+class Solution {
+public:
+    int scheduleCourse(vector<vector<int>>& courses) {
+        sort(courses.begin(), courses.end(), [](vector<int> &v1, vector<int>&v2){
+            return v1[1] < v2[1];
+        });
+        int size = courses.size();
+        int maxTime = courses.back()[1];
+        vector<int> dp(maxTime+1, 0);
+        int res = 0;
+        for(int i = 1; i <= size; ++i){
+            vector<int> next(maxTime+1, 0);
+            /*for(int j = 0; j < maxTime; ++j){
+                cout<<dp[j]<<" ";
+            }
+            cout<<endl;*/
+            for(int j = 0; j <= courses.back()[1]; ++j){
+                if(j - courses[i-1][0] < 0){
+                    next[j] = max(dp[j], next[j-1]);
+                    continue;
+                }
+                if(j > courses[i-1][1]){
+                    next[j] = max(dp[j], next[j-1]);
+                    continue;
+                }
+                next[j] = max(dp[j-courses[i-1][0]] + 1, dp[j]); //没有取左, 不知道是否正确
+                if(i == size){
+                    res = max(res, next[j]);
+                }
+            } //时间
+            swap(dp, next);
+            
+        }
+        return res;
+    }
+};
