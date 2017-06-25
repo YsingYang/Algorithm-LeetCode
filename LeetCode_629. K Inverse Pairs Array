@@ -32,6 +32,7 @@ private:
     const int mod = pow(10, 9) + 7;
 };
 
+//优化后O(n * k)方法, post在discuss里面..就不想多写了..写了一个多小时
 class Solution {
 public:
     int kInversePairs(int n, int k) {
