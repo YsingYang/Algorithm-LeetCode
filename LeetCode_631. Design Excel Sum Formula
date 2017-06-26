@@ -1,0 +1,120 @@
+//Solution_1
+//一开始没想到什么好方法, 决定用最笨的..每次set后都调用已有的formula...但明显这样很蠢
+
+class Excel {
+public:
+    Excel(int H, char W) : matrix(H, vector<int>(W-'A'+1, 0)) {
+        
+    }
+    
+    void set(int r, char c, int v) { //先尝试下set了之后重新计算所有的formula, 可能会TLE
+        pair<int, char> p(r, c);
+        if(mp.find(p) != mp.end()){
+            mp.erase(p);
+        }
+        setVal(r, c, v);
+        for(auto &i : mp){
+            sum(i.first.first, i.first.second, {i.second});
+        }
+    }
+    
+    int get(int r, char c) {
+        return matrix[r-1][c-'A'];
+    }
+    
+    int sum(int r, char c, vector<string> strs) {
+        int sum = 0;
+        for(int i = 0; i < strs.size(); ++i){
+            int partition = strs[i].find(':');
+            if(partition == string::npos){ //single number
+                char c = strs[i][0];
+                int index = stoi(strs[i].substr(1));
+                sum += get(index, c);
+            }
+            else{
+                char leftC = strs[i][0];
+                int leftIndex = stoi(strs[i].substr(1, partition)) - 1;
+                char rightC = strs[i][partition+1];
+                int rightIndex = stoi(strs[i].substr(partition + 2)) - 1;
+                for(int i = leftIndex; i <= rightIndex; ++i){
+                    sum += accumulate(matrix[i].begin() + leftC - 'A', matrix[i].begin() + rightC - 'A' + 1, 0);
+                }
+            }
+        }
+        setVal(r, c, sum);
+        mp[{r, c}] = strs;
+        return sum;
+    }
+private:
+
+    void setVal(int r, int c, int val){
+        matrix[r-1][c-'A'] = val;
+    }
+    map<pair<int, char>, vector<string>> mp; //cell -> formula的映射关系
+    vector<vector<int>> matrix;
+};
+
+
+
+/*
+  Solution_2, 其实想了一下, 不需要每次set了一个值都check一下所有的formula, 只需要在get相应的值, check这个值的formula即可, 也就相当于为写时复制
+  一样的道理
+  
+  后来想了一下, 其实这种方法并没有减少Solution1的时间复杂度, 而是分散投资, 因为在计算sum的过程中, sum要调用get, get又要重新调用sum , 这之中的时间
+  复杂度也可能是很大的.
+*/
+
+class Excel {
+public:
+    Excel(int H, char W) : matrix(H, vector<int>(W-'A'+1, 0)) {
+        
+    }
+    
+    void set(int r, char c, int v) { //先尝试下set了之后重新计算所有的formula, 可能会TLE
+        pair<int, char> p(r, c);
+        if(mp.find(p) != mp.end()){
+            mp.erase(p);
+        }
+        setVal(r, c, v);
+    }
+    
+    int get(int r, char c) {
+        if(mp.find({r, c}) != mp.end()){
+            return sum(r, c, mp[{r, c}]);
+        }
+        return matrix[r-1][c-'A'];
+    }
+    
+    int sum(int r, char c, vector<string> strs) {
+        int sum = 0;
+        for(int i = 0; i < strs.size(); ++i){
+            int partition = strs[i].find(':');
+            if(partition == string::npos){ //single number
+                char c = strs[i][0];
+                int index = stoi(strs[i].substr(1));
+                sum += get(index, c);
+            }
+            else{
+                char leftC = strs[i][0];
+                int leftIndex = stoi(strs[i].substr(1, partition));
+                char rightC = strs[i][partition+1];
+                int rightIndex = stoi(strs[i].substr(partition + 2));
+                for(int i = leftIndex; i <= rightIndex; ++i){
+                    for(char j = leftC; j <= rightC; ++j){
+                        sum += get(i, j);
+                    }
+                }
+            }
+        }
+        setVal(r, c, sum);
+        mp[{r, c}] = strs;
+        return sum;
+    }
+private:
+
+    void setVal(int r, int c, int val){
+        matrix[r-1][c-'A'] = val;
+    }
+    map<pair<int, char>, vector<string>> mp; //cell -> formula的映射关系
+    vector<vector<int>> matrix;
+};
