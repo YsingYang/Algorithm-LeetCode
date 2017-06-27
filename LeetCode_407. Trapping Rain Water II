@@ -1,0 +1,76 @@
+/*
+    想了很多方法得到的都是worse ansewer,准备来说，应该是边界把握不足的原因，
+    
+    该方法主要是将边界一次性的全部push仅priority_queue中，当做这一cell的边界，同时，pop出第一个高度最小的，开始BFS搜索，
+    对pop出来的点搜索4周的点，如果如果比当前的小（应该pop出的是最小的点，不用考虑最外层边界的问题）res = n->height - heightMap[row][col])<0?0:n->height-heightMap[row][col],同时，push 进新的点，（注意！）新的点的高度为max(height,与heightMap[row][col]的高度)，而不当当只是当前测试点的高度，毕竟边界还是没有变化的。但如果该点比边界高，会组成新的边界
+
+
+*/
+
+
+
+struct node;
+class compare;
+
+
+class Solution {
+public:
+    int trapRainWater(vector<vector<int>>& heightMap) {
+        if(heightMap.empty())
+            return 0;
+        int rs = heightMap.size(), cs = heightMap[0].size();
+        vector<vector<bool>> visited(rs, vector<bool>(cs, false));
+        priority_queue<node, vector<node>, compare> pq;
+        //初始化
+        for(int i = 0; i < rs; ++i){
+            visited[i][0] = true;
+            visited[i][cs-1] = true;
+            pq.emplace(i, 0, heightMap[i][0]);
+            pq.emplace(i, cs-1, heightMap[i][cs-1]);
+        }
+        
+        for(int j = 0; j < cs; ++j){
+            visited[0][j] = true;
+            visited[rs-1][j] = true;
+            pq.emplace(0, j, heightMap[0][j]);
+            pq.emplace(rs-1, j, heightMap[rs-1][j]);
+        }
+        
+        int res = 0;
+        while(!pq.empty()){
+            node temp = pq.top(); //pq中高度最小的值
+            pq.pop();
+            for(int i = 0; i < direction.size(); ++i){
+                int nx = temp.r + direction[i][0];
+                int ny = temp.c + direction[i][1];
+                if(nx < 0 || nx >= rs || ny < 0 || ny >= cs || visited[nx][ny]){
+                    continue;
+                }
+                if(heightMap[nx][ny] < temp.height)
+                    res += temp.height - heightMap[nx][ny];
+                visited[nx][ny] = true;
+                pq.emplace(nx, ny, max(temp.height, heightMap[nx][ny]));
+            }
+        }
+        return res;
+    }
+private:
+    vector<vector<int>> direction = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    
+    //如果下面struct 和 class不写在内部, 会报出一个required for here的错误
+    struct node{
+        node(int r_, int c_, int height_) : r(r_), c(c_), height(height_){}
+    
+        int r;
+        int c;
+        int height;
+    };
+
+    class compare{
+    public://注意不要遗漏public, 不然会报错
+        bool operator()(const node& n1, const node &n2) const {
+            return n1.height > n2.height;
+        }
+    };
+};
+
