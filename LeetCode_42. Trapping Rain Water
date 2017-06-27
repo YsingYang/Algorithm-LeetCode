@@ -5,23 +5,33 @@
 
 */
 
-
 class Solution {
 public:
     int trap(vector<int>& height) {
-        stack<int> s;
-        int max_water(0);
-        int i(0);
-        while (i<height.size()) {
-            if (s.empty()||height[i]<=height[s.top()]) {
-                s.push(i++);
-            } else {
-                int bot=height[s.top()];
-                s.pop();
-                max_water+=s.empty()?0:((min(height[i],height[s.top()])-bot)*(i-s.top()-1));//与我之前想的区别关键在这一步
+        int water = 0, index = 0;
+        stack<int> st;
+        while(index < height.size()){
+            if(st.empty() || height[index] <= height[st.top()]){
+                st.push(index++); //如果比当前栈中最大的小, 放入栈中, 因为不形成井
+            }
+            else{
+                int bottom = height[st.top()];
+                st.pop();
+                water += st.empty() ? 0 : (min(height[st.top()], height[index]) - bottom) * (index - st.top() - 1);
+                //如果大于, 与栈中的元素肯定能形成坑, 那么需要把st.top()先pop出来(一定是栈中最小的), 加上height, 与st.top中可以形成坑的高度
+                /* 如下
+                    | ^ ^ |
+                    | | * |
+                    | | | |
+                    | | | |
+                    1 2 3 4
+                    当index, 到4时, pop出3, 让3的高度2为 botton, 那么这里res += 就是min(h[4], [2]) - bottom的差 * (4 - 2 + 1)相对距离
+                    上述中* 为第一次加上的水容量, ^为第二次(pop出二加上的水容量)
+                
+                */
             }
         }
-        return max_water;
+        return water;
     }
 };
 
