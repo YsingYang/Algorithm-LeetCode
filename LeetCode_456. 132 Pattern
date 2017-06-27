@@ -45,3 +45,29 @@ public:
        return false;
     }
 };
+/**
+ * 循环每次都push一个数进st中，当且仅当nums[i]>st.top()时才pop出数
+ * 这个时候把pop出的最后一个数，是pop出的所有数中最小的（为了满足132 pattern, 这个数应该尽可能大）
+ * 当存在num[i]<s3时，return true
+ * 否则  return false;
+ * 
+ */
+
+class Solution {
+public:
+    bool find132pattern(vector<int>& nums) {
+        stack<int> st;
+        int s3 = INT_MIN, size = nums.size();
+        for(int i = size - 1; i >= 0; --i){
+            if(nums[i] < s3){ 
+                return true;
+            }
+            else while(!st.empty() && nums[i] > st.top()){
+                s3 = st.top(); //最后一个弹出栈的作为S3(让S3尽可能大, 但又<nums[i])
+                st.pop();
+            }
+            st.push(nums[i]); //小于直接push
+        }
+        return false;
+    }
+};
