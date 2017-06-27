@@ -47,7 +47,8 @@ public:
 
 
 /*
-  Solution-3 ,其实为solution-2复杂化的解决方法，思路差不多
+  Solution-3 ,其实为solution-2复杂化的解决方法，思路差不多, 因为这种方法单向搜索会导致0,0,0,1,0,0,0这种情况下1是没有用的, 所以我们需要在左右都
+  找到一个最大值, Two pointer在这里是个非常好的选择
 */
 
 class Solution {
