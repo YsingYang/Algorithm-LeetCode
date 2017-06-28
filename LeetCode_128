@@ -53,3 +53,30 @@ public:
         return res;
     }
 };
+
+
+/************************************************************
+    感觉自己之前用的方法好牛x...比现在这个看起来要简介..但是不容易看懂
+*************************************************************/
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        map<int, int> mp;
+        for(auto &num : nums){
+            mp[num] = num + 1;
+            if(mp.find(num-1) != mp.end())
+                mp[num-1] = num;
+            if(mp.find(num+1) == mp.end())
+                mp[num] = num;
+        }
+        int res = 0, len = 0;
+        for(auto &it : mp){
+            ++len;
+            if(it.second == it.first){
+                res = max(res, len);
+                len = 0;
+            }
+        }
+        return max(res, len);
+    }
+};
