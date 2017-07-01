@@ -1,0 +1,7 @@
+# Write your MySQL query statement below
+select class 
+from (select DISTINCT student, class from courses) as C #如果不加as会报出一个Every derived table must have its own alias”的错误
+#这句话的意思是说每个派生出来的表都必须有一个自己的别名
+GROUP BY class
+HAVING COUNT(*) >= 5
+#新学到应该是这里， 用来统计相应列的出现变量的数量
