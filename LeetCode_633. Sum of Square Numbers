@@ -1,0 +1,15 @@
+class Solution {
+public:
+    bool judgeSquareSum(int c) {
+        if(c == 0)
+            return true;
+        for(int i = 1; i <= sqrt(c); ++i){
+            int n1 = c - pow(i, 2);
+            double n2 = sqrt(n1);
+            if(abs(n2 - (int)(n2) )< 1e-5){
+                return true;
+            }
+        }
+        return false;
+    }
+};
