@@ -1,0 +1,47 @@
+class Solution {
+/**
+    Sliding Windows的做法, 这种方法感觉空间要求会很大, 或许应该进一步讨论， 如果内存中无法一次性放入这么多数据， 这种方法还有效吗
+    按道理来说， 最坏情况下数据块内外存交换 会在i, j交互的下的时候非常糟糕， ， 不过有visited这个数组的话应该会减少一些交互， 不过似乎要多一个if的判断
+    
+
+
+**/
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        multimap<int, int> mp; //val -> index
+        for(int i = 0; i < nums.size(); ++i){
+            for(int j = 0; j < nums[i].size(); ++j){
+                mp.insert({nums[i][j], i});
+            }
+        } //首先初始化mp
+        
+        int minimal = INT_MIN, length = INT_MAX;
+        int currentMinimal, currentLength = 0;
+        vector<int> visited(nums.size(), 0);
+        int count = nums.size();
+        auto i = mp.begin(), j = mp.begin();
+        //初始化需要用到的变量
+        
+        while(i != mp.end()){
+            currentMinimal = i->first; //每次开始新的start
+            
+            while(count > 0 && j != mp.end()){
+                count -= ++visited[j++->second] == 1;//新访问
+                ++currentLength;
+            }
+            if(count == 0){ //避免因为j == mp.end()退出，　而不是count = 0
+                auto last = next(j, -1);
+                currentLength = last->first - currentMinimal;
+                if(currentLength < length){
+                    minimal = currentMinimal;
+                    length = currentLength;
+                }
+            }
+            
+            count += (--visited[i++->second] == 0);//首point递增
+            --currentLength;
+        }
+        vector<int> res = {minimal, minimal + length};
+        return res;
+    }
+};
