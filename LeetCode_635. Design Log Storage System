@@ -1,0 +1,56 @@
+class LogSystem {
+public:
+    LogSystem() {
+        
+    }
+    
+    void put(int id, string timestamp) {
+        mp.insert({timestamp, id});
+    }
+    
+    vector<int> retrieve(string s, string e, string gra) {
+        getStart(s, e, gra);
+        //cout<<s<<"  "<<e<<endl;
+        auto it = mp.lower_bound(s);
+        auto it2 = mp.upper_bound(e);
+        vector<int> res;
+        for(auto i = it ; i != it2; ++i){
+            res.push_back(i->second);
+        }
+        return res;
+        
+    }
+    
+    void getStart(string &s, string &e, const string& gra){
+        if(gra == "Second")
+            return;
+        s[17] = s[18] = '0';
+        e[17] = '5';
+        e[18] = '9';
+        if(gra == "Minute"){
+            return;
+        }
+        s[14] = s[15] = '0';
+        e[14] = '5';
+        e[15] = '9';
+        if(gra == "Hour")
+            return;
+        s[11] = s[12] = '0';
+        e[11] = '5';
+        e[12] = '9';
+        if(gra == "Day")
+            return;
+        s[8] = s[9] = '0';
+        e[8] = '5';
+        e[9] = '9';
+        if(gra == "Month")
+            return;
+        s[5] = s[6] = '0';
+        e[5] = '5';
+        e[6] = '9';
+        return;
+    }
+    
+private:
+    multimap<string, int> mp;
+};
