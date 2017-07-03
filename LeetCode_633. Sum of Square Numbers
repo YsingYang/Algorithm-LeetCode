@@ -13,3 +13,29 @@ public:
         return false;
     }
 };
+
+
+class Solution {
+/*******
+
+费尔玛定理
+"Any positive number nn is expressible as a sum of two squares if and only if the prime factorization of nn, every prime of the form (4k+3)(4k+3) occurs an even number of times."
+
+
+
+********/
+public:
+    bool judgeSquareSum(int c) {
+        for(int i = 2; i <= sqrt(c); ++i){
+            int count = 0; //如果为因子， 统计其出现次数
+            while(c % i == 0){
+                ++count;
+                c /= i;
+            }
+            if(i % 4 == 3 && (count & 1)){//如果该因子形如4k + 3的形式， 且出现次数不为偶数， 返回false;
+                return false;
+            }
+        }
+        return c % 4 != 3;//如果c是质数
+    }
+};
