@@ -1,0 +1,41 @@
+class Solution {
+public:
+    /**
+     * @param numCourses a total of n courses
+     * @param prerequisites a list of prerequisite pairs
+     * @return true if can finish all courses or false
+     */
+    bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+        // Write your code here
+        vector<int> inDegree(numCourses, 0);
+        vector<vector<int>> mp(numCourses);
+        for(auto &it : prerequisites){
+            mp[it.second].push_back(it.first);
+            ++inDegree[it.first];
+        }
+        //寻找入度为0的点, 其实应该可以总结到上面那个for中， 做一个set, 然后逐步erase即可
+        queue<int> que;
+        vector<int> res;
+        for(int i = 0; i < numCourses; ++i){
+            if(inDegree[i] == 0){
+                que.push(i);
+                inDegree[i] = -1;
+            }
+        }
+        while(!que.empty()){ //topo sort
+            int node = que.front();
+            res.push_back(node);
+            que.pop();
+            
+            for(int i = 0; i < mp[node].size(); ++i){
+                if(--inDegree[mp[node][i]] == 0){
+                    que.push(mp[node][i]);
+                    inDegree[mp[node][i]] = -1;
+                }
+            }
+            --numCourses;
+            
+        }
+        return numCourses == 0;
+    }
+};
