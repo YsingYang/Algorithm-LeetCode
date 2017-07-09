@@ -1,0 +1,39 @@
+//我一直觉得应该是用dp解决的背包问题...但是对于这个need不稳定的来说， 需要创建1~6维间的数组记录状态..
+//谁知道暴力都能过...backtracking
+class Solution {
+public:
+    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) {
+        int minCost = INT_MAX;
+        for(int i = 0; i < special.size(); ++i){
+            if(canBuy(special[i], needs)){
+                modifyNeeds(special[i], needs, -1);
+                minCost = min(minCost, special[i].back() + shoppingOffers(price, special, needs));
+                modifyNeeds(special[i], needs, 1);
+            }
+        }
+        //计算如果不适用special offer
+        int sum = 0;
+        for(int i = 0; i < needs.size(); ++i){
+            sum += needs[i] * price[i];
+        }
+        minCost = min(minCost, sum);
+        
+        return minCost;
+        
+    }
+    
+    bool canBuy(const vector<int> &special, const vector<int>& needs){
+        for(int i = 0; i < needs.size(); ++i){
+            if(special[i] > needs[i]){
+                return false;
+            }       
+        }
+        return true;
+    }
+    
+    void modifyNeeds(const vector<int> &special, vector<int>& needs, int flag){
+        for(int i = 0; i < needs.size(); ++i){
+            needs[i] += flag * special[i];
+        }
+    }
+};
