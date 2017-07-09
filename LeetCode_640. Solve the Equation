@@ -1,0 +1,49 @@
+class Solution {
+public:
+    string solveEquation(string equation) {
+        int left = 0, right = 0;
+        int start = isdigit(equation.front()) || equation[0] == 'x' ? 0 : 1;
+        int flag = start == 0 ? 1 : -1, reverse = 1;
+        while(true){
+            int next  = start + 1;
+            //cout<<start<<"  "<<next<<endl;
+            while(next < equation.size() && equation[next] != '+' && equation[next] != '-' && equation[next] != '='){
+                ++next;
+            }
+            string number = equation.substr(start, next - start);
+            //cout<<number<<endl;
+            if(number.back() == 'x'){
+                number = number.substr(0, number.size() - 1);
+                int num = number.empty() ? 1 : stoi(number);
+                left += num * flag * reverse;
+            }
+            else{
+                //cout<<flag<<endl;
+                int num = stoi(number) * flag;//
+                right += num * reverse;
+            }
+            //cout<<left<<"  "<<right<<endl;
+            if(next >= equation.size()){
+                break;
+            }
+            if(equation[next] == '='){
+                reverse = -1;
+            }
+            //cout<<equation[start] <<"  "<<equation[next]<<endl;
+            do{
+                start = next + 1;
+                flag = (equation[next] == '+'|| equation[next] =='=') ? 1 : -1;//算下一个符号
+                //cout<<start<<"  "<<flag<<endl;
+                ++next;
+            }while(!isdigit(equation[start]) && equation[start] != 'x');
+        }
+        if(left == 0 && right == 0)
+            return  "Infinite solutions";
+        else if(left == 0)
+            return "No solution";
+        else{
+            int res = right * (-1.0) / left;
+            return "x=" + to_string(res);
+        }
+    }
+};
