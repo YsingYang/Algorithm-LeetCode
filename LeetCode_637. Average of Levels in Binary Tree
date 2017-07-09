@@ -1,0 +1,27 @@
+//简单的广度优先遍历
+
+class Solution {
+public:
+    vector<double> averageOfLevels(TreeNode* root) {
+        queue<TreeNode*> que;
+        que.push(root);
+        vector<double> res;
+        while(!que.empty()){
+            int size = que.size();
+            long sum = 0;
+            int count = 0;
+            for(int i = 0; i < size; ++i){
+                TreeNode* temp = que.front();
+                que.pop();
+                sum += temp->val;
+                ++count;
+                if(temp->left)
+                    que.push(temp->left);
+                if(temp->right)
+                    que.push(temp->right);
+            }
+            res.push_back(sum * 1.0/ count);
+        }
+        return res;
+    }
+};
