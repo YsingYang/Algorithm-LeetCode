@@ -1,0 +1,40 @@
+class Solution {
+/********************************
+
+之前lintCode做过的一道题...最大平均值子数组
+
+*********************************/
+public:
+    double findMaxAverage(vector<int>& nums, int k) {
+        //int minVal = INT_MAX, maxVal = INT_MIN;
+        double minVal = *min_element(nums.begin(), nums.end());
+        double maxVal = *max_element(nums.begin(), nums.end());
+        //cout<<minVal<<" "<<maxVal<<endl;
+        while(maxVal - minVal > 1e-5){
+            double mid = minVal + (maxVal - minVal) / 2.0;
+            //cout<<mid<<endl;
+            if(binarySearch(nums, k, mid)){
+                minVal = mid;
+            }
+            else{
+                maxVal = mid;
+            }
+        }
+        return maxVal;
+    }
+    
+    bool binarySearch(const vector<int>& nums, const int& k, double mid){
+        vector<double> sum(nums.size() + 1, 0);
+        double threshold = 0.0;
+        for(int i = 0; i < nums.size(); ++i){
+            sum[i+1]  = sum[i] + nums[i] - mid;
+            if(i+1 >= k && sum[i+1] >= threshold){
+                return true;
+            }
+            else if(i+1 >= k){
+                threshold = min(threshold, sum[i+2-k]);
+            }
+        }
+        return false;
+    }
+};
