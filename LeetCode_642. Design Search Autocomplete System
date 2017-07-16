@@ -1,0 +1,97 @@
+class AutocompleteSystem {
+/*****************
+待Debug
+
+******************/
+public:
+    AutocompleteSystem(vector<string> sentences, vector<int> times):prefix(), isNotFound(false), root(new Trie()), search(root){
+        for(int i = 0; i < sentences.size(); ++i){
+            root = root->build(sentences[i], times[i]);
+        }//初始化
+    }
+    
+    vector<string> input(char c) {
+        if(c == '#'){//重置
+            isNotFound = false;
+            search = root;
+            root = root->build(prefix, 1);
+            prefix = "";
+            return vector<string>();
+        }
+        if(isNotFound || search->trieMap.find(c) == search->trieMap.end()){
+            prefix += c;
+            isNotFound = true;
+            return vector<string>();
+        }
+        search = search->trieMap[c];
+        prefix += c;
+        return search->searchTop(3, prefix);//default
+        
+    }
+private:
+    struct Compare{
+        bool operator()(const pair<int, char>& p1 , const pair<int, char> &p2){
+            if(p1.first == p2.first){
+                return p1.second > p2.second; //按ASCII顺序
+            }
+            return p1.first < p2.second;
+        }  
+    };
+    
+    struct Trie{
+    public:
+        Trie() = default;
+        Trie* build(const string& str, const int time){
+            Trie* root = this;
+            for(int i = 0; i < str.size(); ++i){
+                if(root->trieMap.find(str[i]) == root->trieMap.end()){
+                    root->trieMap[str[i]] = new Trie();
+                }
+                root->timesRecord.insert({time, str[i]});//记录最大时间
+                root = root->trieMap[str[i]]; //下一层
+            }
+            //记录终点
+            root->timesRecord.insert({time, '~'});//用~表示当前的终点
+            return this;
+        }
+        
+        vector<string> searchTop(int count, const string& prefix){
+            vector<string> res;
+            int c = 0;
+            for(auto it = timesRecord.rbegin(); it != timesRecord.rend(); ++it){
+            }
+            
+            for(auto it = timesRecord.rbegin(); c < 3 && it != timesRecord.rend(); ++it, ++c){
+                string str = prefix;
+                this->search(it->first, str, c);
+                res.push_back(str);
+            }
+            return res;
+        }
+        
+    private:
+        void search(int time, string& str, int idx){ //根据time寻找相应的关键字, 遇到time->'_'结束
+            int c = 0;
+            map<pair<int, char>, int> record;
+            auto it = timesRecord.rbegin();
+            for(; it != timesRecord.rend() && c < idx; ++it, ++c){
+                ++record[{time, it->second}];//记录前面有多少个元素
+            }
+            if(it->second == '~')
+                return;//找到结尾
+            str += it->second;
+            int nextIdx = record.find({time, it->second}) == record.end() ? 0 : record[{time, it->second}];
+            trieMap[it->second]->search(time, str, nextIdx);
+        }
+        
+    public:
+        unordered_map<char, Trie*> trieMap;
+        multiset<pair<int, char>, Compare> timesRecord;
+        //bool isEnd = false;
+    };
+    
+    string prefix;
+    bool isNotFound;
+    Trie *root;
+    Trie *search;
+};
