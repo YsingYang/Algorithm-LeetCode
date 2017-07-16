@@ -1,0 +1,54 @@
+class Solution {
+/********************
+
+
+感觉取了实习以后自己算法能力退步了一大截... 这道题Debug了一个小时..自己逻辑出了很大的问题
+首先, 对于start->start 来讲, lastIndex 只执行了thisStart - lastStart 的时间
+而如果是start->end来讲, 那么执行的就是endTime - thisstart + 1;
+
+处理这个问题最简单的方法就是直接push 1的时间进栈, 表示start的这个时间是属于该process的
+如果到end, 我们将endtime也算进去, 如果start, 减取这个start的时间点
+
+
+
+
+
+**********************/
+public:
+    vector<int> exclusiveTime(int n, vector<string>& logs) {
+        if(logs.empty())
+            return vector<int>();
+        vector<int> times(n, 0);
+        //int last = logs[0][0]; //默认为start
+        stack<pair<int, int>> st;
+        int last = stoi(logs[0].substr(0, logs[0].find_first_of(':')));
+        int lastTime = 0;
+        char lastLogo = 's';
+        st.push({last, 1});
+        vector<int> isStart(n, 0);
+        for(int i = 1; i < logs.size(); ++i){
+            
+            int index = stoi(logs[i].substr(0, logs[i].find_first_of(':')));
+            int time = stoi(logs[i].substr(logs[i].find_last_of(':')+1));
+            
+            
+            char logo = logs[i][logs[i].find_first_of(':') + 1];
+            
+            
+            if(logo == 's'){
+                st.top().second += time - lastTime - 1;
+                st.push({index, 1});
+            }
+            else{
+                st.top().second += time - lastTime ;
+                times[st.top().first] += st.top().second;
+                --isStart[st.top().first];
+                st.pop();
+            }
+            last = index;
+            lastTime = time;
+            lastLogo = logo;
+        }
+        return times;
+    }
+};
