@@ -1,0 +1,56 @@
+class Solution {
+public:
+    string replaceWords(vector<string>& dict, string sentence) {
+        root = new Trie(); //记得创建根
+        build(dict);//建trie
+        istringstream ss(sentence);
+        string word;
+        string res;
+        while(getline(ss, word, ' ')){
+            search(word, res);
+        }
+        res.pop_back();
+        return res;
+    }
+
+private:
+    void build(vector<string>& dict){
+        for(int i = 0; i < dict.size(); ++i){
+            Trie* node = root;//起始点
+            for(int j = 0; j < dict[i].size(); ++j){
+                if(node->next[dict[i][j]-'a'] == nullptr){ //不存在该节点
+                    node->next[dict[i][j]-'a'] = new Trie();
+                }
+                node = node->next[dict[i][j]-'a'];
+            }
+            node->isRoot = true; //标记也单词结束
+        }
+    }
+    
+    void search(string &word, string &res){
+        Trie* node = root;
+        for(int i = 0; i < word.size(); ++i){
+            if(node -> isRoot){
+                res += word.substr(0, i) + " "; //这里不知道有没潜在的错误
+                return;
+            }
+            else if(node -> next[word[i]-'a'] == nullptr){ //没有该单词词根, 直接返回, 这个判断要在判断isRoot后面, 不然可能结束了但因为没有下一个letter而跳过
+                res += word + " ";
+                return;
+            }
+            node = node->next[word[i]-'a'];
+        }
+        res += word + " ";//找完Trie也没找到, 直接加入单词
+    }
+
+private :
+    struct Trie{
+        Trie(): isRoot(false), next(26, nullptr){
+            
+        }
+        bool isRoot;
+        vector<Trie*> next;
+    };
+    
+    Trie* root;
+};
