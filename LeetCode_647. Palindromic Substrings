@@ -1,0 +1,29 @@
+class Solution {
+    //dynamic programming, 2 O(n ^ 2), 
+public:
+    int countSubstrings(string s) {
+        if(s.empty())
+            return 0;
+        int size = s.size();
+        vector<vector<bool>> dp(size, vector<bool> (size, false));
+        //注意这里i循环不能从前往后(除非你说换一种dp思路, 否则, 前面的dp是依赖与后面的(就是说后面的是子问题))
+        for(int i = size - 1; i >= 0; --i){
+            for(int j = i; j < size; ++j){
+                if(i == j){
+                    dp[i][j] = true;
+                }
+                else if(s[i] == s[j]){ //前后相等, 如果中间是Palindromic, 那么本身也是Palindromic
+                    dp[i][j] = (i+1 >= j-1 || dp[i+1][j-1]);
+                }
+            }
+        }
+        int res = 0;
+        //就算true的总和
+        for(int i = 0; i < size; ++i){
+            for(int j = i; j < size; ++j){
+                res += dp[i][j];
+            }
+        }
+        return res;
+    }
+};
