@@ -1,0 +1,73 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        computeCounter(root);
+        if(!root)
+            return {};
+        if(root->left){
+            findDuplicateSubtrees(root->left);
+        }
+        if(root->right){
+            findDuplicateSubtrees(root->right);
+        }
+        
+        int flag = 0;
+        if(mp.find(root->val) != mp.end()){
+            for(int i = 0; i < mp[root->val].size(); ++i){
+                if (counter[root] == counter[mp[root->val][i]] && isSameTree(root, mp[root->val][i])){
+                    if(!haveSame(res, root)){
+                        res.push_back(root);   
+                    }
+                    flag = 1;
+                    break;
+                }
+            }
+        }
+        if(flag == 0){    
+            mp[root->val].push_back(root);
+        }
+        return res;   
+    }
+private:
+    
+    int computeCounter(TreeNode* root){
+        if (!root)
+            return 0;
+        int left = computeCounter(root->left); 
+        int right = computeCounter(root->right);
+        counter[root] = left + right + 1;
+        return counter[root];
+    }
+    
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        if(!p && !q){
+            return true;
+        }
+        if(!p || !q)
+            return false;
+        if(p->val == q->val)
+            return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+        return false;
+    }
+    
+    bool haveSame(vector<TreeNode*>& res, TreeNode* root){
+        for(int i = 0; i < res.size(); ++i){
+            if(isSameTree(root, res[i]))
+                return true;
+        }
+        return false;
+    }
+    
+    unordered_map<int, vector<TreeNode*>> mp;
+    vector<TreeNode*> res;
+    unordered_map<TreeNode*, int> counter;
+};
