@@ -1,0 +1,50 @@
+class Solution {
+/********
+
+    这样的代码写起来有点丑..不过感觉就算要缩也缩得不优雅
+    
+    总结来说这个方法简单的利用list的双向链表的性质, 当且仅当某一方没有senator的时候, 另一方胜利
+    
+    ban策略可简单的归为贪心准则, 对于某一方威胁最大的肯定是相对最近的(大端方向, 如果大端方向没有senator, 从begin开始)
+    
+    所以该算法最简单的策略为比较当前双方iterator哪个符合当前权利, 符合的ban掉另一方. 另一方erase掉, 同时双方it++
+
+**********/
+public:
+    string predictPartyVictory(string senate) {
+        list<int> dire, radiant;
+        for(int i = 0; i < senate.size(); ++i){
+            if(senate[i] == 'D'){
+                dire.push_back(i);
+            }
+            else{
+                radiant.push_back(i);
+            }
+        }
+        auto id = dire.begin(), ir = radiant.begin();
+        int rd = 0, rr = 0;
+        while(!dire.empty() && !radiant.empty()){
+            if(id == dire.end()){
+                ++rd;
+                ++id;
+            }
+            if(ir == radiant.end()){
+                ++rr;
+                ++ir;
+            }
+            if(rd < rr || (rd == rr && *id < *ir)){
+                auto nextIr = next(ir, 1);
+                radiant.erase(ir);
+                ir = nextIr;
+                ++id;
+            }
+            else {
+                auto nextId = next(id, 1);
+                dire.erase(id);
+                id = nextId;
+                ++ir;
+            }
+        }
+        return dire.empty() ? "Radiant" : "Dire";
+    }
+};
