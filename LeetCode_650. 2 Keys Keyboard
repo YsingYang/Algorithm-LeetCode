@@ -1,0 +1,19 @@
+class Solution {
+/***
+
+    典型动态规划问题，　不过dp递推有点绕，　记得copy是要算1次operation的
+***/
+public:
+    int minSteps(int n) {
+        vector<int> dp(n+1, INT_MAX);
+        dp[1] = 0;
+        for(int i = 2; i <= n; ++i){
+            for(int j = 2; j <= i; ++j){
+                if(i % j == 0){
+                    dp[i] = min(dp[i], dp[i/j] + j); //其实展开来说应该是dp[i/j] + 1(copy) + j-1(parse)
+                }
+            }
+        }
+        return dp[n];
+    }
+};
