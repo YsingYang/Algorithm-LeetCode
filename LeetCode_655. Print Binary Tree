@@ -1,0 +1,54 @@
+class Solution {
+/*****************
+
+  思路比较简单，　首先需要知道树的深度，　然后对其进行层次遍历，　其实如果知道深度的话，　想要知道每一层的位置是挺方便的
+  具体可以参考下leetcode的　vertical travel的思路
+  比如当前遍历到一个TreeNode* , 下一层的layer为k, 那么下一层的节点应该为index -(+) (capacity >> layer)
+
+*******************/
+public:
+    vector<vector<string>> printTree(TreeNode* root) {
+        if(!root)
+            return vector<vector<string>>();
+        int hight = GetHeight(root);
+        vector<vector<string>> vecRes(hight, vector<string>(pow(2, hight)-1)); //初始化数组
+        
+        //层次遍历
+        queue<TreeNode*> que;
+        que.push(root);
+        int level = 1,  capacity = pow(2, hight); //用户锁定位置
+        vecRes[0][(capacity>>1)-1] = to_string(root->val);
+        unordered_map<TreeNode*, int> indexRecord;
+        indexRecord[root] = (capacity>>1) - 1;
+        while(!que.empty()){
+            int size = que.size();
+            ++level;
+            for(int i = 0; i < size; ++i){
+                TreeNode* tmp = que.front();
+                int index = indexRecord[tmp];
+                que.pop();
+                if(tmp->left){
+                    que.push(tmp->left);
+                    vecRes[level-1][index - (capacity >> level)] = to_string(tmp->left->val);
+                    indexRecord[tmp->left] = index - (capacity >> level); 
+                    
+                }
+                if(tmp->right){
+                    que.push(tmp->right);
+                    vecRes[level-1][index + (capacity >> level)] = to_string(tmp->right->val);
+                    indexRecord[tmp->right] = index + (capacity >> level);
+                }
+                
+            }
+        }
+        return vecRes;
+        
+    }
+private:
+    int GetHeight(TreeNode* root){
+        if(!root){
+            return 0;
+        }
+        return max(GetHeight(root->left), GetHeight(root->right)) + 1;
+    }
+};
