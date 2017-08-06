@@ -1,0 +1,29 @@
+class Solution {
+public:
+    bool findTarget(TreeNode* root, int k) {
+        vector<int> vec;
+        preTravel(root, vec);
+        int front = 0, rear = vec.size()-1;
+        while(front < rear){
+            int sum = vec[front] + vec[rear];
+            if(sum  == k)
+                return true;
+            else if(sum > k){
+                --rear;
+            }
+            else{
+                ++front;
+            }
+        }
+        return false;
+    }
+    
+    void preTravel(TreeNode* root, vector<int>& vec){
+        if(!root){
+            return;
+        }
+        preTravel(root->left, vec);
+        vec.push_back(root->val);
+        preTravel(root->right, vec);
+    }
+};
