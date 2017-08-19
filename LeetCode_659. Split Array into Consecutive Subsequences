@@ -1,0 +1,30 @@
+class Solution {
+/**********
+简单的multimap贪心, 每次如果有符合的元素, 插入到数量最少的位置
+
+***********/
+public:
+    bool isPossible(vector<int>& nums) {
+        multimap<int, int> mp;
+        using pair_type = decltype(mp)::value_type;
+        for(int i = 0; i < nums.size(); ++i){
+            auto lowerIterator = mp.lower_bound(nums[i] - 1);
+            auto upperIterator = mp.upper_bound(nums[i] - 1);
+            if(lowerIterator == upperIterator){ //如果没有上一个元素, 当成新元素插入
+                mp.insert({nums[i], 1});
+                continue;
+            }
+            auto pr = std::min_element(lowerIterator, upperIterator, [](const pair_type &p1, const pair_type &p2){
+                return p1.second < p2.second;
+            });
+            mp.insert({nums[i], pr->second + 1});
+            mp.erase(pr);
+        }
+        for(auto it = mp.begin(); it != mp.end(); ++it){
+            if(it->second < 3){
+                return false;
+            }
+        }
+        return true;
+    }
+};
