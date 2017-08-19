@@ -1,0 +1,30 @@
+class Solution {
+/****************************
+
+比较蠢的方法.. 不过时间复杂度也是O(n)
+
+*****************************/
+public:
+    bool judgeCircle(string moves) {
+        pair<int, int> position = {0, 0};
+        for(auto &c : moves){
+            move(position, c);
+        }
+        return position.first == 0 && position.second == 0;
+    }
+    
+    void move(pair<int, int> &position, const char m){
+        if(m == 'L'){
+            --position.first;
+        }
+        else if(m == 'R'){
+            ++position.first;
+        }
+        else if(m == 'U'){
+            ++position.second;
+        }
+        else{
+            --position.second;
+        }
+    }
+};
