@@ -1,0 +1,19 @@
+/********************
+
+这他妈就是一个很简单的基数问题...
+但remove9, 无非就是10进制变成9进制, 当然中间需要一些数学证明
+
+*********************/
+
+class Solution {
+public:
+    int newInteger(int n) {
+        string number;
+        while(n > 0){
+            number += (n % 9) + '0';
+            n /= 9;
+        }
+        reverse(number.begin(), number.end());
+        return stoi(number);
+    }
+};
