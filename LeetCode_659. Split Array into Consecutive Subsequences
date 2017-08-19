@@ -28,3 +28,32 @@ public:
         return true;
     }
 };
+
+class Solution {
+public:
+    bool isPossible(vector<int>& nums) {
+        unordered_map<int, int> freqRecord, buildRecord;
+        for(auto &num : nums){
+            ++freqRecord[num];
+        }
+        for(auto &num : nums){
+            if(freqRecord[num] <= 0){
+                continue;//之前已经寻找完
+            }
+            else if(buildRecord.find(num) != buildRecord.end() && buildRecord[num] > 0){//当有上一个存在时, 直接加上(这里不需要考虑贪心准则)
+                --buildRecord[num];
+                ++buildRecord[num+1];
+            }
+            else if(freqRecord[num+1] > 0 && freqRecord[num+2] > 0){ //如果有连续3个, 直接加上连续3个
+                --freqRecord[num+1];
+                --freqRecord[num+2];
+                ++buildRecord[num+3];
+            }
+            else{ //上面条件都不满足, 则不存在
+                return false;
+            }
+            --freqRecord[num];
+        }
+        return true;
+    }
+};
