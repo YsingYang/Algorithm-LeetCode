@@ -1,0 +1,26 @@
+//没什么技术含量的一道题...
+
+class Solution {
+public:
+    vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
+        if(M.empty())
+            return M;
+        int rs = M.size(), cs = M[0].size();
+        vector<vector<int>> res(rs, vector<int> (cs, 0));
+        for(int i = 0; i < rs; ++i){
+            for (int j = 0; j < cs; ++j){
+                int counter = 0, sum = 0;
+                int sx = max(0, i-1), sy = max(0, j-1);
+                int ex = min(rs-1, i+1), ey = min(cs-1, j+1);
+                for(int nx = sx; nx <= ex; ++nx){
+                    for(int ny = sy; ny <= ey; ++ny){
+                        ++counter;
+                        sum += M[nx][ny];
+                    }
+                }
+                res[i][j] = sum / counter;
+            }
+        }
+        return res;
+    }
+};
