@@ -1,0 +1,43 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+    /*****
+    
+        偏简单的一道BFS题, 主要在于记录每一层的宽度, 我用的方法是给每一层的节点标个序号, 比如根节点为0
+        他的左子节点为2 * 0, 右子节点为2 * 0 + 1, 我们就可以通过最小最大序号知道相应的宽度了(记得每一层遍历完都要记录宽度)
+    
+    ******/
+public:
+    int widthOfBinaryTree(TreeNode* root) {
+        queue<pair<TreeNode*, int>> que;
+        if(!root)
+            return 0;
+        que.emplace(root, 0);
+        int res = 0;
+        while(!que.empty()){
+            int size = que.size();
+            int left = INT_MAX, right = INT_MIN;
+            for(int i = 0; i < size; ++i){
+                pair<TreeNode*, int> temp = que.front();
+                que.pop();
+                left = min(left, temp.second);
+                right = max(right, temp.second);
+                if(temp.first->left){
+                    que.emplace(temp.first->left, temp.second * 2);
+                }
+                if(temp.first->right){
+                    que.emplace(temp.first->right, temp.second * 2 + 1);
+                }
+            }
+            res = max(res, right-left+1);
+        }
+        return res;
+    }
+};
