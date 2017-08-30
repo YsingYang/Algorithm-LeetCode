@@ -1,0 +1,49 @@
+class Solution {
+/**********
+
+写了一段贼他妈丑的代码..., 不过思路我觉得是没有错的， 当我们只用一遍便利check是否为decreasing的时候， 是容易发生问题的
+会有许多奇怪的testcase 如， 10, 2, 3, 4, 5, 6 -》ok , 10, 5, 2, 3, 4, 5, -> 解决方法是用正序与逆序遍历
+
+***********/
+public:
+    bool checkPossibility(vector<int>& nums) {
+        return checkFunction(nums, true) || checkFunction(nums, false);
+    }
+    
+    bool checkFunction(const vector<int>& nums, bool order){
+        int counter = 0;
+        if(order){
+            int lastElement = nums[0];
+            for(int i = 1; i < nums.size(); ++i){
+                if(lastElement > nums[i]){
+                    if(counter){
+                        return false;
+                    }
+                    else{
+                        ++counter;
+                    }
+                }
+                else{
+                    lastElement = nums[i];
+                }
+            }
+        }
+        else{
+            int lastElement = nums.back();
+            for(int i = nums.size()-2; i >= 0; --i){
+                if(lastElement < nums[i]){
+                    if(counter){
+                        return false;
+                    }
+                    else{
+                        ++counter;
+                    }
+                }
+                else{
+                    lastElement = nums[i];
+                }
+            }
+        }
+        return true;
+    }
+};
