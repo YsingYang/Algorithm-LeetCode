@@ -47,3 +47,26 @@ public:
         return true;
     }
 };
+
+
+class Solution {
+    /********
+        可以用稍微简单的方法， 直接用一遍遍历就可以解决问题  
+    ********/
+public:
+    bool checkPossibility(vector<int>& nums) {
+        int counter = 0;
+        for(int i = 1; i < nums.size() && counter <= 1; ++i){
+            if(nums[i] < nums[i-1]){ //出现逆序的情况
+                ++counter;
+                if(i-2<0 || nums[i-2]<nums[i]){
+                    nums[i-1] = nums[i];
+                }
+                else{
+                    nums[i] = nums[i-1];
+                }
+            }
+        }
+        return counter <= 1;
+    }
+};
