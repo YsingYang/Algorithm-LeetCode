@@ -1,0 +1,21 @@
+class Solution {
+/****
+    除了可以用先序遍历外, 还可以用到其他性质, 
+    题目描述说, node节点会比他的子节点要小, 那么我们只需要比较left, right中返回最小的节点即可
+    (注意处理下所有都相等的情况)
+
+****/
+public:
+    int findSecondMinimumValue(TreeNode* root) {
+        if (!root) return -1;
+        int ans = minval(root, root->val);
+        return ans == INT_MAX? -1:ans;
+    }
+private:
+    int minval(TreeNode* p, int first) {
+        if (p == nullptr) return INT_MAX;
+        if (p->val != first) return p->val;
+        int left = minval(p->left, first), right = minval(p->right, first);
+        return min(left, right);
+    }
+};
