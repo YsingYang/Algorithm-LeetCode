@@ -1,0 +1,28 @@
+class Solution {
+    /********
+        优先队列做法. 首先将number每一个元素都push进优先队列中, 每一次pop 出一个最大的
+        对string进行遍历, 每次与最大的比较, 如果相同, 表示当前index不用交换, 继续寻找下一个
+        如果不同, 从后往前找出当前pop出的最大元素, 进行swap
+    *********/
+public:
+    int maximumSwap(int num) {
+        priority_queue<int> pq;
+        string number = to_string(num);
+        for_each(number.begin(), number.end(), [&pq](const char& c){
+            pq.push(c);
+        });
+        for(int i = 0; i < number.size(); ++i){
+            char c = pq.top();
+            pq.pop();
+            if(c != number[i]){ //如果不等于, 可以进行交换
+                for(int j = number.size()-1; j > i; --j){
+                    if(number[j] == c){
+                        swap(number[j], number[i]);
+                        return stoi(number);
+                    }
+                }
+            }
+        }
+        return stoi(number);
+    }
+};
