@@ -1,0 +1,20 @@
+class Solution {
+/******
+有点类似于找规律的题目...
+每次取i=0, j=n 进行筛选, 根据k值的情况push相应的i/j
+可以参考下答案 https://discuss.leetcode.com/topic/101113/c-java-clean-code-4-liner
+*******/
+public:
+    vector<int> constructArray(int n, int k) {
+        vector<int> vec;
+        for(int i = 1, j = n; i <= j;){
+            if(k > 1){
+                vec.push_back(k-- % 2 ? i++ : j--);
+            }
+            else{
+                vec.push_back(k % 2 ? i++ : j--);
+            }
+        }
+        return vec;
+    }
+};
