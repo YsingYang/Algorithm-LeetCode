@@ -1,0 +1,35 @@
+class Solution {
+/**************
+
+m * n 开始我以为表示的是元素个数, 后来仔细看了下discuss, 因为这个数组是一个乘法表, m * n 可以表示为 最后一个数的数值, 每次mid
+可以找到位于每一行, 该mid所在的col, 那么就可以统计到该mid所在第几个数了
+
+第二个问题是跟普通的binary Search不同, counter == k 时, 不可以直接返回, 因为当前mid的数不一定是在乘法表内的数
+
+
+**************/
+public:
+    int findKthNumber(int m, int n, int k) {
+        int start = 1, end = m * n;
+        while(start < end){
+            int mid = start + (end - start >> 1);
+            int counter = getCount(mid, m, n);
+            if(counter >= k){
+                end = mid;
+            }
+            else{
+                start = mid + 1;
+            }
+        }
+        return start;
+    }
+    
+private:
+    int getCount(int mid, int m, int n){
+        int counter = 0;
+        for(int i = 1; i <= m; ++i){
+            counter += min(n, mid / i);
+        }
+        return counter;
+    }
+};
