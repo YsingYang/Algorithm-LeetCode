@@ -1,4 +1,7 @@
 class Solution {
+/**
+    对除0, 1外每个元素进行排序, 然后对每个元素进行BFS遍历
+**/
 public:
     int cutOffTree(vector<vector<int>>& forest) {
         if(forest.empty())
