@@ -1,0 +1,62 @@
+class Solution {
+public:
+    int cutOffTree(vector<vector<int>>& forest) {
+        if(forest.empty())
+            return 0;
+        set<int> treeMap;
+        rs = forest.size();
+        cs = forest[0].size();
+        for(int i = 0; i < rs; ++i){
+            for(int j = 0; j < cs; ++j){
+                if(forest[i][j] == 0 || forest[i][j] == 1){
+                    continue;
+                }
+                treeMap.insert(forest[i][j]);
+            }
+        }
+        
+        //初始化完成
+        int step = 0, px = 0, py = 0; //px, py表示行走到的当前位置
+        for(auto &i : treeMap){
+            int temp = BFS(forest, i, px, py);
+            if(temp == -1){
+                return -1;
+            }
+            step += temp;
+        }
+        return step;
+    }
+    
+    int BFS(const vector<vector<int>> &forest, int dest, int& px, int& py){
+        vector<vector<bool>> visited(rs, vector<bool>(cs, false));
+        queue<pair<int, int>> que;
+        que.emplace(px, py);
+        visited[px][py] = true;
+        int step = 0;
+        while(!que.empty()){ //当队列不为空, 且没到dest时继续循环
+            int size = que.size();
+            for(int i = 0; i < size; ++i){
+                pair<int, int> temp = que.front();
+                que.pop();
+                if(forest[temp.first][temp.second] == dest){ //到达
+                    px = temp.first;
+                    py = temp.second;
+                    return step;
+                }
+                for(int i = 0; i < 4; ++i){
+                    int nx = temp.first + direction[i], ny = temp.second + direction[i+1];
+                    if(nx < 0 || nx >= rs || ny < 0 || ny >= cs || visited[nx][ny] || forest[nx][ny] == 0){
+                        continue;
+                    }
+                    visited[nx][ny] = true; //标记已到达过
+                    que.emplace(nx, ny);
+                }
+            }
+            ++step;
+        }
+        return -1;
+    }
+private:
+    vector<int> direction = {1, 0, -1, 0, 1};
+    int rs, cs;
+};
