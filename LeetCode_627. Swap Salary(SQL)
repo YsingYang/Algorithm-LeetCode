@@ -1,0 +1,5 @@
+# 通过异或技巧
+update salary set sex = CHAR(ASCII('f') ^ ASCII('m') ^ ASCII(sex))
+
+# 类似于if else的方法
+update salary set sex = (CASE WHEN sex = 'm' Then 'f' else 'm' END)
