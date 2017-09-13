@@ -1,0 +1,37 @@
+class Solution {
+/************************************
+
+
+简单的DP思路, 不过有两个DP数组, 1. counter[i]记录以i为结尾时(记录最长长度时), 长度都为length[i]的个数
+                                2. length[i]记录以i为结尾的最大长度
+
+
+************************************/
+public:
+    int findNumberOfLIS(vector<int>& nums) {
+        if(nums.empty())
+            return 0;
+        int size = nums.size();
+        vector<int> counter(size, 1), length(size, 1);
+        int maxLength = 1;
+        for(int i = 1; i < size; ++i){
+            for(int j = 0; j < i; ++j){
+                if(nums[i] > nums[j]){ //递增
+                    if(length[i] < length[j]+1){
+                        length[i] = length[j]+1;
+                        counter[i] = counter[j];
+                    }
+                    else if(length[i] == length[j] + 1){
+                        counter[i] += counter[j];
+                    }
+                }
+            }
+            maxLength = max(maxLength, length[i]);
+        }
+        int res = 0;
+        for(int i = 0; i < size; ++i){
+            res += maxLength == length[i] ? counter[i] : 0;
+        }
+        return res;
+    }
+};
