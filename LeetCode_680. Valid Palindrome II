@@ -1,0 +1,21 @@
+class Solution {
+public:
+    bool validPalindrome(string s) {
+        int left = 0, right = s.size() - 1;
+        while(left < right){
+            if(s[left++] != s[right--]){ //出现diff
+                return valid(s, left-1, right) || valid(s, left, right+1);//第一个valid表示去左元素, 第二个valid表示去右元素
+            }
+        }
+        return true;
+    }
+    
+    bool valid(const string& s, int left, int right){
+        while(left < right){
+            if(s[left++] != s[right--]){
+                return false;
+            }   
+        }
+        return true;
+    }
+};
