@@ -1,0 +1,53 @@
+class MapSum {
+public:
+    /************************************
+        
+        简单的trie的使用, 题目讲少了点东西, string中的字符范围为a~z
+        这里有一个注意的点就是 *如果key曾经存在, 则override it*
+        所以, 我的方法中仍需要一个unordered_map进行存储string, 以便在插入的时候确定是否曾经插入过
+        如果插入过, 对val进行相应的更新
+        
+    ************************************/
+    MapSum() {
+        root = new Trie();
+    }
+    
+    void insert(string key, int val) {
+        int temp_val = val;
+        if(mp.find(key) != mp.end()){ //already existed
+            val -= mp[key]; //将需要加上的val值更新为相应变化的值
+        }
+        mp[key] = temp_val;
+        Trie *tmp = root;//开始遍历
+        for(int i = 0; i < key.size(); ++i){
+            if(tmp->trie[key[i]-'a'] == nullptr){ //该节点不存在
+                tmp->trie[key[i]-'a'] = new Trie();
+            }
+            tmp->count += val;
+            tmp = tmp->trie[key[i]-'a'];
+        }
+        tmp->count += val;//最后记得最后一个扔需要加上val
+    }
+    
+    int sum(string prefix) {
+        //保证存在?
+        Trie *tmp = root;
+        for(int i = 0; i < prefix.size(); ++i){
+            if(tmp->trie[prefix[i] - 'a'] == nullptr){
+                return 0; //假设有不存在的返回0
+            }
+            tmp = tmp->trie[prefix[i] - 'a'];
+        }
+        return tmp->count;
+    }
+private:
+    struct Trie{
+        Trie(): count(0), trie(vector<Trie*>(26, nullptr)){}
+        
+        int count; //记录个数
+        vector<Trie*> trie;//字典树表
+    };
+    
+    Trie* root;
+    unordered_map<string, int> mp;
+};
