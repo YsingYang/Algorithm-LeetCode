@@ -1,0 +1,26 @@
+class Solution {
+//backtracking
+public:
+    bool checkValidString(string s) {
+        int checkPoint = 0;
+        return backtracking(s, 0, 0);
+    }
+    
+    bool backtracking(const string& s, int current, int checkPoint){
+        if(checkPoint < 0){
+            return false;
+        }
+        if(current == s.size()){
+            return checkPoint == 0;//递归出口
+        }
+        if(s[current] == '('){
+            return backtracking(s, current+1, checkPoint+1);
+        }
+        else if(s[current] == ')'){
+            return backtracking(s, current+1, checkPoint-1);
+        }
+        else{
+            return backtracking(s, current+1, checkPoint) || backtracking(s, current+1, checkPoint+1) || backtracking(s, current+1, checkPoint-1);
+        }
+    }
+};
