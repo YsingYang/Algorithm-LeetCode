@@ -24,3 +24,41 @@ public:
         }
     }
 };
+
+class Solution {
+    /******************
+    
+        在Discuss中发现的一个挺好的想法, 而且不想backtracking方法一样需要指数的指数的时间复杂度, 这里只需要常数项的时间复杂度
+        对于每一个'(', ')'只需要++, -- 一个record, 可以根据record的值来判断括号是否能得到匹配.
+        在符号中加上'*', 会使得record有3种方式的选择, 那么我们可以记录record的lower与upper来确定当前的record是否有范围(<0)
+        对于每次遇到* 时, 可以使lower--(if > 0), upper++, 
+        如果当upper < 0 时, 那么必返回false
+    
+    *******************/
+public:
+    bool checkValidString(string s) {
+        int lowerBound = 0, upperBound = 0;
+        for(int i = 0; i < s.size(); ++i){
+            if(s[i] == '('){
+                ++lowerBound;
+                ++upperBound;
+            }   
+            else if(s[i] == ')'){
+                if(lowerBound > 0){ //当且仅当lower > 0 时, 才会--(当lower <= 0时, --lower没有意义)
+                    --lowerBound;
+                }
+                --upperBound;
+            }
+            else{
+                if(lowerBound > 0){
+                    --lowerBound;
+                }
+                ++upperBound;
+            }
+            if(upperBound < 0){
+                return false; // 当可能出现的最大值也<0时, 则返回false, 匹配不正确
+            }
+        }
+        return lowerBound == 0;
+    }
+};
