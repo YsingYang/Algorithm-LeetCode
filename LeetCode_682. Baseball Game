@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int calPoints(vector<string>& ops) {
+        vector<int> pointRecord;
+        int sum = 0;
+        for(int i = 0; i < ops.size(); ++i){
+            int value = 0;
+            if(ops[i] == "C"){
+                value = -pointRecord.back();
+                pointRecord.pop_back();
+            }
+            else if(ops[i] == "D"){
+                value = pointRecord.back() * 2;
+                pointRecord.push_back(value);
+            }
+            else if(ops[i] == "+"){
+                auto it = --pointRecord.end();
+                value =  *it + *--it;//
+                pointRecord.push_back(value);
+            }
+            else{
+                value = stoi(ops[i]);
+                pointRecord.push_back(value);
+            }
+            sum += value;
+        }
+        return sum;
+    }
+};
