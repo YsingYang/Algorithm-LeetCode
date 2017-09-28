@@ -46,3 +46,41 @@ private:
     
     int vertex;
 };
+
+
+class Solution {
+    /***********************
+        
+        //这道题的本质在于使用unionFind查找某条edge后是否还存在环(unionFind, 就是用于查找无)
+        这道题基本只需要一个循环就可以..不需要像第一个做法那样去掉一条边再循环一次. 只是不太明白的是
+        为什么unionFind碰到的第一个==就是答案?
+        
+    ***********************/
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        //找出最大节点
+        vertex = 0;
+        for(vector<int>& edge : edges){
+            vertex = max(edge[0], max(edge[1], vertex));
+        }
+        vector<int> un(vertex+1, -1);
+        for(int i = 0; i < edges.size(); ++i){
+            int left = unionFind(un, edges[i][0]), right = unionFind(un, edges[i][1]);
+            if(left == right){
+                return edges[i];
+            }
+            un[left] = right;
+        }
+        return vector<int>();
+    }
+    
+private:  
+    int unionFind(vector<int>& un, int index){
+        if(un[index] == -1){
+            return index;
+        }
+        return unionFind(un, un[index]);
+    }
+    
+    int vertex;
+};
