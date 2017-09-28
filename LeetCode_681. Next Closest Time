@@ -53,3 +53,15 @@ private:
         return true;
     }
 };
+
+# Shared by @StefanPochmann
+# python, 利用dateime, 每次minute+1, (因为时间是递增的所以不用比较大小). 只需要确保每次的set集合是 <= 原来的digits, set即可
+from datetime import *
+
+class Solution(object):
+    def nextClosestTime(self, time):
+        digits = set(time)
+        while True:
+            time = (datetime.strptime(time, '%H:%M') + timedelta(minutes=1)).strftime('%H:%M')
+            if set(time) <= digits:
+                return time
