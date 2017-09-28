@@ -1,0 +1,48 @@
+class Solution {
+    /***********************
+        
+        这道题的本质在于使用unionFind查找某条edge后是否还存在环(unionFind, 就是用于查找无向图是否有环的)
+        
+    ***********************/
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        //找出最大节点
+        vertex = 0;
+        for(vector<int>& edge : edges){
+            vertex = max(edge[0], max(edge[1], vertex));
+        }
+        vector<int> candidate;
+        for(int i = 0; i < edges.size(); ++i){
+            vector<int> un(vertex, -1);
+            if(hascircle(i, edges))
+                candidate = edges[i];
+        }
+        return candidate;
+    }
+    
+private:
+    bool hascircle(int i, vector<vector<int>>& edges){
+        vector<int> un(vertex+1, -1);
+        for(int j = 0; j < edges.size(); ++j){
+            if(i == j){
+                continue; //删除掉该边
+            }
+            int left = unionFind(un, edges[j][0]);
+            int right = unionFind(un, edges[j][1]);
+            if(left == right){ //有环
+                return false;
+            }
+            un[right] = left;
+        }
+        return true;
+    }
+    
+    int unionFind(vector<int>& un, int index){
+        if(un[index] == -1){
+            return index;
+        }
+        return unionFind(un, un[index]);
+    }
+    
+    int vertex;
+};
