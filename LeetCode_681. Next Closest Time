@@ -1,0 +1,55 @@
+class Solution {
+/***************
+
+比较简单的思路, 首先对time中的四个字符进行排序, 从最高位开始for循环
+每次check该位是否有更大的数字, 如果有则将改位的数字调大, 并将其后面的数字调至最小
+调整完成, check是否是合法的时间, 是则返回, 不是则继续下一位.
+
+最后如果循环结束都没有找到正确的时间, 那么全选最小位组成最小时间
+
+****************/
+public:
+    string nextClosestTime(string time) {
+        //提取time中的四个数字
+        set<char> candidate;
+        for(int i = 0; i < time.size(); ++i){
+            if(time[i] != ':'){
+                candidate.insert(time[i]);
+            }
+        }//插入相应的数据
+        //从后往前
+        for(int i = time.size()-1; i >= 0; --i){
+            if(time[i] == ':'){
+                continue;
+            }
+            auto it = lower_bound(candidate.begin(), candidate.end(), time[i]);//找到time[i]的lower_bound
+            if(++it != candidate.end()){
+                string temp = time;
+                temp[i] = *it;
+                for(int j = i+1; j < temp.size(); ++j){
+                    if(temp[j] != ':')
+                        temp[j] = *candidate.begin();
+                }
+                if(valid(temp)){
+                    return temp;
+                }
+            }
+        }
+        //没有满足, 使用最小的数组成
+        return string(2, *candidate.begin()) + ':' + string(2, *candidate.begin());
+    }
+    
+    
+private:
+    bool valid(const string& time){
+        string hour = time.substr(0, 2);
+        if(stoi(hour) > 24){
+            return false;
+        }
+        string minute = time.substr(3);
+        if(stoi(minute) >= 60){
+            return false;
+        }  
+        return true;
+    }
+};
