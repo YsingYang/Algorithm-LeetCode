@@ -1,0 +1,39 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int longestUnivaluePath(TreeNode* root) {
+        int maxLength = 0;
+        dfs(root, maxLength);
+        return maxLength;
+    }
+    
+    int dfs(TreeNode* root, int& maxLength){
+        if(!root){
+            return 0; 
+        }
+        int sum = 0;
+        int left = dfs(root->left, maxLength);
+        int right = dfs(root->right, maxLength);
+        //如果有两边相同, 计算已该节点为根的大小
+        if(root->left && root->left->val == root->val && root->right && root->right->val == root->val){
+            maxLength = max(maxLength, left + right + 2);
+        }
+        //选取最大的一边
+        if(root->left && root->left->val == root->val){
+            sum = max(sum, left + 1);
+        }
+        if(root->right && root->right->val == root->val){
+            sum = max(sum, right + 1);
+        }
+        maxLength = max(maxLength, sum);
+        return sum;
+    }
+};
