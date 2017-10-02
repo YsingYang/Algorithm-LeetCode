@@ -1,0 +1,17 @@
+class Solution {
+    /***********
+    
+        不断拼接字符串A, 与字符串B进行匹配， 最多重复B/A + 2次， 如果没有找到则返回-1
+    
+    ************/
+public:
+    int repeatedStringMatch(string A, string B) {
+        string temp = A;
+        for(int repeat = 1; repeat <= B.size() / A.size() + 2; ++repeat, temp += A){ //有一种情况可能是A.size() > B.size(), 那么需要repeat两次判断是否有解
+            if(temp.find(B) != string::npos){
+                return repeat;
+            }
+        }
+        return -1;
+    }
+};
