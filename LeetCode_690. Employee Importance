@@ -1,0 +1,53 @@
+class Solution {
+public:
+    int getImportance(vector<Employee*> employees, int id) {
+        unordered_map<int, Employee*> mp;
+        for(Employee* employee : employees) {
+            mp[employee->id] = employee;
+        } //插入到哈希中， 方便在bfs中搜索
+        //BFS搜索
+        
+        queue<int> que;
+        que.push(id);
+        int importantValue = 0;
+        while(!que.empty()){
+            int id = que.front();
+            que.pop();
+            Employee* employee = mp[id];
+            importantValue += employee->importance;
+            for(int sub : employee->subordinates) {
+                que.push(sub);//应该是不会重复的， 题目中说每个员工只有一个直属上司
+            }
+        }
+        return importantValue;
+    }
+};
+
+
+
+class Solution {
+    /**********
+    
+    不需要第一遍遍历， 只需要简单的进行BFS 即可， 注意其中的hash操作
+    
+    ***********/
+public:
+    int getImportance(vector<Employee*> employees, int id) {
+        unordered_set<int> s;
+        queue<int> q;
+        int ans = 0, temp;
+        q.push(id-1);
+        while (!q.empty()) {
+            temp = q.front();
+            q.pop();
+            if (s.find(temp) == s.end()) {
+                ans += employees[temp]->importance;
+                s.insert(temp);
+                for (auto n : employees[temp]->subordinates) {
+                    q.push(n-1);
+                }
+            }
+        }
+        return ans;
+    }
+};
