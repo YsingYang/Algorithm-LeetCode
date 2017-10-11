@@ -29,3 +29,39 @@ public:
 private:
     vector<int> directions = {2, -1, 2, 1, -2, -1, -2, 1, 2};
 };
+
+
+class Solution {
+public:
+    double knightProbability(int N, int K, int r, int c) {
+        vector<vector<double>> dp(N, vector<double>(N, 0));
+        dp[r][c] = 1;
+        for(int step = 0; step < K; ++step){
+            vector<vector<double>> next(N, vector<double>(N, 0));
+            for(int i = 0; i < N; ++i){
+                for(int j = 0; j < N; ++j){
+                    if(dp[i][j] != 0){ //存在可达
+                        for(int d = 0; d < directions.size() - 1; ++d){
+                            int nx = i + directions[d];
+                            int ny = j + directions[d+1];
+                            if(nx < 0 || ny < 0 || nx >= N || ny >= N){
+                                continue;
+                            }
+                            next[nx][ny] += dp[i][j];
+                        }
+                    }
+                }
+            }
+            swap(dp, next);
+        }
+        double sum = 0;
+        for(int i = 0; i < N; ++i){
+            for(int j = 0; j < N; ++j){
+                sum += dp[i][j];
+            }
+        }
+        return sum / pow(8, K);
+    }
+private:
+    vector<int> directions = {2, -1, 2, 1, -2, -1, -2, 1, 2};
+};
