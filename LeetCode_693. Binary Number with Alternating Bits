@@ -15,3 +15,14 @@ public:
         return true;
     }
 };
+
+
+//Solution-2, By@StefanPochmann
+bool hasAlternatingBits(int n) {
+    return !((n ^= n/4) & n-1);
+}
+
+Example : 
+    000101010
+  ^ 000001010
+  = 000100000
