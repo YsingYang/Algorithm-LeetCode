@@ -1,0 +1,36 @@
+class Solution {
+    /*************
+    
+    感觉像是 n + nlogn + klogn算法, 只是重写了一下priority_queue的排序方法.
+    
+    **************/
+public:
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        unordered_map<string, int> mp;//计数
+        for(string& s : words){
+            ++mp[s];
+        }
+        priority_queue<pair<string, int>, vector<pair<string, int>>, compare> pq;
+        for(auto e : mp){
+            pq.push(e);
+        }
+        vector<string> res;
+        while(!pq.empty() && k > 0){
+            res.emplace_back(pq.top().first);
+            --k;
+            pq.pop();
+            
+        }
+        return res;
+    }
+    
+private:
+    struct compare{
+        bool operator()(const pair<string, int> &p1, const pair<string, int>& p2){
+            if(p1.second == p2.second){
+                return p1.first > p2.first;
+            }
+            return p1.second < p2.second;
+        }  
+    };
+};
