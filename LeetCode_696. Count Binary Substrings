@@ -1,0 +1,55 @@
+class Solution {
+public:
+    int countBinarySubstrings(string s) {
+        unordered_map<int, vector<int>> mp;
+        mp[0].push_back(0);
+        int sum = 0, result = 0;
+        
+        for(int i = 0; i < s.size(); ++i){
+            sum += s[i] == '0' ? -1 : 1;
+            if(mp.find(sum) != mp.end()){ //如果已存在. 判断是否是连续的1, 0
+                for(int j = 0; j < mp[sum].size(); ++j){
+                    if(checkConsecutive(s, mp[sum][j], i)){
+                        //cout<<mp[sum][j] <<"  "<<i<<endl;
+                        ++result;
+                    }
+                }
+            }
+            mp[sum].push_back(i+1);
+        }
+        return result;
+    }
+    
+    bool checkConsecutive(const string& s, int start, int end) {
+        char sentry = s[start];
+        for(int i = start; i < start + (end - start + 1) / 2; ++i){
+            if((sentry ^ s[i]) != 0){
+                return false; //并不为Consecutive
+            }
+        } 
+        return true;
+    }
+};
+
+//O(n)算法
+class Solution {
+public:
+    int countBinarySubstrings(string s) {
+        int preLength = 0, curLength = 1, curValue = s[0];
+        int res = 0; //返回的结果
+        for(int i = 1; i < s.size(); ++i){
+            if(s[i] == curValue){ //如果等于当前记录的value, 序列处于连续, ++长度
+                ++curLength;
+            }
+            else{  //否则将当前记录的长度转为preLength,  同时, 重新记录cur
+                preLength = curLength;
+                curLength = 1;
+                curValue = s[i];
+            }
+            if(preLength >= curLength) { // 这一这里的判断条件, 如果>=0都++result, (连续条件已经满足, 只需要长度存在即可)
+                ++res;
+            }
+        }
+        return res;
+    }
+};
