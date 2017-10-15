@@ -1,0 +1,35 @@
+class Solution {
+public:
+    int findShortestSubArray(vector<int>& nums) {
+        //2O(N)
+        unordered_map<int, Node*> mp;
+        int maxFrequency = 0;
+        for(int i = 0; i < nums.size(); ++i){
+            if(mp.find(nums[i]) == mp.end()){ //尚未添加
+                mp[nums[i]] = new Node(1, i, i);
+            }
+            else{
+                ++mp[nums[i]]->frequency;
+                mp[nums[i]]->end = i;
+            }
+            int freTemp = mp[nums[i]]->frequency;
+            if(freTemp > maxFrequency){
+                maxFrequency = freTemp;
+            }
+        }
+        int result = INT_MAX;
+        for(auto &n : mp){
+            if(n.second->frequency == maxFrequency){
+                result = min(n.second->end - n.second->start + 1, result);
+            }
+        }
+        return result;
+    }
+private:
+    struct Node{
+        Node(int fre, int s, int e): frequency(fre), start(s), end(e){}
+        int frequency;
+        int start;
+        int end;
+    };
+};
