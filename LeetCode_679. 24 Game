@@ -1,0 +1,46 @@
+class Solution {
+public:
+    bool judgePoint24(vector<int>& nums) {
+       vector<double> doubleNums(nums.begin(), nums.end());
+        return backtrack(doubleNums);
+    }
+    
+    bool backtrack(vector<double> nums){
+        if(nums.size() == 1) {
+            return abs(nums[0] - 24) < 1e-5;
+        }
+        for(int i = 0; i < nums.size(); ++i) {
+            for(int j = 0;j < nums.size(); ++j){
+                vector<double> next; //创建下一层的vector
+                if(i == j)
+                    continue; //i != j
+                for(int k = 0; k < nums.size(); ++k) { //拷贝未使用的数字
+                    if(i != k && j != k) {
+                        next.push_back(nums[k]);
+                    }
+                }
+                for(int k = 0; k < 4; ++k) {
+                    if(k < 2 && i < j) { //  +, * 法交换得到的还是一样的结果
+                        continue;
+                    }
+                    if(k == 0) {
+                        next.push_back(nums[i] + nums[j]);
+                    }
+                    if(k == 1) {
+                        next.push_back(nums[i] * nums[j]);
+                    }
+                    if(k == 2) {
+                        next.push_back(nums[i] - nums[j]);
+                    }
+                    if(k == 3 && nums[j] != 0.0) { //除数不能为0, 注意这里直接与0比较会出现隐式类型转换
+                        next.push_back(nums[i] / nums[j]);
+                    }
+                    if(backtrack(next))
+                        return true;
+                    next.pop_back();
+                }
+            }
+        }
+        return false;
+    }
+};
