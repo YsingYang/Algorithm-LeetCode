@@ -1,0 +1,27 @@
+
+class Solution {
+    /**
+        发现一个挺重要的问题。
+        当我们调用algorithm的lower_bound与upper_bound的时候， 默认调用的应该是O(N)时间复杂度的算法
+        所以在set中自己有一个lower_bound与upper_bound, 使用的O(lgn)的时间复杂度的算法
+        
+        另外其实下方的算法还是有可优化的地方的， 因为在insert下返回的是一个pair<iterator, bool> 类型， 取出first即可得到相应的迭代器， 题目也说没有重复的。 所以不需要话费多2(lgn)的操作
+    
+    **/
+public:
+    int kEmptySlots(vector<int>& flowers, int k) {
+        int N = flowers.size(); //N
+        set<int> bloomFlower; 
+        for(int i = 0; i < N; ++i) {
+            bloomFlower.insert(flowers[i]); //插入第i天开花的情况
+            //每次只用检测插入flower左右是否满足条件即可
+            auto lower = bloomFlower.lower_bound(flowers[i]);
+            auto upper = bloomFlower.upper_bound(flowers[i]);
+            if((lower != bloomFlower.begin() && *lower - *next(lower, -1) - 1 == k) || (upper != bloomFlower.end() && *upper - *lower - 1 == k)) {
+                return i + 1;
+            } 
+        
+        }
+        return -1;
+    }
+};
