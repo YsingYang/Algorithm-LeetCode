@@ -1,0 +1,34 @@
+/**
+    类似于最长公共子序列的思想做。 
+    只不过最长公共子序列是用0 初始化， 而这道题目0行0列的初始化需要加上相应字母的ASCII
+    
+    对于dp递推过程， 有， 若s1[row] == s2[col]  -> dp[row+1][col+1] = dp[row][col]
+    反之， s1[row] != s2[col] -> min(dp[row][col+1] + s1[row], dp[row+1][col] + s2[col])
+
+**/
+
+class Solution {
+public:
+    int minimumDeleteSum(string s1, string s2) {
+        int row = s1.size(), col = s2.size();
+        vector<vector<int>> dp(row+1, vector<int>(col+1, 0));
+        for(int i = 1; i <= row; ++i) { //初始化行
+            dp[i][0] = dp[i-1][0] + s1[i-1];
+        }
+        for(int i = 1; i <= col; ++i) {
+            dp[0][i] = dp[0][i-1] + s2[i-1];
+        }
+        for(int i = 1; i <= row; ++i) {
+            for(int j = 1; j <= col; ++j) {
+                if(s1[i-1] == s2[j-1]){ //如果相等， 取左上角
+                    dp[i][j] = dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j] = min(dp[i-1][j] + s1[i-1], dp[i][j-1] + s2[j-1]); //左列 + s2[j-1], 上行 + s1[i-1]
+                }
+            }
+        }
+        return dp[row][col];
+        
+    }
+};
