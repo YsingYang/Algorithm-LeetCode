@@ -1,0 +1,29 @@
+/*****
+题目中有几个点需要考虑的
+这道题其实就是sliding windows题型的变形
+1. left 移动的条件是*right后 > k， 这时候如果product 是 < k的， 那么可以叠加进counter中
+2. right 移动有两个条件， 第一个是product * nums[right] < k， 第二个隐藏的比较深， 如果没注意第二个条件可以会卡在79的 testcase上 大部分是1， 中间偷偷藏了个8， 这时候， 我们要考虑当right到8时， product因为*8 > k 而使得left不断往right中靠拢， 但当left == right 时， 如果我们不给right的移动加上left == right的话， 那么就会导致right不移动。 这里是一个比较需要注意的点
+
+******/
+
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+        int left = 0, size = nums.size();
+        int right = 0;
+        long long counter = 0, product = 1;
+        while(left < size) {
+            if(right < size && (product * nums[right] < k || left == right)){
+                product *= nums[right++];
+            }
+            else {
+                if(product < k) {
+                    counter += right - left;
+                }
+                product /= nums[left++];
+                product = max((long long)(1), product);
+            }
+        }
+        return counter;
+    }
+};
