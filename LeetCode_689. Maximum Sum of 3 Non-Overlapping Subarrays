@@ -1,0 +1,50 @@
+class Solution {
+public:
+    vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) {
+        int size = nums.size();
+        vector<int> leftSubArrays(size, 0), rightSubArrays(size, 0);
+        vector<int> sum(1, 0);
+        for(int i = 0; i <= size; ++i) { //计算数组sum值
+            sum.push_back(sum[i] + nums[i]); 
+        }
+        for(int i = 0, threshold = sum[i+k]-sum[i]; i <= size-k; ++i) {
+            if(sum[i+k] - sum[i] > threshold) {
+                threshold = sum[i+k] - sum[i];
+                leftSubArrays[i] = i;
+            }
+            else
+                leftSubArrays[i] = leftSubArrays[i-1];
+        }
+        for(int i = size-k, threshold = sum[i+k]-sum[i]; i >= 0; --i) {
+            if(sum[i+k] - sum[i] >= threshold) { // 注意这里是>=0, 因为最右侧是没有初始化为0的
+                threshold = sum[i+k] - sum[i];
+                rightSubArrays[i] = i;
+            }
+            else{
+                rightSubArrays[i] = rightSubArrays[i+1];
+            }
+        }
+        //确定left, right vector后, 选取最优的中间解
+        //printVec(leftSubArrays);
+        //printVec(rightSubArrays);
+        int threshold = 0;
+        vector<int> res(3, 0);
+        for(int i = k; i <= size-2*k; ++i) {
+            int left = leftSubArrays[i-k], right = rightSubArrays[i+k];
+            int sumTemp = sum[left+k] - sum[left] + sum[right+k] - sum[right] + sum[i+k] - sum[i];
+            if(sumTemp > threshold){
+                threshold = sumTemp;
+                res = {left, i, right};
+            }
+        }
+        return res;
+        
+    }
+private:
+    void printVec(vector<int>& nums){
+        for_each(nums.begin(), nums.end(), [](const int& num){
+            cout<<num<<" ";
+        });
+        cout<<endl;
+    }
+};
