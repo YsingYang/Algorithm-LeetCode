@@ -1,0 +1,39 @@
+/*********
+简陋的写法..
+一开始还想用dp的 不过想了一下 2-character只有10, 11 那么碰到1的时候i+=2就可以了
+至于最后一个字符 只需要用一个flag记录当前是2-character还是1-character即可
+*********/
+
+class Solution {
+public:
+    bool isOneBitCharacter(vector<int>& bits) {
+        bool flag = false;
+        for(int i = 0; i < bits.size(); ) {
+            if(bits[i] & 1) {
+                i += 2;
+                flag = false;
+            }
+            else{
+                i += 1;
+                flag = true;
+            }
+        }
+        return flag;
+    }
+};
+
+/*****************
+简洁的写法， 注意i += bits[i] 要在flag记录之后， 不然碰到10直接会判断到0上
+*****************/
+
+class Solution {
+public:
+    bool isOneBitCharacter(vector<int>& bits) {
+        bool flag = false;
+        for(int i = 0; i < bits.size(); ++i) {
+            flag = !bits[i];
+            i += bits[i];
+        }
+        return flag;
+    }
+};
