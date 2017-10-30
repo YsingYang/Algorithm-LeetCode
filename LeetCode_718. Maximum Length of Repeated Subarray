@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int findLength(vector<int>& A, vector<int>& B) {
+        int rs = A.size(), cs = B.size();
+        //vector<vector<int>> dp(rs+1, vector<int>(cs+1, 0));
+        vector<int> dp(cs+1, 0);
+        int length = 0;
+        for(int i=1; i<=rs; ++i) {
+            vector<int> next(cs+1, 0);
+            for(int j=1; j<=cs; ++j){
+                if(A[i-1] == B[j-1]) {
+                    next[j]= dp[j-1] + 1;
+                    length = max(length, next[j]);
+                }
+            }
+            swap(next, dp);
+        }
+        return length;
+    }
+};
