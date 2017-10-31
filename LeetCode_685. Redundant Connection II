@@ -1,0 +1,47 @@
+class Solution {
+    /**********************************************
+    
+        该题为一个有向图， 且除去一个顶点为一棵树，那么有且仅有一个顶点有两个parent , 或者为一个环
+    
+    ***********************************************/
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
+        int size = edges.size();
+        vector<int> parent(size+1, 0), candidateA, candidateB;
+        for(vector<int> &edge : edges) {
+            if(parent[edge[1]] == 0) { //没有parent
+                parent[edge[1]]= edge[0];
+            }
+            else{
+                
+                candidateA = {parent[edge[1]], edge[1]}; //优先记录的父节点
+                candidateB = edge;
+                edge[1] = 0; //重置 
+            }
+        }
+        parent = vector<int>(size+1, -1);
+        for(vector<int>& edge : edges) {
+            if(edge[1] == 0)  {
+                continue;
+            }
+            int left = unionFind(parent, edge[0]);
+            int right = unionFind(parent, edge[1]);
+            if(left == right) {
+                //cout<<candidateA[0] << candidateA[1]<<endl;
+                if(candidateA.empty())
+                    return edge;
+                return candidateA; //去掉B后的一个环， 那么result为candidateA
+            }
+            parent[right] = left; 
+        }
+        return candidateB; //去掉B后无环， 则为B
+    }
+    
+private:
+    int unionFind(vector<int> &un, int i) {
+        if(un[i] == -1){
+            return i;
+        }
+        return unionFind(un, un[i]);
+    }
+};
