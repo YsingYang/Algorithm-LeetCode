@@ -45,3 +45,61 @@ private:
         
     }
 };
+
+
+/**************
+
+There are potentially a lot of overlapping sub problems, but meanwhile we don't exactly know what those sub problems are. DP with memoization works pretty well in such cases. (在Discuss中看到的一句话， 感觉挺有道理的， 确实有时候纠结我的DP是自上而下还是自下而上， 每一个子问题该如何定义)
+
+该题其实是一道很基本的dp题， 子问题的定义很明确就是每个target string， 最少能用多少个stickers组成
+所以最底层的问题就是dp[""] = 0; 我们就能自上而下的寻找子问题， 在问题的搜索过程中， 初始化result = INT_MAX,搜索完毕如果result仍为INT_MAX, 则返回-1
+注意中间有个小优化， 如何当前stricker不是target所需的， 哪么重组的str == target, 这里我们可以优化这个判断
+直接在每次stricker前判断ounter[i][target[0]-'a'] == 0是否有首字母即可（即使当前没有首字母， 等target缩小到一定时， 仍然是某个答案stricker的首字母
+
+
+**************/
+class Solution {
+public:
+    int minStickers(vector<string>& stickers, string target) {
+        int size = stickers.size();
+        vector<vector<int>> counter(size, vector<int>(26, 0)); //用于初始化每一个stickers的所有的数值
+        for(int i = 0; i < stickers.size(); ++i) {
+            for(char c : stickers[i]) {
+                ++counter[i][c-'a'];
+            }
+        }
+        unordered_map<string, int> dp; //dp记录数组， 记录相应的string需要多少个-stickers
+        dp[""] = 0; //dp起始
+        dynamicSearch(dp, counter, target);
+        return dp[target];
+    }
+    
+    int dynamicSearch(unordered_map<string, int>& dp, vector<vector<int>>& counter, string target) {
+        if(dp.find(target) != dp.end()) { //如果已经记录直接返回
+            return dp[target];
+        }
+        int result = INT_MAX;
+        vector<int> targetCounter(26, 0);
+        for(char c: target) {
+            ++targetCounter[c-'a'];
+        }
+        
+        for(int i = 0; i < counter.size(); ++i) {
+            if(counter[i][target[0]-'a'] == 0) { //优化不存在的search判断
+                continue;
+            }
+            string str; //记录剩余字符
+            for(int j = 0; j < 26; ++j) {
+                if(targetCounter[j] - counter[i][j] > 0) {
+                    str += string(targetCounter[j] - counter[i][j], j + 'a'); //当targetCounter的某些字符 > counter字符时， 记录为下一个深度的target
+                }
+            }
+            int ans = dynamicSearch(dp, counter, str);
+            if(ans != -1)
+                result = min(result, ans+1);
+        }
+        dp[target] = (result == INT_MAX ? -1 : result);
+        return dp[target];
+        
+    }
+};
