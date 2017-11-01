@@ -1,0 +1,47 @@
+class Solution {
+    /***************
+    
+        Basic BFS, TLE
+    
+    ****************/
+    
+public:
+    int minStickers(vector<string>& stickers, string target) {
+        queue<string> que; //直接重构string也许会比set好， 毕竟string也就最多15个字符长度
+        que.push(target);
+        int result = 1;
+        while(!que.empty()) {
+            int size = que.size();
+            for(int count = 0; count < size; ++count){
+                string temp = que.front();
+                que.pop();
+                for(int i = 0; i < stickers.size(); ++i) {
+                    unordered_multiset<char> collection(temp.begin(), temp.end());
+                    if(!eraseCollection(collection, stickers[i])) { //没有交集
+                        continue;
+                    }
+                    if(collection.empty()){
+                        return result;
+                    }
+                    que.emplace(string(collection.begin(), collection.end())); //不用在意str顺序？
+                }
+            }
+            //cout<<endl;
+            ++result;
+        }
+        return -1;
+    }
+private:
+    bool eraseCollection(unordered_multiset<char>& mp, string& str) {
+        bool flag = false;
+        for(char c : str){
+            auto it = mp.find(c); //注意是multiset
+            if(it != mp.end()) {
+                flag = true;
+                mp.erase(it); 
+            }
+        }
+        return flag;
+        
+    }
+};
