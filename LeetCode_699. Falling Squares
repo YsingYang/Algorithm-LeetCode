@@ -1,0 +1,57 @@
+/***************************
+
+         感觉并没有用到Binary Search 与 Segment Tree的常识..
+         
+         普通O(N^2)解决的问题, 其实就是顺序遍历positions, 并记录相应的start与end, 每次遍历position, 区间在哪一个Interval之上.
+         假如有多个, 则选取最大值. 
+         
+         
+         注:
+            在写程序过程中也发现了一个问题, 如果Interval定义在 用到Interval的函数后, 会有错误 , 这主要是由于LeetCode服务端那边也定义了一个Interval , 
+            且我自己定义的Interval写在了函数后面, 所以会默认用LeetCode的Interval类, 所以写在使用到的函数前面会比较好 (单独写在Solution外面的话, 会报Interval已经存在的错误)
+
+
+
+
+****************************/
+class Solution {
+public:
+    vector<int> fallingSquares(vector<pair<int, int>>& positions) {
+        vector<Interval> intervals;
+        vector<int> result;
+        int maxHeight = 0;
+        for(int i = 0; i < positions.size(); ++i) {
+            Interval current = Interval(positions[i].first, positions[i].first+positions[i].second-1, positions[i].second);
+            int height = compareInterval(intervals, current);
+            current.height = height; //获取height后, 重置height(当前Interval的height是叠加在其他square上的)
+            intervals.emplace_back(current);
+            maxHeight = max(maxHeight, height);
+            result.emplace_back(maxHeight);
+        }
+        return result;
+    }
+    
+private:
+    int compareInterval(vector<Interval>& intervals, Interval& current) {
+        int height = current.height;
+        for(int i = 0; i < intervals.size(); ++i) {
+            if(current.end < intervals[i].start || current.start > intervals[i].end)
+                continue; //不在范围内
+            height = max(height, intervals[i].height+current.height);
+        }    
+        return height;
+    }
+private:
+    struct Interval{
+    public:
+        Interval(int start_, int end_, int height_):
+            start(start_), 
+            end(end_), 
+            height(height_){}
+        
+    public:
+        int start;
+        int end;
+        int height;
+    };
+};
