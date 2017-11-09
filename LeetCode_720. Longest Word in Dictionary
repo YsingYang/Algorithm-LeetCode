@@ -1,0 +1,30 @@
+class Solution {
+/************
+普通的哈希方法..效率没有Trie高
+*************/
+public:
+    string longestWord(vector<string>& words) {
+        unordered_set<string> mp(words.begin(), words.end());
+        string result;
+        for(int i = 0;  i < words.size(); ++i) {
+            if(canBeBuilt(mp, words[i])){
+                if(result.size() < words[i].size())
+                    result = words[i];
+                else if(result.size() == words[i].size()) {
+                    result = result > words[i] ? words[i] : result;
+                }
+            }
+        }
+        return result;
+    }
+    
+private:
+    bool canBeBuilt(unordered_set<string>& mp, string& word) {
+        for(int j = 1; j < word.size(); ++j) {
+            string temp = word.substr(0, j);
+            if(mp.find(temp) == mp.end())
+                return false;
+        }
+        return true;
+    }
+};
