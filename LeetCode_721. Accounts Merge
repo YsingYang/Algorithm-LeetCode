@@ -1,0 +1,52 @@
+class Solution {
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        map<string, string> owner;
+        map<string, string> parent;
+        map<string, set<string>> graph; //构建相应的图
+        for(vector<string>& account : accounts) {
+            for(int j = 1; j < account.size(); ++j) {
+                owner[account[j]] = account[0]; // 确认相应的owner
+                parent[account[j]] = account[j]; //将每个节点的parent设置为自己
+            }
+        }
+        
+        for(vector<string>& account : accounts) {
+            string left = unionFind(parent, account[1]); //确定每组的祖先    
+            for(int j = 2; j < account.size(); ++j) {
+                string right = unionFind(parent, account[j]);
+                parent[right] = left;
+            }
+        }
+        
+        //加入name集合
+        for(vector<string>& account : accounts) {
+            for(int j = 1; j < account.size(); ++j) {
+                graph[unionFind(parent, account[j])].insert(account[j]);
+            }    
+        }
+        
+        vector<vector<string>> result;
+        for(auto &node : graph){
+            vector<string> temp;
+            temp.emplace_back(owner[node.first]);
+            /*for(string str : node.second) {
+                cout<<str<<"  ";
+            }
+            cout<<endl;*/
+            for(string str : node.second) {
+                temp.emplace_back(str);
+            }
+            result.emplace_back(temp);
+        }
+        return result;
+    }
+    
+private:
+    string unionFind(map<string, string>& un, string& index){
+        if(un[index] == index) {
+            return index;
+        }
+        return unionFind(un, un[index]);
+    }
+};
