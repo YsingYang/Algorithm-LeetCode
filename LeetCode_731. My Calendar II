@@ -1,0 +1,45 @@
+class MyCalendarTwo {
+public:
+    MyCalendarTwo() {
+        
+    }
+    
+    bool book(int start, int end) {
+        int counter = 0;
+        container.insert(start);
+        container.insert(-end);
+        auto travel = container.begin();
+        while(travel != container.end() && *travel <= end) {
+            if(*travel++ >= 0) {
+                ++counter;
+            }
+            else{
+                --counter;
+            }
+            if(counter >= 3) {
+                container.erase(container.find(start));
+                container.erase(container.find(-end));
+                return false;
+            }
+        }
+        return true;
+    }
+private:
+    struct compare{
+        bool operator()(const int& lhs, const int& rhs ) {
+            if(abs(lhs) == abs(rhs)){
+                return lhs < rhs;
+            }
+            return abs(lhs) < abs(rhs);
+        }  
+    };
+    
+    multiset<int, compare> container;
+    
+};
+
+/**
+ * Your MyCalendarTwo object will be instantiated and called as such:
+ * MyCalendarTwo obj = new MyCalendarTwo();
+ * bool param_1 = obj.book(start,end);
+ */
