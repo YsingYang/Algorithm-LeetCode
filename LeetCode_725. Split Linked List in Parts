@@ -1,0 +1,68 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<ListNode*> splitListToParts(ListNode* root, int k) {
+        //先遍历链表长度
+        int length = getListLength(root);
+        int resultLength = length / k,  redundancy = length % k;
+        ListNode* travel = root;
+        vector<ListNode*> result;
+        while(k != 0) {
+            ListNode* head = travel;
+            int subLength = resultLength + (redundancy <= 0 ? 0 : 1);
+            //cout<<subLength<<endl;
+            result.push_back(head);
+            while(subLength > 1) {
+                head = head->next;
+                --subLength;
+            }
+            if(head != nullptr){
+                travel = head->next;
+                head->next = nullptr;
+            }
+            --redundancy;
+            --k;
+        }
+        return result;
+        
+    }
+    
+    int getListLength(ListNode* root) {
+        ListNode* travel = root;
+        int length = 0;
+        while(travel != nullptr) {
+            ++length;
+            travel = travel -> next;
+        }
+        return length;
+    }
+};
+
+
+// 将While循环改成for循环会减少挺多的代码量
+class Solution {
+    public ListNode[] splitListToParts(ListNode root, int k) {
+        ListNode[] parts = new ListNode[k];
+        int len = 0;
+        for (ListNode node = root; node != null; node = node.next)
+            len++;
+        int n = len / k, r = len % k; // n : minimum guaranteed part size; r : extra nodes spread to the first r parts;
+        ListNode node = root, prev = null;
+        for (int i = 0; i < k; i++, r--) {
+            parts[i] = node;
+            for (int j = 0; j < n + (r > 0 ? 1 : 0); j++) {
+                prev = node;
+                node = node.next;
+            }
+            if (prev != null) prev.next = null;
+        }
+        return parts;        
+    }
+}
