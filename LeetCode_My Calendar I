@@ -1,0 +1,70 @@
+//Solution-1, 使用跟My Calendar II 一样使用counter的方法
+class MyCalendar {
+public:
+    MyCalendar() {
+            
+    }
+    
+    bool book(int start, int end) {
+        int counter = 0;
+        container.insert(start);
+        container.insert(-end);
+        for(auto it = container.begin(); it != container.end() && *it <= end; ++it) {
+            if(*it >= 0) {
+                ++counter;
+            }
+            else {
+                --counter;
+            }
+            if(counter > 1) {
+                container.erase(container.find(start));
+                container.erase(container.find(-end));
+                return false;
+            }
+        }
+        return true;
+        
+    }
+    
+private:
+    struct compare{
+        bool operator()(const int& lhs, const int& rhs) {
+            if(abs(lhs) == abs(rhs)){
+                return lhs < rhs;
+            }
+            return abs(lhs) < abs(rhs);
+        }  
+    };
+    multiset<int, compare> container;
+};
+
+//Solution-2 判断是否有交集
+class MyCalendar {
+/****************
+
+有不重叠的部分即可
+
+****************/
+public:
+    MyCalendar() {
+        
+    }
+    
+    bool book(int start, int end) {
+        for(pair<int, int> p : container) {
+            if(max(start, p.first) < min(end, p.second)) {
+                return false; //当有交集时， 有一个max start < min end
+            }
+        }
+        container.emplace_back(start, end);
+        return true; //没有交集， start min end  < max start
+    }
+private:
+    vector<pair<int, int>> container;
+};
+
+/**
+ * Your MyCalendar object will be instantiated and called as such:
+ * MyCalendar obj = new MyCalendar();
+ * bool param_1 = obj.book(start,end);
+ */
