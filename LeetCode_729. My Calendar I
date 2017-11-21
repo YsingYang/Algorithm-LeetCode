@@ -1,0 +1,45 @@
+//Solution-1
+
+class MyCalendar {
+public:
+    MyCalendar() {
+        
+    }
+    
+    bool book(int start, int end) {
+        auto it = container.lower_bound(start);
+        if(it != container.end()&& it->first < end)
+            return false;
+        if(it != container.begin() && (--it) -> second > start) {
+            return false;
+        }
+        container[start] = end;
+        return true;
+    }
+private:
+    map<int, int> container;
+};
+
+
+//Solution-2 
+//利用在有overlap情况下，max(start, p.first) > min(end, p.second)  是， 则为有重叠
+
+class MyCalendar {
+public:
+    MyCalendar() {
+        
+    }
+    
+    bool book(int start, int end) {
+        auto it = container.lower_bound(start);
+        if(it != container.end()&& it->first < end)
+            return false;
+        if(it != container.begin() && (--it) -> second > start) {
+            return false;
+        }
+        container[start] = end;
+        return true;
+    }
+private:
+    map<int, int> container;
+};
