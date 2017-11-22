@@ -38,8 +38,44 @@ private:
     
 };
 
-/**
- * Your MyCalendarTwo object will be instantiated and called as such:
- * MyCalendarTwo obj = new MyCalendarTwo();
- * bool param_1 = obj.book(start,end);
- */
+/***********************
+
+    在CalendarTwo中调用Calendar,  即在Two中取出overlap的部分进行Calendar判断
+
+***********************/
+
+class MyCalendarTwo {    
+public:
+    MyCalendarTwo() {
+        
+    }
+    
+    bool book(int start, int end) {
+        MyCalendar calendar;
+        for(pair<int, int> &p : container) {
+            if(max(start, p.first) < min(end, p.second)) {
+                pair<int, int> overlap = {max(start, p.first), min(end, p.second)};
+                if(!calendar.book(overlap.first, overlap.second)) {
+                    return false;
+                }
+            }
+        }
+        container.emplace_back(start, end);
+        return true;
+    }
+    
+private:
+    vector<pair<int, int>> container;
+    
+    class MyCalendar {
+        vector<pair<int, int>> books;
+        public:
+            bool book(int start, int end) {
+                for (pair<int, int> p : books)
+                    if (max(p.first, start) < min(end, p.second)) return false;
+                books.push_back({start, end});
+            return true;
+        }
+    };
+
+};
