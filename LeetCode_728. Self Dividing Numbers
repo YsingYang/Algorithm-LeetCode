@@ -1,0 +1,31 @@
+/************
+
+暴力解法
+
+************/
+
+class Solution {
+public:
+    vector<int> selfDividingNumbers(int left, int right) {
+        vector<int> result;
+        for(int i = left; i <= right; ++i) {
+            if(checkFunction(i)){
+                result.emplace_back(i);
+            }
+        }
+        return result;
+    }
+    
+    
+    bool checkFunction(int number) {
+        int temp = number;
+        while(temp != 0) {
+            int divide = temp % 10;
+            if(divide == 0 || number % divide != 0) {
+                return false;
+            }
+            temp /= 10;
+        }
+        return true;
+    }
+};
