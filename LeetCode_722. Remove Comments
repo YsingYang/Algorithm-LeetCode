@@ -1,0 +1,50 @@
+class Solution {
+public:
+    vector<string> removeComments(vector<string>& source) {
+        vector<string> result;
+        bool flag = false;
+        string temp;
+        for(string &str : source) {
+            for(int i = 0; i < str.size(); ) {
+                //不在block中
+                if(!flag) {
+                    if (i + 1 == str.size()) 
+                        temp += str[i++];
+                    else{
+                        if(str.substr(i, 2) == "//") {
+                            break; //跳过
+                        }
+                        if(str.substr(i, 2) == "/*") {
+                            flag = true; //在block中
+                            i += 2;
+                        }
+                        else {
+                            temp += str[i++];
+                        }
+                    }
+                }
+                else {
+                    // 在block中
+                    if(i + 1 == str.size() )
+                        ++i;
+                    else{
+                        string sub = str.substr(i, 2);
+                        if(sub == "*/"){
+                            flag = false;
+                            i += 2;;
+                        }
+                        else {
+                            ++i;
+                        }
+                    }
+                }
+            }
+            if(!flag && !temp.empty()) {
+                    result.push_back(temp);
+                    temp = "";
+                }
+            
+        }
+        return result;
+    }
+};
