@@ -1,0 +1,36 @@
+class MyCalendarThree {
+public:
+    MyCalendarThree() {
+        result = 0;
+    }
+    
+    int book(int start, int end) {
+        container.insert(start);
+        container.insert(-end);
+        int counter = 0;
+        for(int i : container){
+            counter += (i >= 0 ? 1 : -1);
+            result = max(counter, result);
+        }
+        return result;
+    }
+    
+private:
+    struct MyCompare{
+        bool operator()(const int& lhs, const int& rhs) {
+            if(abs(lhs) == abs(rhs)) {
+                return lhs < rhs;
+            }
+            return abs(lhs) < abs(rhs);
+        }
+    };
+    
+    int result;
+    multiset<int, MyCompare> container;
+};
+
+/**
+ * Your MyCalendarThree object will be instantiated and called as such:
+ * MyCalendarThree obj = new MyCalendarThree();
+ * int param_1 = obj.book(start,end);
+ */
