@@ -1,0 +1,29 @@
+class Solution {
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+        queue<pair<int, int>> que;
+        int startColor = image[sr][sc];
+        int r = image.size(), c = image[0].size();
+        vector<vector<bool>> visited(r, vector<bool>(c, false));
+        que.emplace(sr, sc);
+        visited[sr][sc] = true;
+        while(!que.empty()) {
+            pair<int, int> temp = que.front();
+            que.pop();
+            image[temp.first][temp.second] = newColor;
+            for(int i = 0; i < direction.size()-1; ++i) {
+                int rs = temp.first + direction[i];
+                int cs = temp.second + direction[i+1];
+                if(rs < 0 || rs >= r || cs < 0 || cs >= c || visited[rs][cs])
+                    continue;
+                if(image[rs][cs] == startColor) {
+                    que.emplace(rs, cs);
+                    visited[rs][cs] = true;
+                }
+            }
+        };
+        return image;
+    }
+private:
+    vector<int> direction = {1, 0, -1, 0, 1};
+};
