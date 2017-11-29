@@ -1,0 +1,34 @@
+/**********************
+
+  通过一个st不断push, 如果出现异位， （后为负）则做出相应判断， 直到对数组for一遍后无任何改变时结束循环返回数组
+
+**********************/
+
+class Solution {
+public:
+    vector<int> asteroidCollision(vector<int>& asteroids) {
+        bool flag = false;
+        do{
+            vector<int> st;
+            for(int i = 0; i < asteroids.size(); ++i) {
+                if(i != 0 && asteroids[i] < 0 && asteroids[i-1] > 0) {
+                    if(abs(asteroids[i]) < abs(asteroids[i-1])) {
+                        continue;
+                    }
+                    else {
+                        st.pop_back();
+                        if(abs(asteroids[i]) != abs(asteroids[i-1])) {
+                            st.push_back(asteroids[i]); //push
+                        }
+                    }
+                    continue;
+                }
+                st.push_back(asteroids[i]);
+            }
+            flag = st.size() != asteroids.size();
+            swap(st, asteroids);
+        }
+        while(flag);
+        return asteroids;
+    }
+};
