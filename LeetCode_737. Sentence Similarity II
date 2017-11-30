@@ -1,0 +1,39 @@
+class Solution {
+public:
+    bool areSentencesSimilarTwo(vector<string>& words1, vector<string>& words2, vector<pair<string, string>> pairs) {
+        if(words1.size() != words2.size()) {
+            return false;
+        }
+        map<string, string> un;
+        
+        for(pair<string, string>& p : pairs) {
+            un[p.first] = p.first;
+            un[p.second] = p.second;
+        } //初始化
+        
+        for(pair<string, string>& p : pairs) {
+            string left = unionFind(un, p.first);
+            string right = unionFind(un, p.second);
+            un[right] = left;
+        }
+        
+        for(int i = 0; i < words1.size(); ++i) {
+            string left = unionFind(un, words1[i]);
+            string right = unionFind(un, words2[i]);
+            if(left != right) {
+                return false;
+            }
+        }
+        return true;
+        
+    }
+    
+    
+    string unionFind(map<string, string>&un, string str) {
+        if(un[str] == str){
+            return str;
+        }
+        return unionFind(un, un[str]);
+    }
+    
+};
