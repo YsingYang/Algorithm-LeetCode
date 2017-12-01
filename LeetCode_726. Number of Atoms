@@ -1,0 +1,58 @@
+/************************/
+
+使用递归做法，每次遇到'('时就进行相应的递归
+当遇到')'时结束递归， 回到上层， 并把相应的counter返回
+
+*************************/
+class Solution {
+public:
+    string countOfAtoms(string formula) {
+        int index = 0;
+        map<string, int> counter = countFunction(formula, index);
+        string ans;
+        for(auto &sub : counter) {
+            ans += sub.first;
+            ans += sub.second == 1 ? "" : to_string(sub.second);
+        }
+        return ans;
+    }
+    
+    map<string, int> countFunction(const string& formula, int& i) {
+        map<string, int> counter;
+        while(i < formula.size()) {
+            //如果是括号
+            if(formula[i] == '(') {
+                ++i;
+                map<string, int> subAns = countFunction(formula, i); //将字符串给下一层
+                int times = getNumber(i, formula);
+                for(auto &ans : subAns) {
+                    counter[ans.first] += ans.second * times;
+                }
+            }
+            else if(formula[i] == ')'){
+                ++i;
+                return counter;
+            }
+            else {
+                int start = i;
+                while(i < formula.size() && islower(formula[++i])) { //是小写则继续循环
+
+                }
+                string element = formula.substr(start, i-start); //取出相应的element
+                int number = getNumber(i, formula);
+                counter[element] += number;
+                
+            }
+            
+        }
+        return counter;
+    }
+    
+    int getNumber(int& startIndex, const string& formula) {
+        int count = 0;
+        while(startIndex<formula.size() && isdigit(formula[startIndex])) {
+            count = count * 10 + formula[startIndex++] - '0';
+        }
+        return count == 0 ? 1 : count;
+    }
+};
