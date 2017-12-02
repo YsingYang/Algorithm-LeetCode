@@ -1,0 +1,17 @@
+/*
+  最蠢的做法 TLE+MLE
+*/
+class Solution {
+public:
+    int smallestDistancePair(vector<int>& nums, int k) {
+        //可能会MLE
+        vector<int> distance;
+        for(int i = 0; i < nums.size(); ++i) {
+            for(int j = i+1; j < nums.size(); ++j) {
+                distance.emplace_back(abs(nums[j] - nums[i]));
+            }
+        }
+        sort(distance.begin(), distance.end());
+        return distance[k-1];
+    }
+};
