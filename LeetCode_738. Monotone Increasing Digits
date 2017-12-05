@@ -1,0 +1,35 @@
+class Solution {
+    /******************
+    
+        同一位是否满足递增， 不满足-一位取最大
+    
+    *******************/
+public:
+    int monotoneIncreasingDigits(int N) {
+        vector<int> vec;
+        while(N) {
+            vec.emplace_back(N%10);
+            N /= 10;
+        }
+        reverse(vec.begin(), vec.end());
+        bool flag = false;
+        for(int i = 1; i < vec.size(); ++i) {
+            if(flag){
+                vec[i] = 9;
+            }
+            if(vec[i] < vec[i-1]) { //不符合递增
+                int index = i;
+                while(index >= 1 && vec[index] < vec[index-1] ){
+                    --vec[index-1];
+                    vec[index--] = 9;
+                }
+                flag = true;
+            }
+        }
+        int sum = 0;
+        for_each(vec.begin(), vec.end(), [&sum](int i) {
+            sum = sum * 10 + i;
+        });
+        return sum;
+    }
+};
