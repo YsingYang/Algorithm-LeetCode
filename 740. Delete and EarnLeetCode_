@@ -1,0 +1,35 @@
+class Solution {
+/********************
+
+有点类似与买股票那一题， 不过递推过程有点不一样
+当preIt的值与curIt的值差1时， sum = max(preSum + it->first * it->second, sum)
+当值差不为1时， 直接计算进sum即可 sum += it->first * it->second
+
+********************/
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        map<int, int> counter;
+        for(int i : nums) {
+            ++counter[i];
+        }
+        int preSum = 0, sum = 0;
+        for(auto it = counter.begin(); it != counter.end(); ++it) {
+            int temp = preSum;
+            preSum = sum;
+            if(it == counter.begin()) {
+                sum += it->first * it->second;
+            }
+            else {
+                auto preIt = next(it, -1); //上一个迭代器
+                if(preIt->first + 1 == it->first) {
+                    sum = max(sum, temp + it->first * it->second);
+                }
+                else {
+                    sum += it->first * it->second;
+                }
+            }
+           // cout<<preSum<<"   "<<sum<<endl;
+        }
+        return max(preSum, sum);
+    }
+};
