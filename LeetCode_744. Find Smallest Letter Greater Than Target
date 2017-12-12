@@ -1,0 +1,19 @@
+class Solution {
+    /********************
+    
+    中间存在着隐式转换
+    
+    ********************/
+public:
+    char nextGreatestLetter(vector<char>& letters, char target) {
+        int minDistance = INT_MAX, result = 0;
+        for(char& c : letters) {
+            int distance  = target == c ? 26 : (c-target + 26) % 26;
+            if(distance < minDistance) {
+                minDistance = distance;
+                result = c;
+            }
+        }
+        return result;
+    }
+};
