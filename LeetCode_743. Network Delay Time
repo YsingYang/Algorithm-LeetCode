@@ -1,0 +1,39 @@
+class Solution {
+    /*********************
+        
+        最短路径算法 BFS . 没有设置相应的visited数组， 当且仅当距离小于当前距离时才加入到数组中
+        
+    *********************/
+public:
+    int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+        //建立临接表与访问表
+        map<int, map<int, int>> graph;
+        for(vector<int>& vec : times) {
+            graph[vec[0]][vec[1]] = vec[2];
+        }
+        vector<int> distance(N+1, INT_MAX);
+        distance[K] = 0;
+        queue<int> que;
+        que.emplace(K);
+        while(!que.empty()) {
+            int index = que.front();
+            que.pop();
+            for(auto & p : graph[index]) { //遍历相应的点
+                int nextDistance = distance[index] + p.second; 
+                if(distance[p.first] > nextDistance){
+                    distance[p.first] = nextDistance;
+                    que.emplace(p.first);
+                }
+            }
+        }
+        int result = 0;
+        for(int i = 1; i < N+1; ++i) {
+            if(distance[i] == INT_MAX){
+                return -1;
+            }
+            result = max(result, distance[i]);
+        }
+        return result;
+        
+    }
+};
