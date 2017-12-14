@@ -1,0 +1,79 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+/*********************
+
+    重新构建一棵树, 有parent指针的树并进行相应的BFS
+    
+**********************/
+class Solution {
+private:
+    struct MyTreeNode{
+        int val;
+        MyTreeNode *left;
+        MyTreeNode *right;
+        MyTreeNode *parent;
+        bool visited;
+        MyTreeNode(int x) : val(x), left(nullptr), right(nullptr), parent(nullptr), visited(false) {}
+    };
+public:
+    int findClosestLeaf(TreeNode* root, int k) {
+        MyTreeNode* start = nullptr;
+        MyTreeNode* myRoot = build(root, start, k);
+        return BFS(start);
+    }
+    
+private:
+    MyTreeNode* build(TreeNode* root, MyTreeNode*& start, const int k) {
+        if(!root)
+            return nullptr;
+        MyTreeNode* node = new MyTreeNode(root->val);
+        if(node->val == k) {
+            start = node;
+        }
+        node->left = build(root->left, start, k);
+        if(node->left) {
+            node->left->parent = node;
+        }
+        node->right = build(root->right, start, k);
+        if(node->right) {
+            node->right->parent = node;
+        }
+        return node;
+    }
+    
+    int BFS (MyTreeNode* start) {
+        queue<MyTreeNode*> que;
+        que.emplace(start);
+        start->visited = true;
+        while(!que.empty()) {
+            int k = que.size();
+            for(int i = 0; i < k; ++i) {
+                MyTreeNode* node = que.front();
+                que.pop();
+                if(!node->left && !node->right) {
+                    return node->val;
+                }
+                if(node->left && !node->left->visited) {
+                    que.emplace(node->left);
+                    node->left->visited = true;
+                }
+                if(node->right && !node->right->visited) {
+                    que.emplace(node->right);
+                    node->right->visited = true;
+                }
+                if(node->parent && !node->parent->visited) {
+                    que.emplace(node->parent);
+                    node->parent->visited = true;
+                }
+            }
+        }
+        return INT_MAX;
+    }
+};
