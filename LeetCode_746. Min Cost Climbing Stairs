@@ -1,0 +1,20 @@
+class Solution {
+    /**********
+    
+        逆序DP， 最后返回dp[0], dp[1] 即可
+        空间应该可以优化成O(1)
+    
+    **********/
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int size = cost.size();
+        vector<int> dp(size+1, INT_MAX);
+        dp[size] = 0;
+        for(int i = size; i >= 1; --i) {
+            if(i-2 >= 0)
+                dp[i-2] = min(dp[i]+cost[i-2], dp[i-2]);
+            dp[i-1] = min(dp[i]+cost[i-1], dp[i-1]);
+        }
+        return min(dp[0], dp[1]);
+    }
+};
