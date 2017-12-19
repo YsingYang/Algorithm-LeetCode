@@ -1,0 +1,36 @@
+class Solution {
+public:
+    string shortestCompletingWord(string licensePlate, vector<string>& words) {
+        vector<int> dict(26, 0);
+        for(char &c : licensePlate) {
+            if(isupper(c)) {
+                ++dict[c-65];
+            }
+            else if (islower(c)) {
+                ++dict[c-97];
+            }
+        }
+        
+        string result;
+        for(string &str : words) {
+            vector<int> temp = dict;
+            bool flag = true;
+            for(char c : str) {
+                --temp[c-'a'];
+            }
+            for(int count : temp) {
+                //cout<<count<<"  ";
+                if(count > 0) {
+                    flag = false;
+                }
+            }
+            //cout<<endl;
+            
+            if(flag && (result.empty() || str.size() < result.size())) {
+                result = str;
+            }
+        }
+        return result;
+        
+    }
+};
