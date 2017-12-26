@@ -1,0 +1,22 @@
+class Solution {
+    /*************************
+    
+        在for的一遍中记录maxValue 与 maxTwice， 最终比较maxValue与maxTwice即可
+    
+    **************************/
+public:
+    int dominantIndex(vector<int>& nums) {
+        int index = 0, maxValue = nums[0], maxTwice = 0;
+        for(int i = 1; i < nums.size(); ++i) {
+            if(nums[i] > maxValue) {
+                maxTwice = max(maxValue * 2, maxTwice);
+                index = i;
+                maxValue = nums[i];
+            }
+            else {
+                maxTwice = max(maxTwice, nums[i] * 2);
+            }
+        }
+        return maxValue >= maxTwice ? index : -1;
+    }
+};
