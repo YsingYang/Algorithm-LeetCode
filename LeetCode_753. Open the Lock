@@ -1,0 +1,44 @@
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        unordered_set<string> deadendsMap(deadends.begin(), deadends.end());
+        unordered_set<string> visited;
+        
+        queue<string> que;
+        if(deadendsMap.find("0000") == deadendsMap.end()) {
+            que.emplace("0000");
+            visited.insert("0000");
+        }
+        int count = 0;
+        while(!que.empty()) {
+            int size = que.size();
+            for(int i = 0; i < size; ++i) {
+                string temp = que.front();
+                que.pop();
+                if(temp  == target) {
+                    return count;
+                }
+                for(int j = 0; j < 4; ++j) {
+                    //++
+                    string up = temp;
+                    up[j] = up[j] == '9' ? '0' : up[j] + 1;
+                    if(visited.find(up) == visited.end() && deadendsMap.find(up) == deadendsMap.end()) {
+                        que.emplace(up);
+                        visited.insert(up);
+                    }
+                    string down = temp;
+                    down[j] = down[j] == '0' ? '9' : down[j] - 1;
+                    if(visited.find(down) == visited.end() && deadendsMap.find(down) == deadendsMap.end()) {
+                        que.emplace(down);
+                        visited.insert(down);
+                            
+                    }
+                }
+            }
+            
+            ++count;
+        }
+        return -1;
+        
+    }
+};
