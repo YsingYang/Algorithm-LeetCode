@@ -1,0 +1,40 @@
+class Solution {
+public:
+    vector<int> pourWater(vector<int>& heights, int V, int K) {
+        // 从中间K位置开始搜索。
+        for(int i = 0; i < V; ++i) {
+            int leftLevel = heights[K], rightLevel = heights[K];
+            int leftIndex = K, rightIndex = K;
+            for(int j = K-1; j >= 0; --j) {
+                if(heights[j] > heights[j+1]) {
+                    break; //height level
+                }
+                if(heights[j] < heights[j+1]) {
+                    leftIndex = j;
+                    leftLevel = heights[j];
+                }
+            }
+            
+            for(int j = K+1; j < heights.size(); ++j) {
+                if(heights[j-1] < heights[j]) {
+                    break;
+                }
+                if(heights[j-1] > heights[j]) {
+                    rightIndex = j;
+                    rightLevel = heights[j];
+                }
+            }
+            
+            if(leftLevel == rightLevel && leftLevel == heights[K]) {
+                ++heights[K];
+            }
+            else if(leftLevel < heights[K]){
+                ++heights[leftIndex];
+            }
+            else {
+                ++heights[rightIndex];
+            }
+        }
+        return heights;
+    }
+};
