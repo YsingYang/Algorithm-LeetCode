@@ -1,0 +1,78 @@
+/*******************************
+
+    字典树， 每次采取将每个word的重组成后缀 + ‘#‘ + word组成一个单词
+    搜索时， 采用后缀 + '#' + word组成一个单词搜索。
+    同时， 在插入时， 每次插入时比较Trie有个index属性， 如果当前插入的currentWord的indexsize > Trie->index所在的单词size, 更新current->index属性
+
+********************************/
+
+struct Trie {
+    Trie(): next(vector<Trie*> (27)), index(-1) {}   //只有小写， 与#
+    vector<Trie*> next;
+    int index;
+};
+
+class WordFilter {    
+public:
+    WordFilter(vector<string> words) {
+        Trie* root = build(words);
+    }
+    
+    int f(string prefix, string suffix) {
+        string search = suffix + '#' + prefix;
+        return findWord(search);
+    }
+private:
+    Trie* build(const vector<string>& words) {
+        root = new Trie();
+        //insert(words);
+        for(int i = 0; i < words.size(); ++i) { //插入后缀系列
+            for(int j = 0; j <= words[i].size(); ++j) {
+                string word = spliceWord(words[i], j);   
+                insert(word, root, words, i);
+            }
+        }
+        return root;
+    }
+    
+    string spliceWord(string word, int index) {
+        string suffix = word.substr(word.size()-index);
+        return suffix + '#' + word;
+    }
+    
+    void insert(const string word, Trie*& root, const vector<string>& words, int currentIndex) {
+        Trie* current = root;
+        for(char c : word) {
+            int index = (c == '#' ? 26 : c-'a');
+            if(current->next[index] == nullptr) {
+                current->next[index] = new Trie();
+            }
+            if(current->index == -1 || words[current->index].size() < word.size()) {
+                current->index = currentIndex;
+            }
+            current = current->next[index];
+        }
+        current->index = currentIndex;
+    }
+    
+    int findWord(const string& search) {
+        Trie* current = root;
+        for(char c : search) {
+            int index = (c == '#' ? 26 : c-'a');
+            if(current->next[index] == nullptr){
+                return -1;
+            }
+            current = current->next[index];
+        }
+        return  current->index;
+        
+   }
+private:
+    Trie* root;
+};
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
