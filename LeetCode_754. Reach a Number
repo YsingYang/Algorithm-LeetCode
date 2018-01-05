@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int reachNumber(int target) {
+        //求最小的n, 可解一元二次方程， n^2 + n - 2target >= 0;
+        target = abs(target);
+        int n = ceil((sqrt(1 + 8.0 * target) - 1) / 2); //向上取整
+        long long sum = (n * (n + 1)) / 2;
+        if(sum == target)
+            return n;
+        long long minus = sum - target;
+        if ((minus & 1) == 0)  //为偶数
+            return n;
+        else 
+            return n + ((n & 1) ? 2 : 1);
+        
+        
+    }
+};
