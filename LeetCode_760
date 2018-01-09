@@ -1,0 +1,16 @@
+class Solution {
+public:
+    vector<int> anagramMappings(vector<int>& A, vector<int>& B) {
+        map<int, int> mp;
+        for(int i = 0; i < B.size(); ++i) {
+            mp[B[i]] = i;
+        }
+        vector<int> result;
+        for(int i : A) {
+            if(mp.find(i) != mp.end()) {
+                result.push_back(mp[i]);
+            }
+        }
+        return result;
+    } 
+};
