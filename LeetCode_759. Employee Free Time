@@ -1,0 +1,51 @@
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+    /*************************************
+        
+        将所有Interval的start与end, 排序。
+        顺序遍历。 遇到start++, 遇到end--, 当counter=0时 出现空闲， 插入interval
+    
+    **************************************/
+public:
+    vector<Interval> employeeFreeTime(vector<vector<Interval>>& schedule) {
+        vector<int> timestamp;
+        for(vector<Interval> &vec : schedule) {
+            for(Interval& interval : vec) {
+                timestamp.push_back(interval.start);
+                timestamp.push_back(-(interval.end));
+            }
+        }
+        
+        sort(timestamp.begin(), timestamp.end(), [](const int& lhs, const int& rhs) {
+            if(abs(lhs) == abs(rhs)) {
+                return lhs > rhs; //正数优先
+            }
+            return abs(lhs) < abs(rhs);
+        });
+        
+        int counter = 0; //当counter=0时为空
+        Interval next;
+        vector<Interval> result;
+        for(int i = 0; i < timestamp.size(); ++i) {
+            if(next.start != 0) {
+                next.end = timestamp[i];
+                result.push_back(next);
+                next.start = 0;
+                next.end = 0;
+            }
+            counter += timestamp[i] >= 0 ?  1 : -1;
+            if(counter == 0) {
+                next.start = abs(timestamp[i]);
+            }
+        }
+        return result;
+    }
+};
