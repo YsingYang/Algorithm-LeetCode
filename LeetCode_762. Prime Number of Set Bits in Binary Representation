@@ -1,0 +1,59 @@
+class Solution {
+public:
+    int countPrimeSetBits(int L, int R) {
+        set<int> record;
+        int result = 0;
+        for(int i = L; i <= R; ++i) {
+            int counter = bitCounter(i);
+            if(record.find(counter) != record.end()){
+                ++result;
+            }
+            else if(primeCheck(counter)){
+                record.insert(counter);
+                ++result;
+            }
+        }
+        return result;
+    }
+    
+    bool primeCheck(int number) {
+        if(number == 1) {
+            return false;
+        }
+        for(int i = 2; i <= sqrt(number); ++i) {
+            if(number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    int bitCounter(int number) {
+        int counter = 0;
+        while(number){
+            counter += number & 1;
+            number >>= 1;
+        }
+        return counter;
+    }
+};
+
+/******************************************
+对于每个number, 最多只会有32个bit(题目限制) ， 那么可以将checkPrime去掉 提前将质数加入到set中即可
+
+******************************************/
+
+class Solution {
+public:
+    int countPrimeSetBits(int l, int r) {
+        set<int> primes = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 };
+        int cnt = 0;
+        for (int i = l; i <= r; i++) {
+            int bits = 0;
+            for (int n = i; n; n >>= 1)
+                bits += n & 1;
+            cnt += primes.count(bits);
+        }
+        return cnt;
+    }
+};
