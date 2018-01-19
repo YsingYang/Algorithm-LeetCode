@@ -1,0 +1,29 @@
+/*******************************
+
+最外层的for确定left < S.size()
+内层for选取划分块， 每次right从右往左搜索， 当==S[left]时停止搜索
+然后left向又， 知道碰到right时块选取终结
+
+*******************************/
+
+class Solution {
+public:
+    vector<int> partitionLabels(string S) {
+        int left = 0;
+        vector<int> result;
+        while(left < S.size()) {
+            int start = left;
+            int right = left;
+            do{
+                int temp = S.size()-1;
+                while(S[temp] != S[left]){
+                    --temp;
+                }
+                right = max(right, temp); //选取最右侧的index
+                ++left;
+            }while(left <= right);
+            result.push_back(left-start);
+        }
+        return result;
+    }
+};
