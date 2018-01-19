@@ -27,3 +27,36 @@ public:
         return result;
     }
 };
+
+
+/*******************************
+
+在上面方法优化后, （增加了set记录运行过的时间）runtime快了2倍
+
+*******************************/
+
+class Solution {
+public:
+    vector<int> partitionLabels(string S) {
+        int left = 0;
+        vector<int> result;
+        while(left < S.size()) {
+            int start = left;
+            int right = left;
+            set<int> mp; //优化搜索， 避免字母的重复搜索
+            do{
+                if(mp.find(S[left]) == mp.end()){
+                int temp = S.size()-1;
+                    while(S[temp] != S[left]){
+                        --temp;
+                    }
+                    right = max(right, temp); //选取最右侧的index
+                    mp.insert(S[left]);
+                }
+                ++left;
+            }while(left <= right);
+            result.push_back(left-start);
+        }
+        return result;
+    }
+};
