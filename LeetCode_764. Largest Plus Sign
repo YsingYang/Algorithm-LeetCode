@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int orderOfLargestPlusSign(int N, vector<vector<int>>& mines) {
+        vector<vector<int>> grid(N, vector<int>(N, 1));
+        for(int i = 0; i < N; ++i) {
+            for(int j = 0; j < N; ++j) {
+                grid[i][j] = min(i, min(N-i-1, min(j, N-j-1))) + 1;
+                //cout<<grid[i][j]<<"  ";
+            }
+            //cout<<endl;
+        }
+        //上述为初始化数组阶段， 下述开始遍历mines.
+        for(int i = 0; i < mines.size(); ++i) {
+            resetGrid(grid, mines[i][0], mines[i][1], N);   
+        }
+        int result = 0;
+        for(int i = 0; i < N; ++i) {
+            for(int j = 0; j < N; ++j) {
+                //cout<<grid[i][j]<<"  ";
+                result = max(result, grid[i][j]);
+            }
+            //cout<<endl;
+        }
+        return result;
+    }
+    
+private:
+    void resetGrid(vector<vector<int>>& grid, int r, int c, const int N) {
+        grid[r][c] = 0;
+        int counter = max(r, max(c, max(N-1-r, N-1-c)));
+        for(int i = 1; i <=counter; ++i) {
+            if(r+i < N) {
+                grid[r+i][c] = min(grid[r+i][c], i);
+            }
+            if(c+i < N) {
+                grid[r][c+i] = min(grid[r][c+i], i);
+            }
+            if(r-i >= 0) {
+                grid[r-i][c] = min(grid[r-i][c], i);
+            }
+            if(c-i >= 0) {
+                grid[r][c-i] = min(grid[r][c-i], i);
+            }
+        }
+    }
+};
