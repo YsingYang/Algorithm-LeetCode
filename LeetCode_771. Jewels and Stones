@@ -1,0 +1,21 @@
+/*********************
+
+对于这种hash匹配， 用bool数组亦可以
+
+*********************/
+class Solution {
+public:
+    int numJewelsInStones(string J, string S) {
+        unordered_set<char> mp;
+        for(char c : J) {
+            mp.insert(c);
+        }
+        int count = 0;
+        for(char c : S) {
+            if(mp.find(c) != mp.end()){
+                ++count;
+            }
+        }
+        return count;
+    }
+};
