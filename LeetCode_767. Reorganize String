@@ -1,0 +1,51 @@
+class Solution {
+public:
+    string reorganizeString(string S) {
+        //计算S中每个字符的个数， 并按个数从大到小排列
+        vector<pair<char, int>> counter;
+        int size = S.size();
+        for(int i = 0; i < 26; ++i) {
+            counter.emplace_back(i+'a', 0);
+        }
+        if(!countElement(S, counter)){
+            return string();
+        }
+        sort(counter.begin(), counter.end(), [](const pair<char, int> &p1, const pair<char, int> &p2) {
+             return p1.second > p2.second;
+        });
+        string next;
+        for_each(counter.begin(), counter.end(), [&next](const pair<char, int> &p1) {
+           next += string(p1.second, p1.first); 
+        });
+        
+        string result = reorganize(next);
+        return result;
+        
+    }
+    
+    bool countElement(const string& s, vector<pair<char, int>>& counter) {
+        int size = s.size();
+        for(char c : s) {
+            int temp = ++counter[c-'a'].second;
+            if(((size & 1) && temp > (size >> 1) + 1)  || (!(size & 1) && temp > (size>>1))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    string reorganize(string& next) {
+        int size = next.size();
+        string result;
+        string left = next.substr(0, (size+1)/2), right = next.substr((size+1)/2);
+        for(int i = 0; i < left.size(); ++i) {
+            result += left[i];
+            if(i < right.size()) {
+                result += right[i];
+            }
+        }
+        return result;
+        
+        
+    }
+};
