@@ -1,0 +1,41 @@
+class Solution {
+/********
+
+中序遍历
+
+********/
+public:
+    int minDiffInBST(TreeNode* root) {
+        int preValue = INT_MAX;
+        int minValue = INT_MAX;
+        inOrder(root, minValue, preValue);
+        return minValue;
+    }
+    
+private:
+    void inOrder(TreeNode* root, int& minValue, int& preValue) {
+        if(root == nullptr){
+            return;
+        }
+        inOrder(root->left, minValue, preValue);
+        if(preValue != INT_MAX){
+            minValue = min(minValue, root->val - preValue);
+        }
+        preValue = root->val;
+        inOrder(root->right, minValue, preValue);
+    }
+};
+
+//参考discuss可以简化相应代码
+
+class Solution {
+  public:
+    int res = INT_MAX, pre = -1;
+    int minDiffInBST(TreeNode* root) {
+        if (root->left != NULL) minDiffInBST(root->left);
+        if (pre >= 0) res = min(res, root->val - pre);
+        pre = root->val;
+        if (root->right != NULL) minDiffInBST(root->right);
+        return res;
+    }
+};
