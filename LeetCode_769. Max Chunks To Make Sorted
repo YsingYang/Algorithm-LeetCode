@@ -1,0 +1,14 @@
+class Solution {
+public:
+    int maxChunksToSorted(vector<int>& arr) {
+        int left = 0,  right = arr[0], size = arr.size();
+        int count = 0;
+        while(left < size) {
+            if(left == right) {
+                ++count;
+            }
+            right = max(right, arr[++left]);
+        }
+        return count;
+    }
+};
