@@ -1,0 +1,21 @@
+class Solution {
+/********************
+
+
+    用一个mp记录每一个answers的数字， 通过ceil(i.seckond * 1.0 / i.first) * i.first
+    向上取整保证多余的仍然能组成整数
+
+********************/
+public:
+    int numRabbits(vector<int>& answers) {
+        map<int, int> mp;
+        for(int i : answers) {
+            ++mp[i+1];
+        }
+        int rst = 0;
+        for(auto i : mp) {
+            rst += ceil(i.second * 1.0 / i.first) * i.first;
+        }
+        return rst;
+    }
+};
