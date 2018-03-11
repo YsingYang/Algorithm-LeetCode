@@ -1,0 +1,45 @@
+class Solution {
+    /*******************************
+    
+        用unordered_map记录A的每个字符的位置，会从B的首字母开始匹配
+    
+    *******************************/
+public:
+    bool rotateString(string A, string B) {
+        if(A.empty() && B.empty()) {
+            return false;
+        }
+        if((A.empty() || B.empty()) || (A.size() != B.size())) {
+            return false;
+        }
+        unordered_map<int, vector<int>> mp;
+        for(int i = 0; i < A.size(); ++i) {
+            mp[A[i]].emplace_back(i);
+        }
+        //可以加个判断
+        int asize = A.size();
+        for(int i = 0; i < mp[B[0]].size(); ++i) {
+            int counter = 1 % A.size();
+            bool flag = true;
+            for(int j = (mp[B[0]][i]+1) % asize; j != mp[B[0]][i]; j = (j+1)%asize) {
+                if(A[j] != B[counter])
+                    break;
+                ++counter;
+            }
+            if(counter == A.size()) {
+                return true;
+            }
+        }
+        return false;
+        
+    }
+};
+
+
+发现是我自己智障了...
+class Solution {
+public:
+    bool rotateString(string A, string B) {           
+    return A.size() == B.size() && (A + A).find(B) != string::npos;
+    }
+};
