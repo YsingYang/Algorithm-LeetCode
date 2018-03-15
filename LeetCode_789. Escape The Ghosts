@@ -1,0 +1,14 @@
+class Solution {
+ //若出现gost离target距离 < 起点到target距离 则返回false 
+ //https://leetcode.com/problems/escape-the-ghosts/discuss/116678/Why-interception-in-the-middle-is-not-a-good-idea-for-ghosts.
+public:
+    bool escapeGhosts(vector<vector<int>>& ghosts, vector<int>& target) {
+        int d = abs(target[0]) + abs(target[1]); //注意坐标可能出现负数
+        for(vector<int>& ghost : ghosts) {
+            int distance = abs(ghost[0] - target[0]) + abs(ghost[1] - target[1]);
+            if(distance <= d)
+                return false;
+        }
+        return true;
+    }
+};
