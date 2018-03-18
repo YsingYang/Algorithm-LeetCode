@@ -1,0 +1,43 @@
+//first Solution
+class Solution {
+public:
+    int kthGrammar(int N, int K) {
+        if(K == 2 || K == 3)
+            return 1;
+        if(K == 1 || K == 4)
+            return 0;
+        int count = pow(2, N-1), perPart = count / 4; //当前行一共2^N-1个
+        int part = (K-1) / perPart, index = (K-1) % perPart; //必定能整除
+        cout<<part<<"    "<<index<<endl;
+        if(part == 1 || part == 2) {
+            index = perPart - index - 1;
+        }
+        return kthGrammar(N-2, index+1);
+        
+        
+    }
+};
+
+
+//Second solution
+class Solution {
+/******************************************
+
+    可以将将序列看成是不同行的二叉树
+    0的左右子节点分别是0, 1， 1的两个子节点分别是1, 0
+    若是奇节点， 则与父节点一致， 若是偶节点与父节点相反
+
+******************************************/
+public:
+    int kthGrammar(int N, int K) {
+        if(K == 1) {
+            return 0;
+        }
+        if(K & 1) { //奇数
+            return kthGrammar(N-1, (K+1)>>1) ? 1 : 0;
+        }
+        else {
+            return kthGrammar(N-1, K>>1) ? 0 : 1;
+        }
+    }
+};
