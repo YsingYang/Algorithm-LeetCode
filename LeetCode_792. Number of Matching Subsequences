@@ -1,0 +1,41 @@
+class Solution {
+/**********************
+
+先对S做预处理， 记录下其所有index
+对word开始循环， 并记录每个字符的index是否大于preIndex, 并用vector<int>(26)记录每个index
+
+***********************/
+public:
+    int numMatchingSubseq(string S, vector<string>& words) {
+        vector<vector<int>> index(26, vector<int>());
+        for(int i = 0; i < S.size(); ++i) {
+            index[S[i]-'a'].emplace_back(i);
+        }
+        int counter = 0;
+        for(string &str : words) {
+            vector<int> mp(26, 0);
+            int preIndex = -1;
+            int i = 0;
+            for(; i < str.size(); ++i) {
+                char c = str[i];
+                //循环搜索至满足条件到满足>preIndex
+                int j = mp[c-'a'];
+                for(; j < index[c-'a'].size(); ++j) {
+                    if(index[c-'a'][j] > preIndex) {
+                        preIndex = index[c-'a'][j];
+                        mp[c-'a'] = j+1; //当前j已经使用
+                        break;
+                    }
+                }
+                //cout<<j<<endl;
+                if(j == index[c-'a'].size()) {
+                    break;
+                }
+            }
+            if(i == str.size()){
+                ++counter;
+            }
+        }
+        return counter;
+    }
+};
