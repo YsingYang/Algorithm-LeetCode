@@ -1,0 +1,27 @@
+class Solution {
+public:
+    vector<string> subdomainVisits(vector<string>& cpdomains) {
+        //先进行拆分
+        unordered_map<string, int> counter;
+        for(string &s : cpdomains) {
+            //提取数字
+            size_t countPosition = s.find(' ');//必定存在
+            int count = stoi(s.substr(0, countPosition));
+            string prefix = s.substr(countPosition+1);
+            while(1){
+                counter[prefix] += count;
+                size_t index = prefix.find('.');
+                if(index == string::npos) {
+                    break;
+                }
+                prefix = prefix.substr(index+1);
+            }
+        }
+        vector<string> result;
+        for(auto it : counter) {
+            string temp = to_string(it.second) + " " + it.first;
+            result.emplace_back(temp);
+        }
+        return result;
+    }
+};
