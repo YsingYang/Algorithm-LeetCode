@@ -1,0 +1,22 @@
+class Solution {
+    // cross product 计算面积
+public:
+    double largestTriangleArea(vector<vector<int>>& points) {
+        int size = points.size();
+        int maxArea = 0;
+        for(int i = 0; i < size-2; ++i) {
+            int x0 = points[i][0], y0 = points[i][1];
+            for(int j = i+1; j < size-1; ++j) {
+                int x1 = points[j][0], y1 = points[j][1];
+                for(int k = j+1; k < size; ++k) {
+                    int x2 = points[k][0], y2 = points[k][1];
+                    int vx1 = x1-x0, vy1 = y1-y0;
+                    int vx2 = x2-x0, vy2 = y2-y0;
+                    int area = abs(vx1 * vy2 - vx2 * vy1);
+                    maxArea = max(area, maxArea);
+                }
+            }
+        }
+        return maxArea/2.0;
+    }
+};
