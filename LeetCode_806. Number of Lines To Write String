@@ -1,0 +1,17 @@
+class Solution {
+public:
+    vector<int> numberOfLines(vector<int>& widths, string S) {
+        int lineCounter = 1;
+        int widthCounter = 0;
+        for(char c : S) {
+            if(widthCounter + widths[c-'a'] <= 100) {
+                widthCounter += widths[c-'a'];
+            }
+            else {
+                ++lineCounter;
+                widthCounter = widths[c-'a'];
+            }
+        }
+        return {lineCounter, widthCounter};
+    }
+};
