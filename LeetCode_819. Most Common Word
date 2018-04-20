@@ -1,0 +1,29 @@
+class Solution {
+public:
+    string mostCommonWord(string paragraph, vector<string>& banned) {
+        unordered_set<string> bannedMap(banned.begin(), banned.end());
+        unordered_map<string, int> counter;
+        for(int front = 0; front < paragraph.size();) {
+            int rear = front;
+            while(islower(paragraph[rear]) || isupper(paragraph[rear])) {
+                paragraph[rear] = tolower(paragraph[rear++]); //这个++只能放在这里
+            }
+            if(rear != front) { //存在word
+                string result = paragraph.substr(front, rear-front);
+                if(bannedMap.find(result) == bannedMap.end()) {
+                    ++counter[result];
+                }
+            }
+            front = rear + 1;
+        }
+        int maxValue = 0;
+        string result;
+        for(auto node : counter) {
+            if(node.second > maxValue) {
+                maxValue = node.second;
+                result = node.first;
+            }
+        }
+        return result;
+    }
+};
