@@ -1,0 +1,47 @@
+//预处理先提前记录string对应的index,
+//通过left,right检测每个字符最接近C的下标
+
+class Solution {
+public:
+    vector<int> shortestToChar(string S, char C) {
+        vector<int> charIndex;
+        for(int i = 0; i < S.size(); ++i) {
+            if(C == S[i]){
+                charIndex.emplace_back(i);
+            }
+        }
+        int left = 0, right = charIndex.size() == 1 ? 0 : 1;
+        vector<int> result(S.size(), 0);
+        for(int i = 0; i < S.size(); ++i) {
+            //cout<<left<<"  "<<right<<endl;
+            result[i] = min(abs(charIndex[left] - i), abs(charIndex[right]-i));
+            if(i == charIndex[right] && right < charIndex.size() - 1) {
+                ++left;
+                ++right;
+            }
+        }
+        return result;
+    }
+};
+
+class Solution {
+public:
+    vector<int> shortestToChar(string S, char C) {
+        int size = S.size();
+        vector<int> result(size, size);
+        int position = -size;
+        for(int i = 0; i < S.size(); ++i) {
+            if(C == S[i]) {
+                position = i;
+            }
+            result[i] = min(result[i], abs(i-position));
+        }
+        for(int i = size-1; i >= 0; --i) {
+            if(C == S[i]) {
+                position = i;
+            }
+            result[i] = min(result[i], abs(i-position));
+        }
+        return result;
+    }
+};
