@@ -1,0 +1,15 @@
+class Solution {
+public:
+    string toGoatLatin(string S) {
+        unordered_set<char> vowel({'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'});
+        istringstream iss(S);
+        string res, word;
+        int counter = 1;
+        while(iss >> word) {
+            word = (vowel.find(word[0]) == vowel.end() ?  word.substr(1) + word[0] : word) + "ma";
+            word += string(counter++, 'a');
+            res += ' ' + word;
+        }
+        return res.substr(1);
+    }
+};
