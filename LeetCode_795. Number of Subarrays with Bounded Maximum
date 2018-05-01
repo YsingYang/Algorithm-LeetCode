@@ -1,0 +1,37 @@
+class Solution {
+/****************************
+
+
+存在3种情况
+若A[i] >= L && A[i] <= R
+    存在最大值满足序列条件， old++, 能与前序中任意连续组合均满足条件， 同时记录old 
+若A[i] < L
+    自身不满足条件，需要与前序old组合完成满足条件的组合
+若A[i] > R
+    重新设置left边界, old清0
+
+
+
+*****************************/
+public:
+    int numSubarrayBoundedMax(vector<int>& A, int L, int R) {
+        if(A.empty())
+            return 0;
+        int old = 0, counter = 0;
+        int size = A.size(), left = 0;
+        for(int i = 0; i < size; ++i) {
+            if(A[i] >= L && A[i] <= R) {
+                counter += i - left + 1;
+                old = i - left + 1;
+            }
+            else if (A[i] > R) {
+                left = i+1;
+                old = 0;
+            }
+            else {
+                counter += old;
+            }
+        }
+        return counter;
+    }
+};
