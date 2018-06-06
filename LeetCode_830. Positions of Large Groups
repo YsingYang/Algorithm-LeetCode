@@ -1,0 +1,18 @@
+class Solution {
+public:
+    vector<vector<int>> largeGroupPositions(string S) {
+        int left = 0, right = 0;
+        int n = S.size();
+        vector<vector<int>> rst;
+        while(left < n) {
+            while(right < n && S[right] == S[left]) {
+                ++right;
+            }
+            if(right - left >= 3) {
+                rst.emplace_back(vector<int>({left, right-1}));
+            }
+            left = right;
+        }
+        return rst;
+    }
+};
