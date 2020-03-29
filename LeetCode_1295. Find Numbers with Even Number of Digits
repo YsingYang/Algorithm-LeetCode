@@ -18,3 +18,25 @@ public:
         return iCounter;
     }
 };
+
+//update
+class Solution {
+public:
+    int findNumbers(vector<int>& nums) {
+        int32_t iCounter = 0;
+        for(auto it = nums.begin(); it != nums.end(); ++it) {
+            int32_t iNum = *it;
+            bool bIsEven = true;
+            
+            while(iNum) {
+                iNum /= 10;
+                bIsEven = !bIsEven;
+            }
+            
+            if (bIsEven) {
+                ++ iCounter;
+            }
+        }
+        return iCounter;
+    }
+};
