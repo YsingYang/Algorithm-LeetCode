@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int findNumbers(vector<int>& nums) {
+        int64_t iCur = 1; //当前游标
+        int32_t iCounter = 0; //结果返回值
+        bool bIsEven = false;  //当前是否为even列表数
+        sort(nums.begin(), nums.end()); //该方法依赖于有序数组
+        for(auto it = nums.begin(); it != nums.end(); ++it) {  
+            while (iCur * 10 < *it) {  //当cur * 10 仍小于当前元素时, 需要将cur * 10。
+                iCur *= 10;  
+                bIsEven = !bIsEven; //cur * 10后 轮转偶数区间
+            }
+            int64_t iNext = iCur * 10;
+            if(bIsEven) {  //如果为偶数区间 ++结果
+                ++iCounter;
+            } 
+        }
+        return iCounter;
+    }
+};
