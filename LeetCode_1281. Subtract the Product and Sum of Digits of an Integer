@@ -1,0 +1,12 @@
+class Solution {
+public:
+    int subtractProductAndSum(int n) {
+        int64_t iProduct = 1, iSum = 0;
+        while(n) {
+            iProduct *= n % 10;
+            iSum += n % 10;
+            n /= 10;
+        }
+        return iProduct - iSum;
+    }
+};
