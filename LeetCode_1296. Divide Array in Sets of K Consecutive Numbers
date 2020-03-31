@@ -1,0 +1,28 @@
+class Solution {
+public:
+    bool isPossibleDivide(vector<int>& nums, int k) {
+        //先判断数组是否可以整除
+        if(nums.size() % k != 0 ) {
+            return false;
+        }
+        multiset<int> stNumsSet(nums.begin(), nums.end());
+        while(!stNumsSet.empty()) {
+            int32_t iNow = 0;
+            for(int i = 0; i < k; ++i) {
+                if(i == 0) {
+                    iNow = *stNumsSet.begin();
+                    stNumsSet.erase(stNumsSet.begin());
+                }
+                else {
+                    auto it = stNumsSet.find(iNow+1);
+                    if(it == stNumsSet.end()) {
+                        return false;
+                    }
+                    iNow = *it;
+                    stNumsSet.erase(it);
+                }
+            }
+        }
+        return true;
+    }
+};
