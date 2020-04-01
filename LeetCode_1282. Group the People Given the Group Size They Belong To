@@ -1,0 +1,15 @@
+class Solution {
+public:
+    vector<vector<int>> groupThePeople(vector<int>& groupSizes) {
+        int iSize = groupSizes.size();
+        vector<vector<int>> szResult, szTmp(iSize+1, vector<int>());
+        for(int i = 0; i < groupSizes.size(); ++i) {
+            szTmp[groupSizes[i]].emplace_back(i);
+            if(szTmp[groupSizes[i]].size() == groupSizes[i]) {
+                szResult.emplace_back(szTmp[groupSizes[i]]);
+                szTmp[groupSizes[i]].clear();
+            }
+        }
+        return szResult;
+    }
+};
