@@ -1,0 +1,62 @@
+class Solution {
+//这种方法虽然效率不高, 但相对还是比较巧妙的
+public:
+    int findBestValue(vector<int>& arr, int target) {
+        //先对数据进行排序(依赖于有序数据)
+        sort(arr.begin(), arr.end());
+        
+        for (int i = 0; i < arr.size(); ++i) {
+            //计算 x * arr[i], 其中x为arr - i的数组长度, 由于是有序的, 总是以最小数开始
+            if ((arr.size() - i) * arr[i] > target) {
+                //如果大于这一个target, 结果必定在target / x , target/x + 1 中
+                int t1 = target/(arr.size() - i);
+                int t2 = t1 + 1;
+                return abs(t1 * (int)(arr.size() - i) - target) <= abs(t2 * (int)(arr.size() - i) - target) ? t1 : t2;
+            }
+            //如果仍小于target , 则继续for循环, 在for前, 需要将target减去当前元素
+            target -= arr[i];
+        }
+        //排除数组元素均小于的情况
+        return arr.back();
+    }
+};
+
+
+class Solution {
+public:
+    int findBestValue(vector<int>& arr, int target) {
+        //二分查找, [0, target]进行查找
+        int32_t iLeft = 0, iRight = target;
+        int32_t iMinDistance = INT_MAX, iResult = 0;
+        while(iLeft <= iRight) {
+            //cout << iLeft << " " << iRight << endl;
+            int32_t iMid = (iLeft + iRight) >> 1;
+            //计算sum
+            int32_t iSum = 0;
+            for (auto each : arr) {
+                iSum += each >= iMid ? iMid : each;
+            }
+            
+            //如果直接是等于, 可直接返回结果
+            if(iSum == target) {
+                return iMid;
+            }
+            
+            //如果差距小于当前差距, 直接替换缓存结果
+            if(abs(iSum - target) < iMinDistance) {
+                iMinDistance = abs(iSum - target);
+                iResult = iMid;    
+            }
+            
+            //变换iLeft, iRight位置, 这里需要根据sum的实际情况
+            //cout << "sum " << iSum << endl;
+            if(iSum < target) {
+                iLeft = iMid + 1;
+            }
+            else { //不会出现==
+                iRight = iMid - 1;
+            }
+        }
+        return iResult;
+    }
+};
