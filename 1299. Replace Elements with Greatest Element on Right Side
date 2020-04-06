@@ -1,0 +1,13 @@
+class Solution {
+public:
+    vector<int> replaceElements(vector<int>& arr) {
+    //从最大下标开始遍历
+        int iMax = -1, iTemp = 0;
+        for(int i = arr.size()-1; i >= 0; --i) {
+            iTemp = move(arr[i]);
+            arr[i] = iMax;
+            iMax = max(iMax, iTemp);
+        }
+        return arr;
+    }
+};
