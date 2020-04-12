@@ -1,0 +1,72 @@
+class Solution {
+public:
+    bool isNStraightHand(vector<int>& hand, int W) {
+        int32_t iSize = hand.size();
+        if(iSize % W != 0) {
+            return false;
+        }
+        
+        map<int, int> mpRecord;
+        
+        for_each(hand.begin(), hand.end(), [&mpRecord](const int& i) {
+            ++mpRecord[i];
+        });
+        
+        int iGroup = iSize / W; //每一组的大小
+        for(int i = 0; i < iGroup; ++i) {
+            int32_t iVal = 0;
+            for (int j = 0; j < W; ++j) {
+                if(j == 0) {
+                    iVal = mpRecord.begin()->first;
+                }
+                else {
+                    if(mpRecord.find(iVal+1) == mpRecord.end()) {
+                        return false;
+                    }
+                    iVal = iVal + 1;
+                }
+                
+                if(--mpRecord[iVal] == 0) {
+                    mpRecord.erase(iVal);
+                }
+            }
+        }
+        return true;
+    }
+};
+
+class Solution {
+public:
+    bool isNStraightHand(vector<int>& hand, int W) {
+        int32_t iSize = hand.size();
+        if(iSize % W != 0) {
+            return false;
+        }
+        
+        map<int, int> mpRecord;
+        
+        for_each(hand.begin(), hand.end(), [&mpRecord](const int& i) {
+            ++mpRecord[i];
+        });
+        
+        int32_t iGroup = iSize / W; //组数
+        while(!mpRecord.empty()) {
+            int32_t iVal = mpRecord.begin()->first, iCount = mpRecord.begin()->second;
+            if(iCount > iGroup) { //剪枝
+                return false;
+            }
+            for(int i = 0; i < W; ++i) {
+                mpRecord[iVal+i] -= iCount;
+                if(mpRecord[iVal+i] == 0) {
+                    mpRecord.erase(iVal+i);
+                }
+                else if(mpRecord[iVal+i] < 0) {
+                    return false;
+                }
+                
+            }
+            iGroup -= iCount; //减去已满的组数
+        }
+        return true;
+    }
+};
